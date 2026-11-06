@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hafenhopser – Pixelhafen</title>
+<meta name="description" content="Ein Tipp, ein Schub: Flieg mit dem hustenden Jetpack durch den Pixelhafen und zwischen den Containern hindurch. Kostenlos, ohne Anmeldung, ohne Werbung.">
+<!-- App-Einstellungen, damit sich das Spiel auf dem Handy wie eine App verhält -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#10243A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hafenhopser">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<style>
+  /* Schrift "Press Start 2P", Copyright 2012 The Press Start 2P Project Authors,
+     SIL Open Font License 1.1 (https://openfontlicense.org). Sie steckt direkt in dieser
+     Datei, damit das Spiel auch offline richtig aussieht. */
+  @font-face {
+    font-family: 'Press Start 2P';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(%%SCHRIFT%%) format('woff2');
+  }
+
+  /* Hafenhopser-Farben: Marineblau, Türkis, Sonnengelb, Korallorange, Creme */
+  :root {
+    color-scheme: dark;
+    --bg: #10243A;
+    --surface: #16314F;
+    --surface-2: #1F4066;
+    --line: #2F5A85;
+    --text: #FFF4DC;
+    --muted: #B5CBE0;
+    --gelb: #FFD35A;
+    --gelb-kante: #C9962A;
+    --koralle: #FF805B;
+    --tuerkis: #24D6CD;
+    --auf-gelb: #10243A;
+    --retro: 'Press Start 2P', 'Courier New', monospace;
+    --body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html { height: 100%; background: var(--bg); }
+  body {
+    min-height: 100%;
+    margin: 0;
+    overflow: hidden;
+    color: var(--text);
+    background: var(--bg);
+    font: 16px/1.5 var(--body);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  :focus-visible { outline: 3px solid var(--gelb); outline-offset: 3px; border-radius: 6px; }
+  [hidden] { display: none !important; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* Dekorative Hafenkulisse hinter allem (auf breiten Bildschirmen an den Seiten sichtbar) */
+  #kulisse {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    pointer-events: none;
+  }
+
+  #app {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    height: 100vh;
+    height: 100dvh;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  /* Kleine Kopfzeile nur auf großen Bildschirmen */
+  #kopf { display: none; }
+  @media (min-width: 760px) and (min-height: 760px) {
+    #kopf {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 14px 16px 0;
+      color: var(--muted);
+      font: 10px/1.6 var(--retro);
+    }
+    #kopf svg { width: 20px; height: 20px; color: var(--gelb); }
+    #kopf b { color: var(--text); font-weight: 400; }
+  }
+
+  /* ---------- Spielfläche ---------- */
+  #buehne {
+    grid-row: 2;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    padding: 10px;
+    /* Nur hier: kein Scrollen, kein Zoomen beim Tippen */
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+  #rahmen {
+    position: relative;
+    flex: none;
+    line-height: 0;
+    border-radius: 4px;
+    /* Pixelhafen-Rahmen: Marineblau, Sonnengelb, Marineblau */
+    box-shadow: 0 0 0 3px var(--bg), 0 0 0 6px var(--gelb), 0 0 0 9px var(--bg), 0 20px 50px rgba(0, 0, 0, 0.55);
+  }
+  canvas#bild {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #9FE3FF;
+    border-radius: 4px;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    cursor: pointer;
+  }
+  canvas#bild:focus-visible { outline: none; }
+
+  /* Kleine Knöpfe oben rechts im Spielfeld */
+  .hudknoepfe {
+    position: absolute;
+    top: max(20px, calc(20px * var(--zoom, 1)));
+    right: 8px;
+    z-index: 2;
+    display: flex;
+    gap: 6px;
+  }
+  .rund {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    color: var(--text);
+    cursor: pointer;
+    background: rgba(16, 36, 58, 0.78);
+    border: 2px solid rgba(255, 244, 220, 0.35);
+    border-radius: 10px;
+    touch-action: manipulation;
+  }
+  .rund:hover { background: rgba(31, 64, 102, 0.92); }
+  .rund svg { width: 18px; height: 18px; }
+  #tonAus { display: none; }
+  .stumm #tonAn { display: none; }
+  .stumm #tonAus { display: block; }
+  /* Pause gibt es nur im laufenden Spiel */
+  :root:not([data-zustand="spielen"]):not([data-zustand="bereit"]) #pauseKnopf { visibility: hidden; }
+
+  #meldung {
+    position: absolute;
+    left: 50%;
+    top: 66%;
+    z-index: 2;
+    padding: 12px 16px;
+    color: var(--text);
+    background: rgba(16, 36, 58, 0.9);
+    border: 3px solid var(--gelb);
+    border-radius: 10px;
+    font: 14px/1.6 var(--retro);
+    text-align: center;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+  }
+  #meldung small { display: block; max-width: 220px; margin-top: 4px; color: var(--muted); font: 13px/1.35 var(--body); }
+
+  /* ---------- Fenster: Start, Pause, Ende ---------- */
+  #fenster {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    overflow-y: auto;
+    background: rgba(8, 20, 34, 0.5);
+    touch-action: manipulation;
+  }
+  .tafel {
+    width: min(380px, 100%);
+    margin: auto;
+    padding: 22px;
+    background: var(--surface);
+    border: 3px solid var(--bg);
+    border-radius: 14px;
+    box-shadow: 0 0 0 3px var(--gelb), 0 18px 44px rgba(0, 0, 0, 0.55);
+  }
+  .marke { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; color: var(--muted); font: 9px/1.5 var(--retro); }
+  .marke svg { width: 20px; height: 20px; flex: none; color: var(--gelb); }
+  .titelzeile { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  #startFigur { flex: none; width: 80px; height: 96px; image-rendering: pixelated; }
+  h1, h2 { margin: 0; font: 400 clamp(17px, 5.4vw, 22px)/1.35 var(--retro); letter-spacing: -0.02em; }
+  h1 { color: var(--gelb); text-shadow: 3px 3px 0 var(--koralle), 5px 5px 0 var(--bg); }
+  h2 { font-size: clamp(14px, 4.4vw, 17px); line-height: 1.5; }
+  .unterzeile { margin: 12px 0 0; font-size: 17px; font-weight: 600; }
+  .steuerinfo { margin: 12px 0 0; padding: 10px 12px; color: var(--muted); background: var(--surface-2); border-radius: 10px; font-size: 14px; line-height: 1.45; }
+  .steuerinfo b { color: var(--text); }
+  .nurTouch { display: none; }
+  .touch .nurTouch { display: inline; }
+  .touch .nurMaus { display: none; }
+  .rekord { margin: 14px 0 0; color: var(--muted); font: 10px/1.6 var(--retro); }
+  .rekord b { color: var(--gelb); font-weight: 400; }
+  .spruch { margin: 10px 0 0; color: var(--tuerkis); font-size: 16px; font-style: italic; }
+  .zahlen { display: grid; gap: 8px; margin: 16px 0 0; padding: 0; }
+  .zahlen div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+  .zahlen dt { color: var(--muted); }
+  .zahlen dd { margin: 0; font: 14px/1.4 var(--retro); }
+  .zahlen .gross dd { color: var(--gelb); font-size: 20px; }
+  .hervor {
+    margin: 14px 0 0;
+    padding: 10px 12px;
+    color: var(--auf-gelb);
+    background: linear-gradient(90deg, var(--gelb), #FFE59A, var(--gelb));
+    border-radius: 8px;
+    box-shadow: 0 0 0 3px var(--koralle);
+    font: 12px/1.6 var(--retro);
+    text-align: center;
+    animation: feiern 0.5s steps(2, start) 6;
+  }
+  @keyframes feiern { 50% { transform: scale(1.05) rotate(-1deg); filter: brightness(1.2); } }
+  .knoepfe { display: grid; gap: 10px; margin-top: 18px; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 10px 18px;
+    color: var(--text);
+    background: var(--surface-2);
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 4px 0 var(--bg);
+    font: 600 16px/1.3 var(--body);
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .btn:hover { filter: brightness(1.1); }
+  .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--bg); }
+  .btn.main {
+    min-height: 56px;
+    color: var(--auf-gelb);
+    background: var(--gelb);
+    border-color: var(--bg);
+    box-shadow: 0 4px 0 var(--gelb-kante), 0 4px 0 2px var(--bg);
+    font: 400 15px/1.3 var(--retro);
+    letter-spacing: 0.02em;
+  }
+  .btn.main:active { box-shadow: 0 2px 0 var(--gelb-kante); }
+  .btn.klein { min-height: 44px; font-size: 15px; }
+
+  /* ---------- Schmale Geräte ---------- */
+  @media (max-width: 380px) {
+    #buehne { padding: 8px; }
+    .tafel { padding: 18px 16px; }
+    #rahmen { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--gelb), 0 0 0 6px var(--bg); }
+  }
+
+  /* ---------- Querformat auf dem Handy: Tafel breiter und flacher ---------- */
+  @media (orientation: landscape) and (max-height: 560px) {
+    #buehne { padding: 6px; }
+    #rahmen { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--gelb), 0 0 0 6px var(--bg); }
+    .tafel { width: min(600px, 100%); padding: 14px 18px; }
+    .marke { display: none; }
+    #fStart .titelzeile { justify-content: flex-start; }
+    #startFigur { width: 56px; height: 66px; }
+    .unterzeile { margin-top: 6px; }
+    .steuerinfo { margin-top: 8px; padding: 8px 10px; }
+    .rekord { margin-top: 8px; }
+    .zahlen { margin-top: 8px; }
+    .knoepfe { grid-template-columns: 1fr 1fr; margin-top: 12px; }
+    .hudknoepfe { top: 6px; right: 6px; gap: 4px; }
+    .rund { width: 40px; height: 40px; }
+  }
+
+  /* ---------- Weniger Bewegung gewünscht ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .btn:active { transform: none; }
+    .hervor { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 11 11"><path fill="currentColor" d="M5 0h1v2H5zM3 2h5v1H3zM5 3h1v5H5zM1 6h1v1H1zM9 6h1v1H9zM1 7h2v1H1zM8 7h2v1H8zM2 8h3v1H2zM6 8h3v1H6zM3 9h5v1H3z"/></symbol>
+</svg>
+
+<canvas id="kulisse" aria-hidden="true"></canvas>
+
+<div id="app">
+  <header id="kopf"><svg aria-hidden="true"><use href="#logo"/></svg><span>PIXELHAFEN · <b>HAFENHOPSER</b></span></header>
+  <main id="buehne">
+    <div id="rahmen">
+      <canvas id="bild" tabindex="0" role="img" aria-label="Spielfeld von Hafenhopser: Die Figur fliegt mit einem Raketenrucksack zwischen hängenden Containern und Containerstapeln hindurch. Leertaste, Pfeil hoch, W, Klick oder Tippen gibt einen Schub."></canvas>
+      <div class="hudknoepfe">
+        <button class="rund" id="tonKnopf" type="button" aria-label="Ton ausschalten" aria-pressed="true">
+          <svg id="tonAn" viewBox="0 0 16 16" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><path d="M2 5h3v6H2zM6 4h1v8H6zM7 3h1v10H7zM10 6h1v4h-1zM12 4h1v8h-1z"/></svg>
+          <svg id="tonAus" viewBox="0 0 16 16" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><path d="M2 5h3v6H2zM6 4h1v8H6zM7 3h1v10H7zM10 6h1v1h-1zM11 7h1v1h-1zM12 8h1v1h-1zM13 9h1v1h-1zM13 6h1v1h-1zM12 7h1v1h-1zM11 8h1v1h-1zM10 9h1v1h-1z"/></svg>
+        </button>
+        <button class="rund" id="pauseKnopf" type="button" aria-label="Pause">
+          <svg viewBox="0 0 16 16" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><path d="M4 3h3v10H4zM9 3h3v10H9z"/></svg>
+        </button>
+      </div>
+      <div id="meldung" role="status" aria-live="polite" hidden></div>
+    </div>
+  </main>
+</div>
+<p id="ansage" class="sr" aria-live="polite"></p>
+
+<div id="fenster">
+  <div class="tafel" role="dialog" aria-modal="true" aria-labelledby="fensterTitel">
+
+    <section id="fStart">
+      <p class="marke"><svg aria-hidden="true"><use href="#logo"/></svg>PIXELHAFEN</p>
+      <div class="titelzeile">
+        <h1 data-titel>HAFEN&shy;HOPSER</h1>
+        <canvas id="startFigur" aria-hidden="true"></canvas>
+      </div>
+      <p class="unterzeile">Der Hafen ruft. Dein Jetpack hustet.</p>
+      <p class="steuerinfo"><span class="nurMaus"><b>Leertaste</b>, <b>Pfeil hoch</b>, <b>W</b> oder <b>Klick</b> gibt einen kurzen Schub. <b>P</b> oder <b>Esc</b> pausiert.</span><span class="nurTouch"><b>Tippe</b> irgendwo auf den Bildschirm für einen kurzen Schub. Flieg durch die Lücken, nicht ins Wasser.</span></p>
+      <p class="rekord">REKORD <b class="js-rekord">0</b></p>
+      <div class="knoepfe">
+        <button class="btn main" id="losKnopf" type="button">Losfliegen</button>
+        <a class="btn klein" href="https://moje9328.github.io/spiele/">Zur Pixelhafen-Seite</a>
+      </div>
+    </section>
+
+    <section id="fPause" hidden>
+      <h2 data-titel>Verschnaufpause</h2>
+      <p class="rekord">PUNKTE <b id="pausePunkte">0</b></p>
+      <div class="knoepfe">
+        <button class="btn main" id="weiterKnopf" type="button">Weiter</button>
+        <button class="btn klein" id="neuKnopf" type="button">Neu starten</button>
+      </div>
+    </section>
+
+    <section id="fEnde" hidden>
+      <h2 data-titel>Das war wohl eine Bruchlandung.</h2>
+      <p class="spruch" id="spruch" hidden></p>
+      <p class="hervor" id="neuerRekord" hidden>NEUER REKORD!</p>
+      <dl class="zahlen">
+        <div class="gross"><dt>Punkte</dt><dd id="ePunkte">0</dd></div>
+        <div><dt>Persönlicher Rekord</dt><dd id="eRekord">0</dd></div>
+      </dl>
+      <div class="knoepfe">
+        <button class="btn main" id="nochmalKnopf" type="button">Noch einmal</button>
+        <a class="btn klein" href="https://moje9328.github.io/spiele/">Zur Pixelhafen-Seite</a>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+%%SPIEL%%
+</script>
+</body>
+</html>

@@ -1,0 +1,2286 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hafenhopser – Pixelhafen</title>
+<meta name="description" content="Ein Tipp, ein Schub: Flieg mit dem hustenden Jetpack durch den Pixelhafen und zwischen den Containern hindurch. Kostenlos, ohne Anmeldung, ohne Werbung.">
+<!-- App-Einstellungen, damit sich das Spiel auf dem Handy wie eine App verhält -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#10243A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hafenhopser">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<style>
+  /* Schrift "Press Start 2P", Copyright 2012 The Press Start 2P Project Authors,
+     SIL Open Font License 1.1 (https://openfontlicense.org). Sie steckt direkt in dieser
+     Datei, damit das Spiel auch offline richtig aussieht. */
+  @font-face {
+    font-family: 'Press Start 2P';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(data:font/woff2;base64,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) format('woff2');
+  }
+
+  /* Hafenhopser-Farben: Marineblau, Türkis, Sonnengelb, Korallorange, Creme */
+  :root {
+    color-scheme: dark;
+    --bg: #10243A;
+    --surface: #16314F;
+    --surface-2: #1F4066;
+    --line: #2F5A85;
+    --text: #FFF4DC;
+    --muted: #B5CBE0;
+    --gelb: #FFD35A;
+    --gelb-kante: #C9962A;
+    --koralle: #FF805B;
+    --tuerkis: #24D6CD;
+    --auf-gelb: #10243A;
+    --retro: 'Press Start 2P', 'Courier New', monospace;
+    --body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html { height: 100%; background: var(--bg); }
+  body {
+    min-height: 100%;
+    margin: 0;
+    overflow: hidden;
+    color: var(--text);
+    background: var(--bg);
+    font: 16px/1.5 var(--body);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  :focus-visible { outline: 3px solid var(--gelb); outline-offset: 3px; border-radius: 6px; }
+  [hidden] { display: none !important; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* Dekorative Hafenkulisse hinter allem (auf breiten Bildschirmen an den Seiten sichtbar) */
+  #kulisse {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    pointer-events: none;
+  }
+
+  #app {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    height: 100vh;
+    height: 100dvh;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  /* Kleine Kopfzeile nur auf großen Bildschirmen */
+  #kopf { display: none; }
+  @media (min-width: 760px) and (min-height: 760px) {
+    #kopf {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 14px 16px 0;
+      color: var(--muted);
+      font: 10px/1.6 var(--retro);
+    }
+    #kopf svg { width: 20px; height: 20px; color: var(--gelb); }
+    #kopf b { color: var(--text); font-weight: 400; }
+  }
+
+  /* ---------- Spielfläche ---------- */
+  #buehne {
+    grid-row: 2;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    padding: 10px;
+    /* Nur hier: kein Scrollen, kein Zoomen beim Tippen */
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+  #rahmen {
+    position: relative;
+    flex: none;
+    line-height: 0;
+    border-radius: 4px;
+    /* Pixelhafen-Rahmen: Marineblau, Sonnengelb, Marineblau */
+    box-shadow: 0 0 0 3px var(--bg), 0 0 0 6px var(--gelb), 0 0 0 9px var(--bg), 0 20px 50px rgba(0, 0, 0, 0.55);
+  }
+  canvas#bild {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #9FE3FF;
+    border-radius: 4px;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    cursor: pointer;
+  }
+  canvas#bild:focus-visible { outline: none; }
+
+  /* Kleine Knöpfe oben rechts im Spielfeld */
+  .hudknoepfe {
+    position: absolute;
+    top: max(20px, calc(20px * var(--zoom, 1)));
+    right: 8px;
+    z-index: 2;
+    display: flex;
+    gap: 6px;
+  }
+  .rund {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    color: var(--text);
+    cursor: pointer;
+    background: rgba(16, 36, 58, 0.78);
+    border: 2px solid rgba(255, 244, 220, 0.35);
+    border-radius: 10px;
+    touch-action: manipulation;
+  }
+  .rund:hover { background: rgba(31, 64, 102, 0.92); }
+  .rund svg { width: 18px; height: 18px; }
+  #tonAus { display: none; }
+  .stumm #tonAn { display: none; }
+  .stumm #tonAus { display: block; }
+  /* Pause gibt es nur im laufenden Spiel */
+  :root:not([data-zustand="spielen"]):not([data-zustand="bereit"]) #pauseKnopf { visibility: hidden; }
+
+  #meldung {
+    position: absolute;
+    left: 50%;
+    top: 66%;
+    z-index: 2;
+    padding: 12px 16px;
+    color: var(--text);
+    background: rgba(16, 36, 58, 0.9);
+    border: 3px solid var(--gelb);
+    border-radius: 10px;
+    font: 14px/1.6 var(--retro);
+    text-align: center;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+  }
+  #meldung small { display: block; max-width: 220px; margin-top: 4px; color: var(--muted); font: 13px/1.35 var(--body); }
+
+  /* ---------- Fenster: Start, Pause, Ende ---------- */
+  #fenster {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    overflow-y: auto;
+    background: rgba(8, 20, 34, 0.5);
+    touch-action: manipulation;
+  }
+  .tafel {
+    width: min(380px, 100%);
+    margin: auto;
+    padding: 22px;
+    background: var(--surface);
+    border: 3px solid var(--bg);
+    border-radius: 14px;
+    box-shadow: 0 0 0 3px var(--gelb), 0 18px 44px rgba(0, 0, 0, 0.55);
+  }
+  .marke { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; color: var(--muted); font: 9px/1.5 var(--retro); }
+  .marke svg { width: 20px; height: 20px; flex: none; color: var(--gelb); }
+  .titelzeile { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  #startFigur { flex: none; width: 80px; height: 96px; image-rendering: pixelated; }
+  h1, h2 { margin: 0; font: 400 clamp(17px, 5.4vw, 22px)/1.35 var(--retro); letter-spacing: -0.02em; }
+  h1 { color: var(--gelb); text-shadow: 3px 3px 0 var(--koralle), 5px 5px 0 var(--bg); }
+  h2 { font-size: clamp(14px, 4.4vw, 17px); line-height: 1.5; }
+  .unterzeile { margin: 12px 0 0; font-size: 17px; font-weight: 600; }
+  .steuerinfo { margin: 12px 0 0; padding: 10px 12px; color: var(--muted); background: var(--surface-2); border-radius: 10px; font-size: 14px; line-height: 1.45; }
+  .steuerinfo b { color: var(--text); }
+  .nurTouch { display: none; }
+  .touch .nurTouch { display: inline; }
+  .touch .nurMaus { display: none; }
+  .rekord { margin: 14px 0 0; color: var(--muted); font: 10px/1.6 var(--retro); }
+  .rekord b { color: var(--gelb); font-weight: 400; }
+  .spruch { margin: 10px 0 0; color: var(--tuerkis); font-size: 16px; font-style: italic; }
+  .zahlen { display: grid; gap: 8px; margin: 16px 0 0; padding: 0; }
+  .zahlen div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+  .zahlen dt { color: var(--muted); }
+  .zahlen dd { margin: 0; font: 14px/1.4 var(--retro); }
+  .zahlen .gross dd { color: var(--gelb); font-size: 20px; }
+  .hervor {
+    margin: 14px 0 0;
+    padding: 10px 12px;
+    color: var(--auf-gelb);
+    background: linear-gradient(90deg, var(--gelb), #FFE59A, var(--gelb));
+    border-radius: 8px;
+    box-shadow: 0 0 0 3px var(--koralle);
+    font: 12px/1.6 var(--retro);
+    text-align: center;
+    animation: feiern 0.5s steps(2, start) 6;
+  }
+  @keyframes feiern { 50% { transform: scale(1.05) rotate(-1deg); filter: brightness(1.2); } }
+  .knoepfe { display: grid; gap: 10px; margin-top: 18px; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 10px 18px;
+    color: var(--text);
+    background: var(--surface-2);
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 4px 0 var(--bg);
+    font: 600 16px/1.3 var(--body);
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .btn:hover { filter: brightness(1.1); }
+  .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--bg); }
+  .btn.main {
+    min-height: 56px;
+    color: var(--auf-gelb);
+    background: var(--gelb);
+    border-color: var(--bg);
+    box-shadow: 0 4px 0 var(--gelb-kante), 0 4px 0 2px var(--bg);
+    font: 400 15px/1.3 var(--retro);
+    letter-spacing: 0.02em;
+  }
+  .btn.main:active { box-shadow: 0 2px 0 var(--gelb-kante); }
+  .btn.klein { min-height: 44px; font-size: 15px; }
+
+  /* ---------- Schmale Geräte ---------- */
+  @media (max-width: 380px) {
+    #buehne { padding: 8px; }
+    .tafel { padding: 18px 16px; }
+    #rahmen { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--gelb), 0 0 0 6px var(--bg); }
+  }
+
+  /* ---------- Querformat auf dem Handy: Tafel breiter und flacher ---------- */
+  @media (orientation: landscape) and (max-height: 560px) {
+    #buehne { padding: 6px; }
+    #rahmen { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--gelb), 0 0 0 6px var(--bg); }
+    .tafel { width: min(600px, 100%); padding: 14px 18px; }
+    .marke { display: none; }
+    #fStart .titelzeile { justify-content: flex-start; }
+    #startFigur { width: 56px; height: 66px; }
+    .unterzeile { margin-top: 6px; }
+    .steuerinfo { margin-top: 8px; padding: 8px 10px; }
+    .rekord { margin-top: 8px; }
+    .zahlen { margin-top: 8px; }
+    .knoepfe { grid-template-columns: 1fr 1fr; margin-top: 12px; }
+    .hudknoepfe { top: 6px; right: 6px; gap: 4px; }
+    .rund { width: 40px; height: 40px; }
+  }
+
+  /* ---------- Weniger Bewegung gewünscht ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .btn:active { transform: none; }
+    .hervor { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 11 11"><path fill="currentColor" d="M5 0h1v2H5zM3 2h5v1H3zM5 3h1v5H5zM1 6h1v1H1zM9 6h1v1H9zM1 7h2v1H1zM8 7h2v1H8zM2 8h3v1H2zM6 8h3v1H6zM3 9h5v1H3z"/></symbol>
+</svg>
+
+<canvas id="kulisse" aria-hidden="true"></canvas>
+
+<div id="app">
+  <header id="kopf"><svg aria-hidden="true"><use href="#logo"/></svg><span>PIXELHAFEN · <b>HAFENHOPSER</b></span></header>
+  <main id="buehne">
+    <div id="rahmen">
+      <canvas id="bild" tabindex="0" role="img" aria-label="Spielfeld von Hafenhopser: Die Figur fliegt mit einem Raketenrucksack zwischen hängenden Containern und Containerstapeln hindurch. Leertaste, Pfeil hoch, W, Klick oder Tippen gibt einen Schub."></canvas>
+      <div class="hudknoepfe">
+        <button class="rund" id="tonKnopf" type="button" aria-label="Ton ausschalten" aria-pressed="true">
+          <svg id="tonAn" viewBox="0 0 16 16" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><path d="M2 5h3v6H2zM6 4h1v8H6zM7 3h1v10H7zM10 6h1v4h-1zM12 4h1v8h-1z"/></svg>
+          <svg id="tonAus" viewBox="0 0 16 16" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><path d="M2 5h3v6H2zM6 4h1v8H6zM7 3h1v10H7zM10 6h1v1h-1zM11 7h1v1h-1zM12 8h1v1h-1zM13 9h1v1h-1zM13 6h1v1h-1zM12 7h1v1h-1zM11 8h1v1h-1zM10 9h1v1h-1z"/></svg>
+        </button>
+        <button class="rund" id="pauseKnopf" type="button" aria-label="Pause">
+          <svg viewBox="0 0 16 16" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><path d="M4 3h3v10H4zM9 3h3v10H9z"/></svg>
+        </button>
+      </div>
+      <div id="meldung" role="status" aria-live="polite" hidden></div>
+    </div>
+  </main>
+</div>
+<p id="ansage" class="sr" aria-live="polite"></p>
+
+<div id="fenster">
+  <div class="tafel" role="dialog" aria-modal="true" aria-labelledby="fensterTitel">
+
+    <section id="fStart">
+      <p class="marke"><svg aria-hidden="true"><use href="#logo"/></svg>PIXELHAFEN</p>
+      <div class="titelzeile">
+        <h1 data-titel>HAFEN&shy;HOPSER</h1>
+        <canvas id="startFigur" aria-hidden="true"></canvas>
+      </div>
+      <p class="unterzeile">Der Hafen ruft. Dein Jetpack hustet.</p>
+      <p class="steuerinfo"><span class="nurMaus"><b>Leertaste</b>, <b>Pfeil hoch</b>, <b>W</b> oder <b>Klick</b> gibt einen kurzen Schub. <b>P</b> oder <b>Esc</b> pausiert.</span><span class="nurTouch"><b>Tippe</b> irgendwo auf den Bildschirm für einen kurzen Schub. Flieg durch die Lücken, nicht ins Wasser.</span></p>
+      <p class="rekord">REKORD <b class="js-rekord">0</b></p>
+      <div class="knoepfe">
+        <button class="btn main" id="losKnopf" type="button">Losfliegen</button>
+        <a class="btn klein" href="https://moje9328.github.io/spiele/">Zur Pixelhafen-Seite</a>
+      </div>
+    </section>
+
+    <section id="fPause" hidden>
+      <h2 data-titel>Verschnaufpause</h2>
+      <p class="rekord">PUNKTE <b id="pausePunkte">0</b></p>
+      <div class="knoepfe">
+        <button class="btn main" id="weiterKnopf" type="button">Weiter</button>
+        <button class="btn klein" id="neuKnopf" type="button">Neu starten</button>
+      </div>
+    </section>
+
+    <section id="fEnde" hidden>
+      <h2 data-titel>Das war wohl eine Bruchlandung.</h2>
+      <p class="spruch" id="spruch" hidden></p>
+      <p class="hervor" id="neuerRekord" hidden>NEUER REKORD!</p>
+      <dl class="zahlen">
+        <div class="gross"><dt>Punkte</dt><dd id="ePunkte">0</dd></div>
+        <div><dt>Persönlicher Rekord</dt><dd id="eRekord">0</dd></div>
+      </dl>
+      <div class="knoepfe">
+        <button class="btn main" id="nochmalKnopf" type="button">Noch einmal</button>
+        <a class="btn klein" href="https://moje9328.github.io/spiele/">Zur Pixelhafen-Seite</a>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+'use strict';
+// ===================================================================
+// 1 · EINSTELLUNGEN
+// Alle Werte zum Abstimmen an einer Stelle. Alles ist in logischen
+// Spielkoordinaten angegeben: Das Spielfeld ist immer 360 × 640 groß,
+// egal wie groß der Bildschirm ist. Zeiten in Sekunden, Tempo in
+// Spielpunkten pro Sekunde.
+// ===================================================================
+
+const K = {
+  BREITE: 360,
+  HOEHE: 640,
+
+  // ---- Zeit ----
+  SCHRITT: 1 / 120,          // fester Simulationsschritt (unabhängig von der Bildrate)
+  MAX_FRAME: 0.1,            // längere Lücken zwischen zwei Bildern werden gekappt
+  MAX_SCHRITTE: 24,          // höchstens so viele Schritte pro Bild
+
+  // ---- Spielfeldgrenzen ----
+  DECKE: 14,                 // Unterkante der Kranbahn oben = obere Spielgrenze
+  WASSER: 584,               // Wasseroberfläche = untere Spielgrenze
+
+  // ---- Figur ----
+  FIGUR_X: 104,              // Mitte der Figur, bleibt im linken Drittel
+  FIGUR_START_Y: 300,
+  TREFFER_B: 22,             // Trefferfläche (kleiner als die sichtbare Figur von etwa 30 × 44)
+  TREFFER_H: 26,
+  KUNST_PIXEL: 1.5,          // ein Pixel der Figurengrafik = 1,5 Spielpunkte
+
+  // ---- Flugphysik ----
+  SCHWERKRAFT: 1450,         // Beschleunigung nach unten
+  IMPULS: -415,              // ein Tipp SETZT die Geschwindigkeit auf diesen Wert (nicht addieren)
+  MAX_FALL: 540,             // höchste Fallgeschwindigkeit
+
+  // ---- Hindernisse ----
+  HINDERNIS_B: 64,           // Breite aller Container und Anlagen
+  ABSTAND: 215,              // Abstand von Hindernis zu Hindernis (linke Kanten)
+  ANFLUG: 430,               // erstes Hindernis so weit rechts von der Figur → ca. 3 s freier Anflug
+  HINDERNIS_EINZUG: 2,       // Trefferfläche der Hindernisse links und rechts so viel schmaler
+  LUECKE_OBEN_MIN: 70,       // Lücke beginnt frühestens hier (Abstand zur Kranbahn)
+  LUECKE_UNTEN_MAX: 520,     // Lücke endet spätestens hier (Abstand zum Wasser)
+  SEIL: 12,                  // Kranseile zwischen Kranbahn und Spreizer (nur Deko, kein Hindernis)
+  SPREIZER: 6,               // gelber Greifrahmen über den hängenden Containern
+  PIER: 22,                  // Betonsockel unter den Containerstapeln
+  CONTAINER_H: 32,           // gewünschte Containerhöhe (wird passend gestreckt)
+
+  // ---- Schwierigkeit (steigt mit den Punkten, ist nach oben begrenzt) ----
+  TEMPO_START: 125,
+  TEMPO_PRO_PUNKT: 1.6,
+  TEMPO_MAX: 178,            // erreicht bei etwa 33 Punkten
+  LUECKE_START: 178,
+  LUECKE_PRO_PUNKT: 1.1,
+  LUECKE_MIN: 140,           // erreicht bei etwa 35 Punkten
+  VERSATZ_START: 60,         // größter Höhenunterschied zweier Lücken am Anfang
+  VERSATZ_PRO_PUNKT: 5,
+  VERSATZ_MAX: 180,
+  RUHIGE_HINDERNISSE: 2,     // die ersten Lücken liegen fast mittig
+
+  // ---- Fairness ----
+  // Der erlaubte Höhenunterschied wird aus der echten Flugphysik berechnet:
+  // Wie weit kommt man hoch, wenn man bequem alle FAIR_TIPP_ABSTAND Sekunden tippt,
+  // in der Zeit zwischen zwei Hindernissen? Davon nur FAIR_FAKTOR als Reserve.
+  FAIR_TIPP_ABSTAND: 0.28,
+  FAIR_FAKTOR: 0.75,
+  FAIR_SICHERHEIT: 10,       // Abstand zur Lückenkante, der als Reserve bleibt
+
+  // ---- Ablauf ----
+  SPERRE_NACH_UNFALL: 0.32,  // so lange werden Eingaben nach einem Unfall ignoriert
+  SCHUB_POSE: 0.16,          // so lange zeigt die Figur nach einem Tipp „Beine hoch“
+
+  // ---- Effekte ----
+  MAX_PARTIKEL: 90,
+};
+
+// ===================================================================
+// 2 · SPIELLOGIK
+// Zustände, Flugphysik, Hindernisse, Punkte und Kollisionen.
+// Kein Zugriff auf Bildschirm, Ton oder Browser: alles hier lässt sich
+// in Node testen (quelle/test-logik.js).
+// ===================================================================
+
+const ZUSTAND = {
+  START: 'start',        // Startfenster, Figur schwebt
+  SPIELEN: 'spielen',
+  BEREIT: 'bereit',      // nach der Pause: Welt steht still, erst ein Tipp fliegt weiter
+  PAUSE: 'pause',
+  ENDE: 'ende',          // Bruchlandung (kurze Sperre, dann Neustart möglich)
+};
+
+// Kleiner Zufallsgenerator mit Startwert, damit Folgen nachprüfbar sind
+function zufallsGenerator(saat) {
+  let a = saat >>> 0;
+  return () => {
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const begrenze = (v, min, max) => Math.max(min, Math.min(max, v));
+
+// ---------- Schwierigkeit ----------
+// Index i = Nummer des Hindernisses = Punktestand, während man darauf zufliegt.
+function tempoBei(punkte) { return Math.min(K.TEMPO_START + punkte * K.TEMPO_PRO_PUNKT, K.TEMPO_MAX); }
+function lueckeBei(i) { return Math.max(K.LUECKE_START - i * K.LUECKE_PRO_PUNKT, K.LUECKE_MIN); }
+function versatzBei(i) {
+  if (i < K.RUHIGE_HINDERNISSE) return 24;
+  return Math.min(K.VERSATZ_START + (i - K.RUHIGE_HINDERNISSE) * K.VERSATZ_PRO_PUNKT, K.VERSATZ_MAX);
+}
+
+// Durchschnittliche Steiggeschwindigkeit bei bequemem Tippen (aus der echten Physik)
+function steigRate() {
+  const t = K.FAIR_TIPP_ABSTAND;
+  return (-K.IMPULS * t - 0.5 * K.SCHWERKRAFT * t * t) / t;
+}
+
+// Größter fairer Höhenunterschied zwischen der Lücke davor (A) und der neuen Lücke (B).
+// Zwischen den Hindernissen bleibt die freie Flugzeit; dazu kommt der Spielraum,
+// den man innerhalb beider Lücken hat (man kann A oben verlassen und B unten erreichen).
+function erlaubterVersatz(i, lueckeA, lueckeB) {
+  const frei = (K.ABSTAND - K.HINDERNIS_B - K.TREFFER_B) / tempoBei(i);
+  const spielraum = Math.max(0, (lueckeA - K.TREFFER_H) / 2 - K.FAIR_SICHERHEIT)
+                  + Math.max(0, (lueckeB - K.TREFFER_H) / 2 - K.FAIR_SICHERHEIT);
+  return steigRate() * frei * K.FAIR_FAKTOR + spielraum;
+}
+
+// ---------- Spielstand ----------
+function erstelleSpiel() {
+  return {
+    zustand: ZUSTAND.START,
+    zeit: 0,                 // läuft immer (für Animationen)
+    punkte: 0,
+    strecke: 0,              // so weit ist die Welt schon nach links gezogen
+    figur: { y: K.FIGUR_START_Y, vy: 0, schub: 99 },
+    vorher: { y: K.FIGUR_START_Y, strecke: 0 },   // für weiche Darstellung zwischen zwei Schritten
+    hindernisse: [],
+    erzeugt: 0,
+    letzteMitte: K.FIGUR_START_Y,
+    letzteLuecke: K.LUECKE_START,
+    rng: zufallsGenerator(1),
+    unfall: null,            // { art: 'container' | 'wasser' | 'decke', zeit }
+    ereignisse: [],
+    statistik: { impulse: 0, starts: 0 },
+  };
+}
+
+function erzeugeHindernis(s) {
+  const i = s.erzeugt++;
+  const luecke = lueckeBei(i);
+  const oben = K.LUECKE_OBEN_MIN + luecke / 2;
+  const unten = K.LUECKE_UNTEN_MAX - luecke / 2;
+  const d = Math.min(versatzBei(i), erlaubterVersatz(i, s.letzteLuecke, luecke));
+  // Begrenzen kann den Versatz nur verkleinern (die vorige Mitte liegt immer im erlaubten Bereich)
+  const mitte = begrenze(s.letzteMitte + (s.rng() * 2 - 1) * d, oben, unten);
+  s.letzteMitte = mitte;
+  s.letzteLuecke = luecke;
+  s.hindernisse.push({
+    i,
+    x: K.FIGUR_X + K.ANFLUG + i * K.ABSTAND,   // linke Kante in Weltkoordinaten
+    oben: mitte - luecke / 2,                  // Oberkante der freien Lücke
+    unten: mitte + luecke / 2,                 // Unterkante der freien Lücke
+    gezaehlt: false,
+    saat: Math.floor(s.rng() * 1e9),           // nur für Farben und Aufkleber
+  });
+}
+
+// Hält genug Hindernisse vor der Figur bereit und räumt hinten auf
+function fuelleHindernisse(s) {
+  while (!s.hindernisse.length || s.hindernisse[s.hindernisse.length - 1].x < s.strecke + K.BREITE + K.ABSTAND) {
+    erzeugeHindernis(s);
+  }
+  while (s.hindernisse.length && s.hindernisse[0].x + K.HINDERNIS_B < s.strecke - 40) s.hindernisse.shift();
+}
+
+function neuStart(s, saat) {
+  s.zustand = ZUSTAND.SPIELEN;
+  s.punkte = 0;
+  s.strecke = 0;
+  s.figur.y = K.FIGUR_START_Y;
+  s.figur.vy = 0;
+  s.figur.schub = 99;
+  s.vorher.y = s.figur.y;
+  s.vorher.strecke = 0;
+  s.hindernisse = [];
+  s.erzeugt = 0;
+  s.letzteMitte = K.FIGUR_START_Y;
+  s.letzteLuecke = K.LUECKE_START;
+  s.rng = zufallsGenerator(saat === undefined ? (Date.now() ^ 0x5eed) : saat);
+  s.unfall = null;
+  s.ereignisse.length = 0;
+  s.statistik.starts++;
+  fuelleHindernisse(s);
+}
+
+// Ein Flugimpuls: Geschwindigkeit wird GESETZT, nicht addiert
+function impuls(s) {
+  s.figur.vy = K.IMPULS;
+  s.figur.schub = 0;
+  s.statistik.impulse++;
+  s.ereignisse.push({ typ: 'impuls' });
+}
+
+// Startet einen Versuch und gibt genau einen ersten Impuls
+function starte(s, saat) {
+  neuStart(s, saat);
+  impuls(s);
+}
+
+// Darf die nächste Spieleingabe einen neuen Versuch starten?
+function kannStarten(s) {
+  return s.zustand === ZUSTAND.START || (s.zustand === ZUSTAND.ENDE && s.unfall && s.unfall.zeit >= K.SPERRE_NACH_UNFALL);
+}
+
+// Eine Spieleingabe (Taste, Klick, Tipp). Gibt zurück, was passiert ist.
+function eingabe(s, saat) {
+  switch (s.zustand) {
+    case ZUSTAND.SPIELEN: impuls(s); return 'impuls';
+    case ZUSTAND.BEREIT: s.zustand = ZUSTAND.SPIELEN; impuls(s); return 'weiter';
+    case ZUSTAND.START:
+    case ZUSTAND.ENDE:
+      if (!kannStarten(s)) return null;
+      starte(s, saat);
+      return 'start';
+    default: return null;   // in der Pause zählt nur „Weiter“
+  }
+}
+
+function pausiere(s) {
+  if (s.zustand !== ZUSTAND.SPIELEN && s.zustand !== ZUSTAND.BEREIT) return false;
+  s.zustand = ZUSTAND.PAUSE;
+  return true;
+}
+
+// Nach der Pause: Bereitschaft, erst die nächste Eingabe fliegt weiter
+function setzeFort(s) {
+  if (s.zustand !== ZUSTAND.PAUSE) return false;
+  s.zustand = ZUSTAND.BEREIT;
+  return true;
+}
+
+// Trefferfläche der Figur (Weltkoordinaten)
+function trefferFlaeche(s) {
+  const x = s.strecke + K.FIGUR_X;
+  return {
+    l: x - K.TREFFER_B / 2, r: x + K.TREFFER_B / 2,
+    o: s.figur.y - K.TREFFER_H / 2, u: s.figur.y + K.TREFFER_H / 2,
+  };
+}
+
+// Trifft die Figur ein Hindernis? Container oben reichen von der Kranbahn bis zur Lücke,
+// Stapel unten von der Lücke bis ins Wasser. Seile liegen innerhalb dieser Fläche über
+// den Containern und sind zu kurz, um hindurchzupassen: kein unerwartetes Hindernis.
+function trifftHindernis(t, h) {
+  const l = h.x + K.HINDERNIS_EINZUG;
+  const r = h.x + K.HINDERNIS_B - K.HINDERNIS_EINZUG;
+  if (t.r <= l || t.l >= r) return false;
+  return t.o < h.oben || t.u > h.unten;
+}
+
+function pruefeKollision(s) {
+  const t = trefferFlaeche(s);
+  if (t.o < K.DECKE) return 'decke';
+  if (t.u > K.WASSER) return 'wasser';
+  for (const h of s.hindernisse) {
+    if (h.x > t.r) break;
+    if (trifftHindernis(t, h)) return 'container';
+  }
+  return null;
+}
+
+function unfall(s, art) {
+  s.zustand = ZUSTAND.ENDE;
+  s.unfall = { art, zeit: 0, y: s.figur.y };
+  s.figur.vy = 0;
+  s.ereignisse.push({ typ: 'unfall', art });
+}
+
+function schritt(s, dt) {
+  s.zeit += dt;
+  s.vorher.y = s.figur.y;
+  s.vorher.strecke = s.strecke;
+
+  if (s.zustand === ZUSTAND.ENDE) { s.unfall.zeit += dt; return; }
+  if (s.zustand !== ZUSTAND.SPIELEN) return;
+
+  const f = s.figur;
+  f.schub += dt;
+  f.vy = Math.min(f.vy + K.SCHWERKRAFT * dt, K.MAX_FALL);
+  f.y += f.vy * dt;
+  s.strecke += tempoBei(s.punkte) * dt;
+  fuelleHindernisse(s);
+
+  const art = pruefeKollision(s);
+  if (art) { unfall(s, art); return; }
+
+  // Punkt erst, wenn die Trefferfläche das Hindernis ganz hinter sich hat; jedes Paar nur einmal
+  const links = s.strecke + K.FIGUR_X - K.TREFFER_B / 2;
+  for (const h of s.hindernisse) {
+    if (!h.gezaehlt && links > h.x + K.HINDERNIS_B) {
+      h.gezaehlt = true;
+      s.punkte++;
+      s.ereignisse.push({ typ: 'punkt', punkte: s.punkte });
+    }
+  }
+}
+
+// ===================================================================
+// 3 · SPEICHER
+// Rekord und Ton-Einstellung im Browser, mit versionierter Kennung.
+// Ist localStorage gesperrt (z. B. privater Modus), merkt sich das Spiel
+// die Werte nur bis zum Neuladen – es läuft trotzdem.
+// ===================================================================
+
+const Speicher = (() => {
+  const PRAEFIX = 'pixelhafen.hafenhopser.v1.';
+  const notfall = {};
+
+  function lager() {
+    try { return window.localStorage || null; } catch (e) { return null; }
+  }
+
+  function lies(name, standard) {
+    const key = PRAEFIX + name;
+    try {
+      const l = lager();
+      const wert = l ? l.getItem(key) : null;
+      if (wert !== null && wert !== undefined) return wert;
+    } catch (e) { /* gesperrt */ }
+    return key in notfall ? notfall[key] : standard;
+  }
+
+  function schreib(name, wert) {
+    const key = PRAEFIX + name;
+    notfall[key] = String(wert);
+    try { const l = lager(); if (l) l.setItem(key, String(wert)); } catch (e) { /* gesperrt oder voll */ }
+  }
+
+  return {
+    rekord() {
+      const n = parseInt(lies('rekord', '0'), 10);
+      return Number.isFinite(n) && n > 0 ? n : 0;
+    },
+    setzeRekord(n) { schreib('rekord', Math.floor(n)); },
+    tonAn() { return lies('ton', '1') !== '0'; },
+    setzeTon(an) { schreib('ton', an ? '1' : '0'); },
+  };
+})();
+
+// ===================================================================
+// 4 · TON
+// Kurze, selbst erzeugte Arcade-Geräusche mit der Web-Audio-Schnittstelle.
+// Keine Audiodateien, keine Sprachausgabe. Der Ton startet erst nach einer
+// Nutzeraktion (Browser-Regel). Ein Kompressor verhindert Übersteuern,
+// und ein neues „Pffup!“ blendet das vorige sofort aus, damit schnelles
+// Tippen nicht zu einem Klangbrei wird.
+// ===================================================================
+
+const Ton = (() => {
+  let ctx = null;
+  let haupt = null;
+  let an = true;
+  let rauschen = null;
+  let letzterImpuls = null;
+
+  function wecke() {
+    if (!an) return;
+    try {
+      if (!ctx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        ctx = new AC();
+        const komp = ctx.createDynamicsCompressor();
+        komp.threshold.value = -14;
+        komp.knee.value = 10;
+        komp.ratio.value = 6;
+        haupt = ctx.createGain();
+        haupt.gain.value = 0.55;
+        haupt.connect(komp).connect(ctx.destination);
+      }
+      if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+    } catch (e) { ctx = null; }
+  }
+
+  const bereit = () => an && ctx && ctx.state === 'running';
+
+  function rauschBuffer() {
+    if (!rauschen) {
+      rauschen = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.8), ctx.sampleRate);
+      const d = rauschen.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    return rauschen;
+  }
+
+  // Lautstärke-Hülle: schneller Anstieg, weiches Ausklingen
+  function huelle(g, t, laut, dauer, anstieg = 0.006) {
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(laut, t + anstieg);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dauer);
+  }
+
+  function ton(f1, f2, dauer, { typ = 'square', laut = 0.3, start = 0, ziel = haupt } = {}) {
+    const t = ctx.currentTime + start;
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = typ;
+    osc.frequency.setValueAtTime(f1, t);
+    if (f2 !== f1) osc.frequency.exponentialRampToValueAtTime(Math.max(20, f2), t + dauer);
+    huelle(g, t, laut, dauer);
+    osc.connect(g).connect(ziel);
+    osc.start(t);
+    osc.stop(t + dauer + 0.03);
+    return osc;
+  }
+
+  function rauschStoss(dauer, { laut = 0.3, start = 0, typ = 'bandpass', f1 = 1800, f2 = 600, q = 0.9, ziel = haupt } = {}) {
+    const t = ctx.currentTime + start;
+    const src = ctx.createBufferSource();
+    src.buffer = rauschBuffer();
+    const fil = ctx.createBiquadFilter();
+    fil.type = typ;
+    fil.Q.value = q;
+    fil.frequency.setValueAtTime(f1, t);
+    fil.frequency.exponentialRampToValueAtTime(f2, t + dauer);
+    const g = ctx.createGain();
+    huelle(g, t, laut, dauer, 0.004);
+    src.connect(fil).connect(g).connect(ziel);
+    src.start(t, Math.random() * 0.3);
+    src.stop(t + dauer + 0.03);
+  }
+
+  return {
+    wecke,
+    istAn: () => an,
+    setze(wert, wecken) {
+      an = wert;
+      if (an && wecken) wecke();
+      else if (!an && ctx && ctx.state === 'running') ctx.suspend().catch(() => {});
+    },
+
+    // „Pffup!“ – kurzes Rauschen plus ansteigender Ton, Tonhöhe leicht zufällig
+    impuls() {
+      if (!bereit()) return;
+      const t = ctx.currentTime;
+      if (letzterImpuls && letzterImpuls.ende > t) {
+        const g = letzterImpuls.g.gain;
+        g.cancelScheduledValues(t);
+        g.setValueAtTime(g.value, t);
+        g.linearRampToValueAtTime(0, t + 0.012);
+      }
+      const bus = ctx.createGain();
+      bus.gain.value = 1;
+      bus.connect(haupt);
+      const v = 1 + (Math.random() * 2 - 1) * 0.08;
+      rauschStoss(0.075, { laut: 0.32, f1: 2600 * v, f2: 900, q: 0.7, ziel: bus });
+      ton(240 * v, 620 * v, 0.1, { typ: 'triangle', laut: 0.34, start: 0.018, ziel: bus });
+      ton(480 * v, 1240 * v, 0.07, { typ: 'square', laut: 0.05, start: 0.02, ziel: bus });
+      letzterImpuls = { g: bus, ende: t + 0.14 };
+    },
+
+    // „Pling!“
+    punkt() {
+      if (!bereit()) return;
+      ton(1318, 1318, 0.09, { typ: 'square', laut: 0.09 });
+      ton(1976, 1976, 0.22, { typ: 'triangle', laut: 0.22, start: 0.05 });
+      ton(3952, 3952, 0.12, { typ: 'sine', laut: 0.05, start: 0.05 });
+    },
+
+    // „Boing-Prrrt“ – Feder-Boing und ein beleidigtes Knattern
+    unfall() {
+      if (!bereit()) return;
+      const t = ctx.currentTime;
+      // Boing: tiefer Ton mit schnellem Wackeln
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(330, t);
+      osc.frequency.exponentialRampToValueAtTime(120, t + 0.32);
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = 17;
+      const tiefe = ctx.createGain();
+      tiefe.gain.value = 38;
+      lfo.connect(tiefe).connect(osc.frequency);
+      const g = ctx.createGain();
+      huelle(g, t, 0.5, 0.34, 0.005);
+      osc.connect(g).connect(haupt);
+      osc.start(t); lfo.start(t);
+      osc.stop(t + 0.36); lfo.stop(t + 0.36);
+
+      // Prrrt: Sägezahn, der von einem schnellen Rechteck an- und ausgeschaltet wird
+      const p0 = t + 0.24;
+      const knatter = ctx.createOscillator();
+      knatter.type = 'sawtooth';
+      knatter.frequency.setValueAtTime(95, p0);
+      knatter.frequency.exponentialRampToValueAtTime(62, p0 + 0.34);
+      const fil = ctx.createBiquadFilter();
+      fil.type = 'lowpass';
+      fil.frequency.value = 700;
+      const am = ctx.createGain();
+      am.gain.value = 0.5;
+      const takt = ctx.createOscillator();
+      takt.type = 'square';
+      takt.frequency.setValueAtTime(30, p0);
+      takt.frequency.linearRampToValueAtTime(22, p0 + 0.34);
+      const takttiefe = ctx.createGain();
+      takttiefe.gain.value = 0.5;
+      takt.connect(takttiefe).connect(am.gain);
+      const pg = ctx.createGain();
+      huelle(pg, p0, 0.42, 0.36, 0.02);
+      knatter.connect(fil).connect(am).connect(pg).connect(haupt);
+      knatter.start(p0); takt.start(p0);
+      knatter.stop(p0 + 0.4); takt.stop(p0 + 0.4);
+    },
+
+    // Kleines Platschen zusätzlich bei Wasserlandung
+    platsch() {
+      if (!bereit()) return;
+      rauschStoss(0.28, { laut: 0.22, typ: 'lowpass', f1: 2400, f2: 300, q: 0.5 });
+    },
+
+    // Kleine fröhliche Hafenfanfare: Schiffshorn „Tuut“, dann ein Dur-Lauf
+    rekord(verzoegerung = 0) {
+      if (!bereit()) return;
+      const s = verzoegerung;
+      ton(196, 196, 0.26, { typ: 'sawtooth', laut: 0.08, start: s });
+      ton(294, 294, 0.26, { typ: 'triangle', laut: 0.2, start: s });
+      const noten = [[523, 0.32], [659, 0.42], [784, 0.52], [1047, 0.64], [784, 0.78], [1047, 0.88]];
+      noten.forEach(([f, st], i) => {
+        const lang = i === noten.length - 1 ? 0.42 : 0.12;
+        ton(f, f, lang, { typ: 'triangle', laut: 0.26, start: s + st });
+        ton(f / 2, f / 2, lang, { typ: 'square', laut: 0.05, start: s + st });
+      });
+    },
+  };
+})();
+
+// ===================================================================
+// 5 · FIGUR
+// Der Hafenhopser als selbst gezeichnete Pixelgrafik (27 × 34 Kunstpixel).
+// Jede Pose wird einmal gemalt, mit Umriss versehen und dann in der
+// passenden Bildschirmauflösung zwischengespeichert.
+// Die Figur schaut nach rechts; der Raketenrucksack sitzt auf dem Rücken (links).
+// ===================================================================
+
+const Figur = (() => {
+  const W = 27;
+  const H = 34;
+  const OX = 1;
+  const OY = 2;
+  // Mittelpunkt der Trefferfläche in Kunstpixeln (Bauch der Jacke)
+  const ANKER = { x: 15.5, y: 18 };
+  // Düse des Rucksacks (für Funken und Rauch)
+  const DUESE = { x: 7, y: 26 };
+
+  const F = {
+    navy: '#10243A',
+    kappe: '#24D6CD', kappeD: '#139AA8', kappeL: '#9BF5EF', band: '#2E7FC8', bandL: '#5BAEEB',
+    haut: '#F6C198', hautD: '#DB9670', wange: '#FF9A82', haar: '#6B4A3A',
+    gelb: '#FFD35A', gelbD: '#E3A43B', gelbL: '#FFF1A8',
+    metall: '#A3B6CA', metallD: '#61748C', rost: '#FF805B', tuerkis: '#24D6CD', creme: '#FFF4DC',
+    hose: '#2B4A7A', hoseD: '#1E355C',
+    stiefel: '#FF805B', stiefelD: '#C9553A', stiefelL: '#FFB59E',
+    stiefel2: '#E8694A', stiefel2D: '#A9442F', stiefel2L: '#F79A82',
+    weiss: '#FFFFFF',
+  };
+
+  function leinwand(w, h) {
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.ceil(w));
+    c.height = Math.max(1, Math.ceil(h));
+    return c;
+  }
+
+  // Malt eine Pose in Originalgröße (1 Kunstpixel = 1 Bildpunkt)
+  // pose: { beine: 'normal'|'hoch'|'flattern0'|'flattern1', kappeDy: 0|-1, jacke: 0|1,
+  //         gesicht: 'ernst'|'verdutzt', schief: bool }
+  function male(pose) {
+    const c = leinwand(W, H);
+    const g = c.getContext('2d');
+    const r = (x, y, w, h, farbe) => { g.fillStyle = farbe; g.fillRect(x + OX, y + OY, w, h); };
+
+    // ---------- Raketenrucksack (alte Hafenmaschine) ----------
+    r(3, 9, 2, 3, F.metallD);            // krummes Auspuffrohr
+    r(2, 9, 4, 1, F.rost);
+    r(2, 12, 7, 10, F.metall);
+    r(2, 12, 1, 10, F.metallD);
+    r(2, 21, 7, 1, F.metallD);
+    r(2, 15, 7, 1, F.rost);              // Warnstreifen
+    r(2, 18, 7, 1, F.tuerkis);
+    r(4, 13, 2, 1, F.tuerkis);           // Kontrolllämpchen
+    r(8, 13, 1, 1, F.creme);             // Nieten
+    r(8, 19, 1, 1, F.creme);
+    r(4, 22, 4, 2, F.metallD);           // Düse
+    r(5, 23, 2, 1, F.rost);
+
+    // ---------- Beine und viel zu große Gummistiefel ----------
+    const bein = (x, y, h) => { r(x, y, 2, h, F.hose); r(x, y, 1, h, F.hoseD); };
+    const stiefel = (x, y, hinten) => {
+      const a = hinten ? F.stiefel2 : F.stiefel;
+      const d = hinten ? F.stiefel2D : F.stiefelD;
+      const l = hinten ? F.stiefel2L : F.stiefelL;
+      r(x, y, 4, 1, l);                  // Stulpe
+      r(x, y + 1, 4, 1, a);
+      r(x, y + 2, 6, 1, a);              // Spitze ragt nach vorn
+      r(x, y + 3, 6, 1, d);              // Sohle
+      r(x + 4, y + 2, 1, 1, l);          // Glanzpunkt
+    };
+    switch (pose.beine) {
+      case 'hoch':      // Beine zucken beim Schub nach oben
+        bein(10, 23, 1); stiefel(7, 24, true);
+        bein(15, 23, 1); stiefel(12, 24, false);
+        break;
+      case 'flattern0':
+        bein(10, 23, 4); stiefel(9, 27, true);
+        bein(15, 23, 2); stiefel(14, 25, false);
+        break;
+      case 'flattern1':
+        bein(10, 23, 2); stiefel(8, 25, true);
+        bein(15, 23, 4); stiefel(15, 27, false);
+        break;
+      default:
+        bein(10, 23, 3); stiefel(9, 26, true);
+        bein(15, 23, 3); stiefel(14, 26, false);
+    }
+
+    // ---------- Große gelbe Regenjacke ----------
+    r(10, 11, 8, 1, F.gelb);
+    r(8, 12, 12, 1, F.gelb);
+    r(7, 13, 14, 10, F.gelb);
+    if (pose.jacke === 1) r(7, 23, 5, 1, F.gelbD);   // Saum flattert hinten
+    else r(15, 23, 5, 1, F.gelbD);                    // oder vorne
+    r(7, 14, 3, 9, F.gelbD);
+    r(7, 22, 14, 1, F.gelbD);
+    r(16, 12, 2, 1, F.gelbL);
+    r(17, 13, 2, 2, F.gelbL);
+    r(18, 15, 1, 7, F.gelbD);            // Knopfleiste
+    r(19, 16, 1, 1, F.creme);
+    r(19, 19, 1, 1, F.creme);
+    r(11, 19, 4, 1, F.gelbD);            // Taschenklappe
+    r(9, 12, 1, 6, F.metallD);           // Rucksackgurt
+    // Arm mit Faust (beim Schub etwas angehoben)
+    const ay = pose.beine === 'hoch' ? -2 : 0;
+    r(15, 16 + ay, 6, 3, F.gelb);
+    r(15, 18 + ay, 6, 1, F.gelbD);
+    r(20, 16 + ay, 1, 3, F.gelbD);
+    r(21, 16 + ay, 2, 3, F.haut);
+    r(21, 18 + ay, 2, 1, F.hautD);
+
+    // ---------- Kopf ----------
+    r(11, 4, 7, 1, F.haut);
+    r(10, 5, 9, 6, F.haut);
+    r(11, 11, 7, 1, F.haut);
+    r(19, 7, 1, 2, F.haut);              // Nase
+    r(19, 8, 1, 1, F.hautD);
+    r(11, 7, 1, 2, F.hautD);             // Ohr
+    r(12, 11, 1, 1, F.hautD);            // Bartstoppeln
+    r(14, 11, 1, 1, F.hautD);
+    r(16, 11, 1, 1, F.hautD);
+    r(10, 10, 3, 2, F.gelb);             // hochgeklappter Kragen
+    r(16, 10, 3, 2, F.gelb);
+    r(16, 10, 1, 1, F.gelbL);
+
+    if (pose.gesicht === 'verdutzt') {
+      r(13, 5, 2, 1, F.navy);            // Augenbrauen weit oben
+      r(17, 5, 2, 1, F.navy);
+      r(13, 7, 2, 2, F.weiss);           // große Augen, Pupillen schielen
+      r(14, 7, 1, 1, F.navy);
+      r(16, 7, 2, 2, F.weiss);
+      r(16, 8, 1, 1, F.navy);
+      r(15, 10, 2, 1, F.navy);           // „Oh!“-Mund
+      r(15, 11, 2, 1, F.haar);
+      r(12, 9, 1, 1, F.wange);
+      r(18, 9, 1, 1, F.wange);
+    } else {
+      // Übertrieben ernst: schräge, tiefe Augenbrauen, schmale Augen, gerader Mund
+      r(13, 6, 2, 1, F.navy);
+      r(15, 7, 1, 1, F.navy);
+      r(16, 7, 1, 1, F.navy);
+      r(17, 6, 2, 1, F.navy);
+      r(13, 8, 1, 1, F.weiss);
+      r(14, 8, 1, 1, F.navy);
+      r(16, 8, 1, 1, F.weiss);
+      r(17, 8, 1, 1, F.navy);
+      r(14, 10, 4, 1, F.navy);
+      r(12, 9, 1, 1, F.wange);
+    }
+
+    // ---------- Blau-türkisfarbene Hafenmütze ----------
+    if (pose.schief) {
+      // Nach der Bruchlandung rutscht die Mütze schief nach vorn
+      r(10, 4, 3, 1, F.haar);
+      r(10, 5, 2, 1, F.haar);
+      r(16, 0, 2, 1, F.kappeD);
+      r(14, 1, 5, 1, F.kappe);
+      r(12, 2, 8, 1, F.kappe);
+      r(12, 3, 9, 1, F.kappe);
+      r(12, 2, 2, 2, F.kappeD);
+      r(15, 2, 2, 1, F.kappeL);
+      r(12, 4, 9, 1, F.bandL);
+      r(13, 5, 8, 1, F.band);
+      r(18, 4, 2, 2, F.creme);
+    } else {
+      const dy = pose.kappeDy || 0;
+      r(14, -1 + dy, 2, 1, F.kappeD);    // kleiner Zipfel
+      r(13, 0 + dy, 4, 1, F.kappe);
+      r(11, 1 + dy, 8, 1, F.kappe);
+      r(10, 2 + dy, 10, 2, F.kappe);
+      r(10, 2 + dy, 2, 2, F.kappeD);
+      r(13, 1 + dy, 2, 1, F.kappeL);
+      r(14, 2 + dy, 1, 1, F.kappeL);
+      r(9, 4 + dy, 11, 1, F.bandL);
+      r(9, 5 + dy, 11, 1, F.band);
+      r(16, 4 + dy, 2, 2, F.creme);      // kleines Anker-Etikett
+      r(17, 5 + dy, 1, 1, F.band);
+    }
+
+    umrande(c);
+    return c;
+  }
+
+  // Dunkler Umriss um alles, was nicht durchsichtig ist (gut lesbar auf hellem Himmel)
+  function umrande(c) {
+    const g = c.getContext('2d');
+    const bild = g.getImageData(0, 0, c.width, c.height);
+    const d = bild.data;
+    const w = c.width;
+    const h = c.height;
+    const voll = (x, y) => x >= 0 && y >= 0 && x < w && y < h && d[(y * w + x) * 4 + 3] > 0;
+    const rand = [];
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        if (voll(x, y)) continue;
+        if (voll(x - 1, y) || voll(x + 1, y) || voll(x, y - 1) || voll(x, y + 1)) rand.push(x, y);
+      }
+    }
+    g.fillStyle = F.navy;
+    for (let i = 0; i < rand.length; i += 2) g.fillRect(rand[i], rand[i + 1], 1, 1);
+  }
+
+  // Zwischenspeicher: pro Pose und Bildpunktgröße ein fertig hochskaliertes Bild
+  const roh = new Map();
+  const gross = new Map();
+  let groessePx = 0;
+
+  function schluessel(p) {
+    return `${p.beine}|${p.kappeDy || 0}|${p.jacke || 0}|${p.gesicht}|${p.schief ? 1 : 0}`;
+  }
+
+  // Liefert die Pose in der gewünschten Größe: jeder Kunstpixel wird ein Block aus px × px Bildpunkten
+  function bild(pose, px) {
+    px = Math.max(1, Math.round(px));
+    if (px !== groessePx) { gross.clear(); groessePx = px; }
+    const key = schluessel(pose);
+    let c = gross.get(key);
+    if (!c) {
+      let r = roh.get(key);
+      if (!r) { r = male(pose); roh.set(key, r); }
+      c = leinwand(W * px, H * px);
+      const g = c.getContext('2d');
+      g.imageSmoothingEnabled = false;
+      g.drawImage(r, 0, 0, W * px, H * px);
+      gross.set(key, c);
+    }
+    return c;
+  }
+
+  return { W, H, ANKER, DUESE, F, bild };
+})();
+
+// ===================================================================
+// 6 · GRAFIK
+// Zeichnet alles in voller Geräteauflösung. Gerechnet wird in Spielkoordinaten
+// (360 × 640); jedes Rechteck wird auf ganze Bildpunkte gerundet, damit die
+// Pixelgrafik knackig bleibt. Ruhige Hintergrundebenen werden einmal pro
+// Größe vorgezeichnet und dann nur verschoben (Parallax).
+// ===================================================================
+
+const Grafik = (() => {
+  const B = K.BREITE;
+  const H = K.HOEHE;
+  const HORIZONT = 446;
+  const NAVY = '#10243A';
+  const CREME = '#FFF4DC';
+  const GELB = '#FFD35A';
+
+  // Containerfarben: [Grundton, Schatten, Licht]
+  const CONTAINER_FARBEN = [
+    ['#FF805B', '#D45C3C', '#FFAA8C'],   // Korallorange
+    ['#24D6CD', '#14A09D', '#8BF0EA'],   // Türkis
+    ['#FFD35A', '#D6A332', '#FFE9A3'],   // Sonnengelb
+    ['#FFF1D6', '#D8C19B', '#FFFFFF'],   // Creme
+    ['#3D7FE0', '#2858A8', '#7FB3F7'],   // Hafenblau
+    ['#EE5D6C', '#B53A4B', '#F897A1'],   // Hummerrot
+    ['#46C98B', '#2C9364', '#8EE6BC'],   // Seegrün
+  ];
+
+  let canvas = null;
+  let ctx = null;
+  let skala = 1;
+  let reduziert = false;
+  let ebenen = null;
+  let partikel = [];
+  let anzeigeWinkel = 0;
+  let punktePop = 0;
+  let letztePunkte = 0;
+  let emitterZeit = 0;
+  let zeitEffekte = 0;
+
+  function leinwand(w, h) {
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.ceil(w));
+    c.height = Math.max(1, Math.ceil(h));
+    return c;
+  }
+
+  // ---------- Malhelfer: Rechtecke auf ganze Bildpunkte gerundet ----------
+  function maler(g, sk, oy = 0) {
+    const p = {
+      r(x, y, w, h, farbe) {
+        const x0 = Math.round(x * sk);
+        const y0 = Math.round((y - oy) * sk);
+        const x1 = Math.round((x + w) * sk);
+        const y1 = Math.round((y + h - oy) * sk);
+        if (x1 <= x0 || y1 <= y0) return;
+        g.fillStyle = farbe;
+        g.fillRect(x0, y0, x1 - x0, y1 - y0);
+      },
+      // Pixelkreis aus waagerechten Streifen
+      kreis(cx, cy, rad, farbe, raster = 2) {
+        for (let dy = -rad; dy < rad; dy += raster) {
+          const m = dy + raster / 2;
+          const hw = Math.round(Math.sqrt(Math.max(0, rad * rad - m * m)) / raster) * raster;
+          if (hw > 0) p.r(cx - hw, cy + dy, hw * 2, raster, farbe);
+        }
+      },
+      // Treppenlinie aus kleinen Quadraten
+      linie(x1, y1, x2, y2, dicke, farbe) {
+        const n = Math.max(1, Math.ceil(Math.hypot(x2 - x1, y2 - y1) / 2));
+        for (let i = 0; i <= n; i++) {
+          const t = i / n;
+          p.r(Math.round((x1 + (x2 - x1) * t) / 2) * 2, Math.round((y1 + (y2 - y1) * t) / 2) * 2, dicke, dicke, farbe);
+        }
+      },
+    };
+    return p;
+  }
+  let p = null;   // Maler für das Hauptbild
+
+  // ===================================================================
+  // Vorgezeichnete Hintergrundebenen
+  // ===================================================================
+  function ebene(breite, y0, hoehe, malen, dunst) {
+    const c = leinwand(breite * skala, hoehe * skala);
+    const g = c.getContext('2d');
+    malen(maler(g, skala, y0));
+    if (dunst) {
+      // Leichter Dunst: Hintergrund bleibt blass, Hindernisse heben sich klar ab
+      g.globalCompositeOperation = 'source-atop';
+      g.fillStyle = dunst;
+      g.fillRect(0, 0, c.width, c.height);
+      g.globalCompositeOperation = 'source-over';
+    }
+    return { c, breite, y0, devB: c.width };
+  }
+
+  function baueEbenen() {
+    // ---- Himmel, Sonne und Hafenbecken (steht still) ----
+    const himmel = leinwand(B * skala, K.WASSER * skala);
+    const hp = maler(himmel.getContext('2d'), skala);
+    const baender = [
+      [0, '#6FCBF2'], [110, '#80D3F4'], [190, '#93DCF6'], [250, '#A7E4F7'],
+      [300, '#BCEBF7'], [342, '#D2F2F5'], [380, '#E6F6EE'], [412, '#F7F3DD'], [436, '#FFEFD0'],
+    ];
+    baender.forEach(([y, f], i) => {
+      const bis = i + 1 < baender.length ? baender[i + 1][0] : HORIZONT;
+      hp.r(0, y, B, bis - y, f);
+    });
+    hp.kreis(284, 132, 44, 'rgba(255, 246, 205, 0.45)');
+    hp.kreis(284, 132, 32, '#FFE58A');
+    hp.kreis(280, 128, 22, '#FFF0B8');
+    const wasserBaender = [
+      [HORIZONT, '#86D3E9'], [454, '#6CC4E2'], [470, '#59B5DA'], [494, '#47A3CF'],
+      [522, '#3A92C3'], [552, '#3080B5'],
+    ];
+    wasserBaender.forEach(([y, f], i) => {
+      const bis = i + 1 < wasserBaender.length ? wasserBaender[i + 1][0] : K.WASSER;
+      hp.r(0, y, B, bis - y, f);
+    });
+    for (const [x, y, w] of [[20, 462, 40], [150, 466, 24], [230, 478, 56], [60, 506, 30], [300, 512, 34], [190, 540, 46], [24, 560, 28]]) {
+      hp.r(x, y, w, 2, 'rgba(255, 255, 255, 0.28)');
+    }
+
+    // ---- Wolken ----
+    const wolken = ebene(720, 30, 250, w => {
+      const wolke = (x, y, b) => {
+        const c = '#FFF9EE';
+        const sch = '#E2F1F8';
+        w.kreis(x + b * 0.3, y + 14, Math.round(b * 0.16), c);
+        w.kreis(x + b * 0.56, y + 10, Math.round(b * 0.21), c);
+        w.kreis(x + b * 0.78, y + 16, Math.round(b * 0.13), c);
+        w.r(x + 6, y + 16, b - 12, 12, c);
+        w.kreis(x + 8, y + 22, 6, c);
+        w.kreis(x + b - 8, y + 22, 6, c);
+        w.r(x + 6, y + 26, b - 12, 4, sch);
+      };
+      wolke(30, 40, 92);
+      wolke(250, 110, 70);
+      wolke(420, 30, 116);
+      wolke(600, 140, 84);
+      wolke(170, 210, 60);
+      wolke(540, 230, 50);
+    });
+
+    // ---- Ferne Küste mit Leuchtturm ----
+    const fern = ebene(720, 290, HORIZONT - 290, f => {
+      const z = zufallsGenerator(7);
+      for (let x = 0; x < 720; x += 24) {
+        const h = 6 + Math.floor(z() * 4) * 4;
+        f.r(x, HORIZONT - h, 24, h, z() < 0.5 ? '#A9D6EA' : '#9DCDE4');
+      }
+      // Landzunge
+      const huegel = [[440, 6], [452, 12], [464, 18], [480, 24], [500, 30], [530, 34], [600, 36], [640, 30], [660, 22], [676, 14], [690, 6]];
+      for (let i = 0; i < huegel.length - 1; i++) {
+        const [x, h] = huegel[i];
+        f.r(x, HORIZONT - h, huegel[i + 1][0] - x, h, '#8DC2DC');
+      }
+      // Häuschen
+      for (const [x, w, h, d] of [[478, 16, 12, '#EAB7A6'], [498, 12, 10, '#F3E3C4'], [630, 14, 12, '#EAB7A6']]) {
+        f.r(x, HORIZONT - 24 - h + 2, w, h, d);
+        f.r(x - 2, HORIZONT - 24 - h - 2, w + 4, 4, '#C98B7A');
+      }
+      // Leuchtturm
+      const lx = 584;
+      const fuss = HORIZONT - 36;
+      for (let y = 330; y < fuss; y += 4) {
+        const w = 10 + Math.round(((y - 330) / (fuss - 330)) * 10 / 2) * 2;
+        f.r(lx - w / 2, y, w, 4, Math.floor((y - 330) / 12) % 2 === 0 ? '#F4A08A' : '#FFF4DC');
+      }
+      f.kreis(lx, 318, 16, 'rgba(255, 238, 160, 0.55)');
+      f.r(lx - 13, 326, 26, 4, '#4B7FA6');
+      f.r(lx - 7, 314, 14, 12, '#FFE07A');
+      f.r(lx - 1, 314, 2, 12, '#4B7FA6');
+      f.r(lx - 9, 310, 18, 4, '#E9876F');
+      f.r(lx - 6, 306, 12, 4, '#E9876F');
+      f.r(lx - 2, 302, 4, 4, '#E9876F');
+    }, 'rgba(205, 238, 250, 0.22)');
+
+    // ---- Kräne und Lagerhäuser ----
+    const mitte = ebene(720, 300, HORIZONT + 10 - 300, m => {
+      m.r(0, HORIZONT, 720, 8, '#5E8FB8');
+      m.r(0, HORIZONT, 720, 2, '#86B2D6');
+      const kran = (x, farbe, dunkel) => {
+        m.r(x, 372, 6, 74, farbe);
+        m.r(x + 40, 372, 6, 74, farbe);
+        m.r(x, 404, 46, 4, dunkel);
+        m.r(x - 2, 440, 10, 6, dunkel);
+        m.r(x + 38, 440, 10, 6, dunkel);
+        m.r(x - 6, 366, 58, 8, farbe);
+        m.r(x - 34, 356, 158, 6, farbe);
+        m.r(x + 16, 318, 8, 48, dunkel);
+        m.linie(x + 20, 320, x - 30, 356, 2, dunkel);
+        m.linie(x + 20, 320, x + 116, 356, 2, dunkel);
+        m.r(x + 50, 362, 12, 10, '#F3EEDF');
+        m.r(x + 52, 364, 8, 3, '#5E8FB8');
+        m.r(x + 88, 362, 8, 4, dunkel);
+        m.r(x + 90, 366, 1, 16, dunkel);
+        m.r(x + 95, 366, 1, 16, dunkel);
+        m.r(x + 84, 382, 20, 9, '#E9A08C');
+      };
+      kran(60, '#63BAC4', '#3F8E9C');
+      kran(430, '#E8A08A', '#B9735F');
+      // Lagerhäuser mit Sägezahndach
+      const halle = (x, w, h, farbe, dach) => {
+        m.r(x, HORIZONT - h, w, h, farbe);
+        for (let dx = 0; dx < w; dx += 20) {
+          m.r(x + dx, HORIZONT - h - 4, 20, 4, dach);
+          m.r(x + dx + 8, HORIZONT - h - 8, 12, 4, dach);
+          m.r(x + dx + 14, HORIZONT - h - 12, 6, 4, dach);
+        }
+        for (let dx = 8; dx < w - 8; dx += 14) m.r(x + dx, HORIZONT - h + 10, 8, 6, '#C9E4F2');
+        m.r(x + w / 2 - 10, HORIZONT - 18, 20, 18, '#4F7BA4');
+      };
+      halle(220, 120, 44, '#6E9CC6', '#557FA8');
+      halle(590, 100, 36, '#7AA7CF', '#5D8AB4');
+      // Kleine Containerstapel auf der Kaje
+      const kfarben = ['#E9A08C', '#7FCFD0', '#F1CF7C', '#93B3E6', '#E68C96'];
+      for (let i = 0; i < 9; i++) {
+        const x = 360 + (i % 3) * 18;
+        const y = HORIZONT - 9 - Math.floor(i / 3) * 9;
+        if (i === 8) continue;
+        m.r(x, y, 16, 8, kfarben[i % kfarben.length]);
+      }
+    }, 'rgba(205, 238, 250, 0.12)');
+
+    // ---- Schiffe im Hafenbecken ----
+    const schiffe = ebene(900, 430, 80, sp => {
+      // Containerschiff
+      sp.r(80, 482, 160, 14, '#3E6F9E');
+      sp.r(240, 482, 8, 10, '#3E6F9E');
+      sp.r(248, 482, 6, 6, '#3E6F9E');
+      sp.r(84, 494, 156, 3, '#E2876F');
+      sp.r(80, 480, 168, 2, '#F3EEDF');
+      const kf = ['#E9A08C', '#7FCFD0', '#F1CF7C', '#93B3E6', '#E68C96', '#9FDDB8'];
+      for (let k = 0; k < 9; k++) {
+        sp.r(110 + k * 14, 468, 13, 12, kf[k % kf.length]);
+        if (k % 3 !== 1) sp.r(110 + k * 14, 457, 13, 11, kf[(k + 2) % kf.length]);
+      }
+      sp.r(86, 450, 18, 30, '#F3EEDF');
+      sp.r(88, 454, 14, 3, '#3E6F9E');
+      sp.r(92, 442, 6, 8, '#E2876F');
+      sp.r(84, 498, 150, 2, 'rgba(255, 255, 255, 0.3)');
+      // Schlepper mit Rauchwölkchen
+      sp.r(480, 488, 46, 9, '#E58A73');
+      sp.r(526, 488, 6, 5, '#E58A73');
+      sp.r(480, 495, 46, 2, '#3E6F9E');
+      sp.r(492, 476, 20, 12, '#F3EEDF');
+      sp.r(495, 479, 14, 3, '#3E6F9E');
+      sp.r(500, 466, 6, 10, '#3E6F9E');
+      sp.r(500, 468, 6, 2, '#F1CF7C');
+      sp.kreis(508, 458, 4, 'rgba(255, 255, 255, 0.7)');
+      sp.kreis(516, 450, 6, 'rgba(255, 255, 255, 0.55)');
+      sp.r(482, 499, 40, 2, 'rgba(255, 255, 255, 0.3)');
+      // Boje
+      sp.r(360, 498, 6, 8, '#E58A73');
+      sp.r(360, 496, 6, 2, '#F3EEDF');
+      // Segelboot
+      sp.r(700, 494, 40, 6, '#F3EEDF');
+      sp.r(704, 500, 32, 2, '#3E6F9E');
+      sp.r(718, 440, 2, 54, '#3E6F9E');
+      for (let i = 0; i < 12; i++) sp.r(720, 442 + i * 4, 4 + i * 2, 4, '#FFF8EA');
+      for (let i = 0; i < 8; i++) sp.r(716 - (2 + i * 1.5), 452 + i * 4, 2 + i * 1.5, 4, '#7FCFD0');
+    }, 'rgba(205, 238, 250, 0.1)');
+
+    ebenen = { himmel, wolken, fern, mitte, schiffe };
+  }
+
+  // Zeichnet eine Kachel-Ebene verschoben und nahtlos wiederholt
+  function zeichneEbene(e, verschiebung) {
+    const off = ((Math.round(verschiebung * skala) % e.devB) + e.devB) % e.devB;
+    const y = Math.round(e.y0 * skala);
+    ctx.drawImage(e.c, -off, y);
+    if (e.devB - off < canvas.width) ctx.drawImage(e.c, e.devB - off, y);
+  }
+
+  // ===================================================================
+  // Bewegte Teile
+  // ===================================================================
+  function zeichneGlitzern(s, strecke) {
+    const t = s.zeit;
+    for (let i = 0; i < 16; i++) {
+      const x = (((i * 97 + 31) % 360) - strecke * (reduziert ? 0 : 0.55) % 360 + 720) % 360;
+      const y = 458 + ((i * 53) % 118);
+      const an = reduziert ? i % 3 === 0 : Math.sin(t * 3 + i * 1.7) > 0.55;
+      if (!an) continue;
+      p.r(Math.floor(x / 2) * 2, y, 4, 2, 'rgba(255, 255, 255, 0.85)');
+      if (!reduziert && Math.sin(t * 3 + i * 1.7) > 0.85) {
+        p.r(Math.floor(x / 2) * 2 + 1, y - 2, 2, 6, 'rgba(255, 255, 255, 0.6)');
+      }
+    }
+  }
+
+  function zeichneVorderWasser(strecke) {
+    p.r(0, K.WASSER, B, 6, '#2A86B8');
+    p.r(0, K.WASSER + 6, B, 14, '#1F6F9E');
+    p.r(0, K.WASSER + 20, B, 16, '#185A85');
+    p.r(0, K.WASSER + 36, B, H - K.WASSER - 36, '#123F60');
+    // Schaumkronen und Wellenstriche ziehen mit der Welt mit
+    const welle = (periode, faktor, y, w, h, farbe, versatz = 0) => {
+      const off = (strecke * faktor + versatz) % periode;
+      for (let x = -off; x < B; x += periode) p.r(x, y, w, h, farbe);
+    };
+    welle(32, 1, K.WASSER, 14, 2, '#D9F6F8');
+    welle(32, 1, K.WASSER + 2, 6, 2, '#9EE3EE', -14);
+    welle(44, 0.9, K.WASSER + 12, 12, 2, '#3A97C6');
+    welle(58, 0.8, K.WASSER + 27, 16, 2, '#2D7AA6', 20);
+    welle(70, 0.7, K.WASSER + 44, 20, 2, '#1D5A80', 8);
+  }
+
+  function zeichneKranbahn(strecke) {
+    p.r(0, 0, B, 9, '#1D3A57');
+    p.r(0, 0, B, 2, '#3B6286');
+    const off = strecke % 24;
+    for (let x = -off + 6; x < B; x += 24) p.r(x, 4, 2, 2, '#7FA3C2');
+    // Gelb-blaue Warnstreifen: hier ist die obere Grenze
+    p.r(0, 9, B, 5, NAVY);
+    const o2 = strecke % 16;
+    for (let x = -o2 - 16; x < B + 8; x += 16) {
+      for (let k = 0; k < 5; k++) p.r(x + k, 9 + k, 8, 1, GELB);
+    }
+    p.r(0, K.DECKE, B, 2, 'rgba(16, 36, 58, 0.28)');
+  }
+
+  // ---------- Hindernisse ----------
+  const MINI = {
+    anker: ['..x..', '.xxx.', '..x..', 'x.x.x', '.xxx.'],
+    fisch: ['.xx..x', 'xxxxxx', 'x.xx.x', '.xx..x'],
+    welle: ['.x...x', 'x.x.x.', '...x..'],
+    stern: ['..x..', 'xxxxx', '.xxx.', 'x...x'],
+  };
+  const ZIFFERN = {
+    0: ['xxx', 'x.x', 'x.x', 'x.x', 'xxx'], 1: ['.x.', 'xx.', '.x.', '.x.', 'xxx'],
+    2: ['xxx', '..x', 'xxx', 'x..', 'xxx'], 3: ['xxx', '..x', '.xx', '..x', 'xxx'],
+    4: ['x.x', 'x.x', 'xxx', '..x', '..x'], 5: ['xxx', 'x..', 'xxx', '..x', 'xxx'],
+    6: ['xxx', 'x..', 'xxx', 'x.x', 'xxx'], 7: ['xxx', '..x', '.x.', '.x.', '.x.'],
+    8: ['xxx', 'x.x', 'xxx', 'x.x', 'xxx'], 9: ['xxx', 'x.x', 'xxx', '..x', 'xxx'],
+  };
+  function muster(karte, x, y, g, farbe) {
+    karte.forEach((zeile, j) => {
+      for (let i = 0; i < zeile.length; i++) if (zeile[i] === 'x') p.r(x + i * g, y + j * g, g, g, farbe);
+    });
+  }
+
+  function container(x, y, w, h, farbe, deko, z) {
+    const [haupt, dunkel, hell] = farbe;
+    p.r(x, y, w, h, NAVY);
+    p.r(x + 2, y + 2, w - 4, h - 4, haupt);
+    p.r(x + 2, y + 2, w - 4, 3, hell);
+    p.r(x + 2, y + h - 5, w - 4, 3, dunkel);
+    if (h >= 20) for (let cx = x + 8; cx < x + w - 6; cx += 7) p.r(cx, y + 7, 2, h - 14, dunkel);
+    p.r(x + 2, y + 2, 4, 4, dunkel);
+    p.r(x + w - 6, y + 2, 4, 4, dunkel);
+    p.r(x + 2, y + h - 6, 4, 4, NAVY);
+    p.r(x + w - 6, y + h - 6, 4, 4, NAVY);
+    if (h < 22) return;
+    const my = y + Math.round(h / 2);
+    switch (deko) {
+      case 1: {   // Anker-Aufkleber
+        const sx = x + 10 + Math.floor(z() * 20);
+        p.r(sx, my - 7, 16, 14, CREME);
+        muster(MINI.anker, sx + 3, my - 5, 2, NAVY);
+        break;
+      }
+      case 2: {   // Fisch-Aufkleber
+        const sx = x + 8 + Math.floor(z() * 26);
+        p.r(sx, my - 6, 18, 12, CREME);
+        muster(MINI.fisch, sx + 3, my - 4, 2, '#FF805B');
+        break;
+      }
+      case 3: {   // Schablonen-Nummer
+        const n = Math.floor(z() * 90) + 10;
+        const sx = x + 14 + Math.floor(z() * 14);
+        muster(ZIFFERN[Math.floor(n / 10)], sx, my - 5, 2, 'rgba(255, 255, 255, 0.75)');
+        muster(ZIFFERN[n % 10], sx + 8, my - 5, 2, 'rgba(255, 255, 255, 0.75)');
+        break;
+      }
+      case 4: {   // Wellen-Band
+        p.r(x + 2, my - 4, w - 4, 8, NAVY);
+        for (let wx = x + 4; wx < x + w - 10; wx += 12) muster(MINI.welle, wx, my - 3, 1, '#24D6CD');
+        break;
+      }
+      case 5: {   // Sternchen-Aufkleber
+        const sx = x + 30 + Math.floor(z() * 10);
+        p.r(sx, my - 6, 14, 12, NAVY);
+        muster(MINI.stern, sx + 2, my - 4, 2, GELB);
+        break;
+      }
+    }
+  }
+
+  // Teilt eine Höhe in gleich hohe Container auf
+  function stapel(hoehe) {
+    const n = Math.max(1, Math.round(hoehe / K.CONTAINER_H));
+    return { n, h: hoehe / n };
+  }
+
+  function zeichneHindernis(h, strecke) {
+    const W = K.HINDERNIS_B;
+    const x = Math.round((h.x - strecke) * skala) / skala;
+    if (x > B + 4 || x + W < -4) return;
+    const z = zufallsGenerator(h.saat);
+    const farbe = () => CONTAINER_FARBEN[Math.floor(z() * CONTAINER_FARBEN.length)];
+    const deko = () => (z() < 0.55 ? 1 + Math.floor(z() * 5) : 0);
+
+    // ---- Oben: Laufkatze an der Kranbahn, Seile, Spreizer, hängende Container ----
+    const seilEnde = K.DECKE + K.SEIL;
+    const spreizEnde = seilEnde + K.SPREIZER;
+    p.r(x + 16, 3, 8, 8, '#3B4E66');
+    p.r(x + W - 24, 3, 8, 8, '#3B4E66');
+    p.r(x + 12, 10, W - 24, 9, NAVY);
+    p.r(x + 14, 11, W - 28, 6, GELB);
+    p.r(x + 14, 15, W - 28, 2, '#D6A332');
+    p.r(x + 19, 19, 2, seilEnde - 19, '#34495F');
+    p.r(x + W - 21, 19, 2, seilEnde - 19, '#34495F');
+    p.r(x + 4, seilEnde, W - 8, K.SPREIZER, NAVY);
+    p.r(x + 6, seilEnde + 1, W - 12, K.SPREIZER - 2, GELB);
+    for (let k = x + 10; k < x + W - 10; k += 10) p.r(k, seilEnde + 1, 4, K.SPREIZER - 2, NAVY);
+    const oben = stapel(h.oben - spreizEnde);
+    for (let i = 0; i < oben.n; i++) {
+      container(x, spreizEnde + i * oben.h, W, oben.h, farbe(), deko(), z);
+    }
+
+    // ---- Unten: Containerstapel auf einem Betonsockel im Wasser ----
+    const pierY = K.WASSER - K.PIER;
+    const unten = stapel(pierY - h.unten);
+    for (let i = 0; i < unten.n; i++) {
+      container(x, h.unten + i * unten.h, W, unten.h, farbe(), deko(), z);
+    }
+    p.r(x, pierY, W, K.PIER, NAVY);
+    p.r(x + 2, pierY, W - 4, K.PIER, '#C9D4E0');
+    p.r(x + 2, pierY + K.PIER - 4, W - 4, 4, '#9FB0C4');
+    for (let k = 0; k < W - 4; k += 8) p.r(x + 2 + k, pierY + 2, 4, 4, k % 16 === 0 ? GELB : NAVY);
+    for (const tx of [x + 8, x + W - 20]) {
+      p.r(tx, pierY + 8, 12, 10, '#1B2A3D');
+      p.r(tx + 4, pierY + 11, 4, 4, '#3A4A5E');
+    }
+    // Pfähle unter Wasser
+    for (const px of [x + 6, x + W - 18]) {
+      p.r(px, K.WASSER, 12, H - K.WASSER, '#0F3550');
+      p.r(px, K.WASSER, 4, H - K.WASSER, '#1A4A6E');
+      p.r(px - 2, K.WASSER + 2, 16, 2, '#9EE3EE');
+    }
+  }
+
+  // ---------- Partikel ----------
+  function neuesTeilchen(t) {
+    if (partikel.length >= K.MAX_PARTIKEL) partikel.shift();
+    partikel.push(t);
+  }
+
+  function duesenPos(y, winkel) {
+    const k = K.KUNST_PIXEL;
+    const dx = (Figur.DUESE.x - Figur.ANKER.x) * k;
+    const dy = (Figur.DUESE.y - Figur.ANKER.y) * k;
+    const c = Math.cos(winkel);
+    const si = Math.sin(winkel);
+    return { x: K.FIGUR_X + dx * c - dy * si, y: y + dx * si + dy * c };
+  }
+
+  const FUNKEN = ['#24D6CD', '#FF805B', '#FFD35A', '#7FF3EC'];
+
+  function funken(x, y, anzahl, kraft) {
+    for (let i = 0; i < anzahl; i++) {
+      neuesTeilchen({
+        art: 'funke', x, y,
+        vx: -30 - Math.random() * 70, vy: 60 + Math.random() * 140 * kraft,
+        leben: 0, max: 0.22 + Math.random() * 0.22,
+        g: Math.random() < 0.5 ? 2 : 3, farbe: FUNKEN[i % FUNKEN.length], schwer: 260,
+      });
+    }
+  }
+  function rauch(x, y) {
+    neuesTeilchen({
+      art: 'rauch', x: x - 2 + Math.random() * 4, y,
+      vx: -20 - Math.random() * 20, vy: 10 + Math.random() * 30,
+      leben: 0, max: 0.5 + Math.random() * 0.25, g: 3, schwer: -60,
+    });
+  }
+
+  function impulsEffekt(s) {
+    const d = duesenPos(s.figur.y, anzeigeWinkel);
+    funken(d.x, d.y, reduziert ? 2 : 6, 1);
+    if (!reduziert) { rauch(d.x, d.y + 2); rauch(d.x - 3, d.y + 4); }
+  }
+
+  function unfallEffekt(s, art) {
+    if (art === 'wasser') {
+      const n = reduziert ? 5 : 14;
+      for (let i = 0; i < n; i++) {
+        neuesTeilchen({
+          art: 'funke', x: K.FIGUR_X - 12 + Math.random() * 24, y: K.WASSER - 2,
+          vx: -70 + Math.random() * 140, vy: -110 - Math.random() * 130,
+          leben: 0, max: 0.45 + Math.random() * 0.2, g: 3,
+          farbe: i % 2 ? '#D9F6F8' : '#7FD3EE', schwer: 600,
+        });
+      }
+    } else {
+      const d = duesenPos(s.figur.y, anzeigeWinkel);
+      for (let i = 0; i < (reduziert ? 1 : 4); i++) rauch(d.x, d.y);
+    }
+  }
+
+  function rekordEffekt() {
+    const n = reduziert ? 12 : 48;
+    for (let i = 0; i < n; i++) {
+      neuesTeilchen({
+        art: 'funke', x: Math.random() * B, y: -10 - Math.random() * 120,
+        vx: -30 + Math.random() * 60, vy: 60 + Math.random() * 90,
+        leben: 0, max: 2.4 + Math.random() * 1.2, g: 4,
+        farbe: CONTAINER_FARBEN[i % CONTAINER_FARBEN.length][0], schwer: 40, flattern: Math.random() * 6,
+      });
+    }
+  }
+
+  function effekteSchritt(dt, s) {
+    zeitEffekte += dt;
+    const welt = s.zustand === ZUSTAND.SPIELEN ? tempoBei(s.punkte) : 0;
+    // Dauerfunken und Rauchwölkchen aus dem Rucksack
+    if (!reduziert && (s.zustand === ZUSTAND.SPIELEN || s.zustand === ZUSTAND.BEREIT || s.zustand === ZUSTAND.START)) {
+      emitterZeit += dt;
+      while (emitterZeit > 0.07) {
+        emitterZeit -= 0.07;
+        const y = s.zustand === ZUSTAND.SPIELEN ? s.figur.y : schwebeY(s);
+        const d = duesenPos(y, anzeigeWinkel);
+        if (Math.random() < 0.6) funken(d.x, d.y, 1, 0.5); else rauch(d.x, d.y + 1);
+      }
+    }
+    for (const t of partikel) {
+      t.leben += dt;
+      t.vy += t.schwer * dt;
+      t.x += (t.vx - welt) * dt + (t.flattern ? Math.sin(zeitEffekte * 5 + t.flattern) * 20 * dt : 0);
+      t.y += t.vy * dt;
+      if (t.art === 'rauch') t.g = 3 + (t.leben / t.max) * 6;
+    }
+    partikel = partikel.filter(t => t.leben < t.max && t.x > -20 && t.x < B + 20 && t.y < H + 10);
+    if (punktePop > 0) punktePop = Math.max(0, punktePop - dt);
+  }
+
+  function effekteLeeren() {
+    partikel = [];
+    emitterZeit = 0;
+  }
+
+  function zeichnePartikel() {
+    for (const t of partikel) {
+      const rest = 1 - t.leben / t.max;
+      if (t.art === 'rauch') {
+        ctx.globalAlpha = Math.max(0, rest * 0.75);
+        const g = Math.round(t.g / 2) * 2;
+        p.r(t.x - g / 2, t.y - g / 2, g, g, CREME);
+      } else {
+        ctx.globalAlpha = Math.min(1, rest * 2);
+        p.r(t.x, t.y, t.g, t.g, t.farbe);
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // ---------- Figur ----------
+  function schwebeY(s) {
+    if (s.zustand === ZUSTAND.START) return K.FIGUR_START_Y + (reduziert ? 0 : Math.sin(s.zeit * 2.4) * 6);
+    if (s.zustand === ZUSTAND.BEREIT || s.zustand === ZUSTAND.PAUSE) return s.figur.y + (reduziert ? 0 : Math.sin(s.zeit * 3) * 3);
+    return s.figur.y;
+  }
+
+  function waehlePose(s) {
+    const f = s.figur;
+    if (s.zustand === ZUSTAND.ENDE) return { beine: 'flattern0', gesicht: 'verdutzt', schief: true, jacke: 1 };
+    if (s.zustand !== ZUSTAND.SPIELEN) {
+      const fl = Math.floor(s.zeit * 5) % 2;
+      return { beine: fl ? 'flattern1' : 'flattern0', gesicht: 'ernst', jacke: fl };
+    }
+    if (f.schub < K.SCHUB_POSE) return { beine: 'hoch', gesicht: 'ernst', kappeDy: f.schub < 0.08 ? -1 : 0, jacke: 0 };
+    if (f.vy > 80) {
+      const fl = Math.floor(s.zeit * 14) % 2;
+      return { beine: fl ? 'flattern1' : 'flattern0', gesicht: 'ernst', jacke: fl };
+    }
+    return { beine: 'normal', gesicht: 'ernst', jacke: 0 };
+  }
+
+  function zeichneFigur(s, alpha, dt) {
+    let y;
+    let ziel;
+    if (s.zustand === ZUSTAND.SPIELEN) {
+      y = s.vorher.y + (s.figur.y - s.vorher.y) * alpha;
+      const vy = s.figur.vy;
+      ziel = vy < 0 ? Math.max(-0.3, (vy / -K.IMPULS) * -0.3) : Math.min(0.62, (vy / K.MAX_FALL) * 0.62);
+    } else if (s.zustand === ZUSTAND.ENDE) {
+      const t = s.unfall.zeit;
+      y = s.figur.y;
+      if (!reduziert && t < 0.4) y -= Math.sin((t / 0.4) * Math.PI) * 14;   // kleiner Boing-Hüpfer
+      ziel = reduziert ? 0.15 : 0.18 + Math.sin(t * 16) * 0.25 * Math.exp(-t * 4);
+    } else {
+      y = schwebeY(s);
+      ziel = 0;
+    }
+    if (reduziert) anzeigeWinkel = ziel * 0.6;
+    else anzeigeWinkel += (ziel - anzeigeWinkel) * Math.min(1, dt * 14);
+
+    const px = Math.max(1, Math.round(K.KUNST_PIXEL * skala));
+    const bild = Figur.bild(waehlePose(s), px);
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, Math.round(K.FIGUR_X * skala), Math.round(y * skala));
+    if (Math.abs(anzeigeWinkel) > 0.01) {
+      ctx.rotate(anzeigeWinkel);
+      ctx.imageSmoothingEnabled = true;
+    } else {
+      ctx.imageSmoothingEnabled = false;
+    }
+    ctx.drawImage(bild, -Math.round(Figur.ANKER.x * px), -Math.round(Figur.ANKER.y * px));
+    ctx.restore();
+
+    if (s.zustand === ZUSTAND.ENDE) zeichneVerdutzt(s, y);
+  }
+
+  // Sternchen um den Kopf und ein kurzes Comic-Wort
+  function zeichneVerdutzt(s, y) {
+    const t = s.unfall.zeit;
+    const kopfY = y - 22;
+    for (let i = 0; i < 3; i++) {
+      const a = (reduziert ? 0 : t * 5) + (i * Math.PI * 2) / 3;
+      const sx = K.FIGUR_X + 2 + Math.cos(a) * 16;
+      const sy = kopfY + Math.sin(a) * 5;
+      p.r(sx - 1, sy - 3, 2, 6, GELB);
+      p.r(sx - 3, sy - 1, 6, 2, GELB);
+    }
+    if (t < 0.9) {
+      const wort = s.unfall.art === 'wasser' ? 'PLATSCH!' : s.unfall.art === 'decke' ? 'BONK!' : 'BOING!';
+      text(wort, K.FIGUR_X + 34, y - 42 - (reduziert ? 0 : Math.min(t, 0.3) * 20), 12, GELB, 'left');
+    }
+  }
+
+  function text(inhalt, x, y, groesse, farbe, ausrichtung = 'center') {
+    ctx.save();
+    ctx.setTransform(skala, 0, 0, skala, 0, 0);
+    ctx.font = `${groesse}px "Press Start 2P", "Courier New", monospace`;
+    ctx.textAlign = ausrichtung;
+    ctx.textBaseline = 'top';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = Math.max(3, groesse * 0.42);
+    ctx.strokeStyle = NAVY;
+    ctx.strokeText(inhalt, x, y);
+    ctx.fillStyle = farbe;
+    ctx.fillText(inhalt, x, y);
+    ctx.restore();
+  }
+
+  function zeichnePunkte(s) {
+    if (s.punkte !== letztePunkte) {
+      if (s.punkte > letztePunkte) punktePop = 0.22;
+      letztePunkte = s.punkte;
+    }
+    const g = 28 + (reduziert ? 0 : (punktePop / 0.22) * 8);
+    text(String(s.punkte), B / 2, 30 - (g - 28) / 2, g, CREME);
+  }
+
+  // ===================================================================
+  // Öffentliche Funktionen
+  // ===================================================================
+  function init(c) {
+    canvas = c;
+    ctx = c.getContext('2d', { alpha: false });
+  }
+
+  function setzeReduziert(wert) { reduziert = wert; }
+
+  // Passt das Spielfeld in den freien Platz: gleiches Seitenverhältnis, keine Verzerrung.
+  // Wenn es fast passt, wird ein ganzzahliger Maßstab gewählt (gleich große Pixel).
+  function groesse(platzW, platzH, dpr) {
+    const cssW = Math.max(120, Math.min(platzW, (platzH * B) / H));
+    let sk = (cssW * dpr) / B;
+    const ganz = Math.floor(sk);
+    if (ganz >= 2 && ganz / sk >= 0.88) sk = ganz;
+    const w = Math.round(B * sk);
+    const h = Math.round(H * sk);
+    if (canvas.width !== w || canvas.height !== h || !ebenen) {
+      canvas.width = w;
+      canvas.height = h;
+      skala = w / B;
+      p = maler(ctx, skala);
+      baueEbenen();
+    }
+    return { cssW: w / dpr, cssH: h / dpr };
+  }
+
+  let letzteZeit = null;
+  function zeichne(s, alpha = 1) {
+    if (!ebenen) return;
+    const jetzt = s.zeit;
+    const dt = letzteZeit === null ? 0 : Math.max(0, Math.min(0.1, jetzt - letzteZeit));
+    letzteZeit = jetzt;
+    const strecke = s.zustand === ZUSTAND.SPIELEN ? s.vorher.strecke + (s.strecke - s.vorher.strecke) * alpha : s.strecke;
+    const par = reduziert ? 0 : 1;
+    const drift = reduziert ? 0 : s.zeit * 4;
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(ebenen.himmel, 0, 0);
+    zeichneEbene(ebenen.wolken, strecke * 0.06 * par + drift);
+    zeichneEbene(ebenen.fern, strecke * 0.15 * par);
+    zeichneEbene(ebenen.mitte, strecke * 0.32 * par);
+    zeichneEbene(ebenen.schiffe, strecke * 0.5 * par);
+    zeichneGlitzern(s, strecke);
+    zeichneVorderWasser(strecke);
+    zeichneKranbahn(strecke);
+    if (s.zustand !== ZUSTAND.START) for (const h of s.hindernisse) zeichneHindernis(h, strecke);
+    zeichnePartikel();
+    zeichneFigur(s, alpha, dt);
+    if (s.zustand !== ZUSTAND.START) zeichnePunkte(s);
+  }
+
+  // Kleine animierte Figur im Startfenster
+  function malStartFigur(ziel, t) {
+    const g = ziel.getContext('2d');
+    g.setTransform(1, 0, 0, 1, 0, 0);
+    g.clearRect(0, 0, ziel.width, ziel.height);
+    const px = Math.max(1, Math.floor((ziel.height * 0.78) / Figur.H));
+    const fl = Math.floor(t * 5) % 2;
+    const schub = !reduziert && (t % 1.2) < 0.18;
+    const pose = schub ? { beine: 'hoch', gesicht: 'ernst', kappeDy: -1 } : { beine: fl ? 'flattern1' : 'flattern0', gesicht: 'ernst', jacke: fl };
+    const bild = Figur.bild(pose, px);
+    const bob = reduziert ? 0 : Math.round(Math.sin(t * 2.6) * px * 1.5);
+    const x = Math.round((ziel.width - Figur.W * px) / 2);
+    const y = Math.round((ziel.height - Figur.H * px) / 2 - px * 2) + bob;
+    // Flämmchen aus der Düse
+    const dx = x + Figur.DUESE.x * px;
+    const dy = y + Figur.DUESE.y * px;
+    const flamme = [['#FFD35A', 0], ['#FF805B', 1], ['#24D6CD', 2]];
+    for (const [farbe, k] of flamme) {
+      if (reduziert && k > 0) continue;
+      const len = reduziert ? 1 : 1 + ((Math.floor(t * 12) + k) % 3);
+      g.fillStyle = farbe;
+      g.fillRect(dx - px + k * px * 0.5, dy + px * (1 + k), px * 2 - k * px * 0.5, px * len);
+    }
+    g.imageSmoothingEnabled = false;
+    g.drawImage(Figur.bild(pose, px), x, y);
+    return bild;
+  }
+
+  // Dekorative Hafenkulisse an den Seiten großer Bildschirme (wird nur bei Größenänderung gemalt)
+  function malKulisse(ziel, w, h, dpr) {
+    ziel.width = Math.round(w * dpr);
+    ziel.height = Math.round(h * dpr);
+    const g = ziel.getContext('2d');
+    const verlauf = g.createLinearGradient(0, 0, 0, ziel.height);
+    verlauf.addColorStop(0, '#0C1D30');
+    verlauf.addColorStop(0.62, '#173A5A');
+    verlauf.addColorStop(1, '#10243A');
+    g.fillStyle = verlauf;
+    g.fillRect(0, 0, ziel.width, ziel.height);
+    const e = Math.max(2, Math.round(3 * dpr));   // Pixelgröße der Kulisse
+    const r = (x, y, bw, bh, f) => { g.fillStyle = f; g.fillRect(Math.round(x / e) * e, Math.round(y / e) * e, Math.max(e, Math.round(bw / e) * e), Math.max(e, Math.round(bh / e) * e)); };
+    const W = ziel.width;
+    const Hh = ziel.height;
+    const boden = Hh * 0.78;
+    const z = zufallsGenerator(42);
+    // Sterne
+    for (let i = 0; i < 70; i++) r(z() * W, z() * boden * 0.7, e, e, z() < 0.3 ? 'rgba(255, 211, 90, 0.7)' : 'rgba(255, 244, 220, 0.55)');
+    // Kräne
+    for (let x = W * 0.03; x < W; x += W * 0.23) {
+      const hk = Hh * (0.3 + z() * 0.12);
+      r(x, boden - hk, e * 3, hk, '#1F4466');
+      r(x + e * 14, boden - hk, e * 3, hk, '#1F4466');
+      r(x - e * 10, boden - hk - e * 4, e * 44, e * 3, '#22496D');
+      r(x + e * 6, boden - hk - e * 16, e * 3, e * 12, '#22496D');
+      r(x + e * 28, boden - hk + e * 2, e, hk * 0.25, '#1C3D5C');
+      r(x + e * 24, boden - hk + e * 2 + hk * 0.25, e * 9, e * 5, ['#8C4A3E', '#1E7C7A', '#8F7438'][Math.floor(z() * 3)]);
+      r(x + e * 7, boden - hk - e * 20, e, e, z() < 0.5 ? '#FF805B' : '#FFD35A');
+    }
+    // Containerstapel
+    const farben = ['#7A3E35', '#1A6F6C', '#7F6531', '#2C4F8A', '#7C3442'];
+    for (let x = 0; x < W; x += e * 22) {
+      const n = 1 + Math.floor(z() * 4);
+      for (let k = 0; k < n; k++) r(x, boden - (k + 1) * e * 8, e * 21, e * 7, farben[Math.floor(z() * farben.length)]);
+    }
+    r(0, boden, W, Hh - boden, '#0E2236');
+    for (let x = 0; x < W; x += e * 12) r(x + z() * e * 6, boden + e * 3 + z() * (Hh - boden - e * 6), e * 5, e, 'rgba(36, 214, 205, 0.25)');
+  }
+
+  return {
+    init, groesse, zeichne, setzeReduziert, impulsEffekt, unfallEffekt, rekordEffekt,
+    effekteSchritt, effekteLeeren, malStartFigur, malKulisse,
+    get skala() { return skala; },
+  };
+})();
+
+// ===================================================================
+// 7 · EINGABE
+// Leertaste, Pfeil hoch, W, Mausklick und Tippen geben einen Schub.
+// P oder Esc pausiert. Gehaltene Tasten (automatische Wiederholung) zählen nicht.
+// Scrollen und Zoomgesten werden nur auf der Spielfläche verhindert.
+// Jede Berührung löst über pointerdown genau eine Eingabe aus; Knöpfe
+// (Pause, Ton, Menü) lösen nie einen Flugimpuls aus.
+// ===================================================================
+
+const Eingabe = (() => {
+  const SCHUB_CODES = new Set(['Space', 'ArrowUp', 'KeyW']);
+  let eingerichtet = false;
+
+  const istKnopf = el => !!(el && el.closest && el.closest('button, a, input, select, textarea, [role="button"]'));
+
+  function init({ buehne, canvas, fenster, beiSchub, beiPause, darfFensterStarten, beiTouch }) {
+    if (eingerichtet) return;   // nie doppelte Listener
+    eingerichtet = true;
+
+    // ---------- Tastatur ----------
+    window.addEventListener('keydown', e => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const ziel = e.target;
+      if (ziel && (ziel.tagName === 'INPUT' || ziel.tagName === 'TEXTAREA' || ziel.isContentEditable)) return;
+
+      if (e.code === 'KeyP' || e.key === 'p' || e.key === 'P' || e.key === 'Escape') {
+        if (e.repeat) return;
+        if (beiPause()) e.preventDefault();
+        return;
+      }
+
+      const schub = SCHUB_CODES.has(e.code) || e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W';
+      if (!schub) return;
+      // Leertaste auf einem fokussierten Knopf: der Knopf übernimmt (sonst doppelter Start)
+      const aufKnopf = istKnopf(ziel) && (e.code === 'Space' || e.key === ' ');
+      if (aufKnopf && !fenster.hidden) return;
+      e.preventDefault();               // kein Seitenscrollen durch Spieltasten
+      if (e.repeat) return;             // gehaltene Taste = nur ein Schub
+      beiSchub('taste');
+    });
+
+    // ---------- Browsergesten nur auf der Spielfläche blockieren ----------
+    const blockiere = e => { if (e.cancelable && !istKnopf(e.target)) e.preventDefault(); };
+    buehne.addEventListener('touchstart', blockiere, { passive: false });
+    buehne.addEventListener('touchmove', blockiere, { passive: false });
+    buehne.addEventListener('touchend', blockiere, { passive: false });
+    buehne.addEventListener('dblclick', blockiere);
+    buehne.addEventListener('contextmenu', blockiere);
+
+    // ---------- Klick und Tipp auf die Spielfläche ----------
+    buehne.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'touch') beiTouch();
+      if (istKnopf(e.target)) return;
+      if (e.button > 0) return;
+      // Mit der Maus zählt nur das Spielfeld selbst; mit dem Finger die ganze Fläche
+      if (e.pointerType === 'mouse' && e.target !== canvas) return;
+      e.preventDefault();
+      if (document.activeElement !== canvas) canvas.focus({ preventScroll: true });
+      beiSchub('zeiger');
+    });
+
+    // ---------- Tippen neben die Tafel im Start- oder Endefenster ----------
+    // Löst wie eine Spieltaste den Start aus (nicht in der Pause: dort nur „Weiter“).
+    fenster.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'touch') beiTouch();
+      if (istKnopf(e.target) || e.button > 0) return;
+      if (!darfFensterStarten()) return;
+      e.preventDefault();
+      beiSchub('zeiger');
+    });
+  }
+
+  return { init };
+})();
+
+// ===================================================================
+// 8 · APP
+// Verbindet Logik, Grafik, Ton, Eingabe und Speicher. Eine einzige
+// Spielschleife; alle Listener werden genau einmal eingerichtet.
+// ===================================================================
+
+(() => {
+  const $ = id => document.getElementById(id);
+  const wurzel = document.documentElement;
+  const app = $('app');
+  const canvas = $('bild');
+  const rahmen = $('rahmen');
+  const buehne = $('buehne');
+  const fenster = $('fenster');
+  const meldung = $('meldung');
+  const kulisse = $('kulisse');
+  const startFigur = $('startFigur');
+
+  const SPRUECHE = [
+    'Die Mütze ist noch da.',
+    'Fast bis zur Mittagspause.',
+    'Der TÜV hat Fragen.',
+    'Die Möwen applaudieren höflich.',
+    'Das Jetpack hustet beleidigt.',
+    'Der Hafenmeister notiert: „Kreativ“.',
+    'Die Gummistiefel sind jetzt voller Ehrgeiz.',
+    'Ein Kran hat kurz weggeschaut.',
+  ];
+
+  const s = erstelleSpiel();
+  let rekord = Speicher.rekord();
+  let endeGezeigt = false;
+
+  // ---------- Grafik und Bewegung ----------
+  Grafik.init(canvas);
+  const wenigBewegung = window.matchMedia('(prefers-reduced-motion: reduce)');
+  Grafik.setzeReduziert(wenigBewegung.matches);
+  wenigBewegung.addEventListener?.('change', e => Grafik.setzeReduziert(e.matches));
+
+  // ---------- Ton ----------
+  Ton.setze(Speicher.tonAn(), false);
+  function zeigeTon() {
+    const an = Ton.istAn();
+    wurzel.classList.toggle('stumm', !an);
+    $('tonKnopf').setAttribute('aria-pressed', String(an));
+    $('tonKnopf').setAttribute('aria-label', an ? 'Ton ausschalten' : 'Ton einschalten');
+  }
+  zeigeTon();
+  $('tonKnopf').addEventListener('click', () => {
+    Ton.setze(!Ton.istAn(), true);
+    Speicher.setzeTon(Ton.istAn());
+    zeigeTon();
+  });
+  // Beim Finger zählt erst das Loslassen als Nutzeraktion, die Audio freischalten darf
+  window.addEventListener('pointerup', () => Ton.wecke(), true);
+  window.addEventListener('touchend', () => Ton.wecke(), { capture: true, passive: true });
+  // Kleine Knöpfe holen sich per Maus keinen Fokus, damit die Leertaste nicht auf ihnen landet
+  for (const k of rahmen.querySelectorAll('.rund')) k.addEventListener('mousedown', e => e.preventDefault());
+
+  // ---------- Touch erkennen (passende Hinweise) ----------
+  if (window.matchMedia('(any-pointer: coarse)').matches && !window.matchMedia('(any-pointer: fine)').matches) wurzel.classList.add('touch');
+  function aufTouch() { wurzel.classList.add('touch'); }
+
+  // ---------- Größe ----------
+  let groesseGeplant = false;
+  function passeGroesseAn() {
+    groesseGeplant = false;
+    const stil = getComputedStyle(buehne);
+    const w = buehne.clientWidth - parseFloat(stil.paddingLeft) - parseFloat(stil.paddingRight);
+    const h = buehne.clientHeight - parseFloat(stil.paddingTop) - parseFloat(stil.paddingBottom);
+    if (w > 0 && h > 0) {
+      const { cssW, cssH } = Grafik.groesse(w, h, window.devicePixelRatio || 1);
+      rahmen.style.width = cssW + 'px';
+      rahmen.style.height = cssH + 'px';
+      rahmen.style.setProperty('--zoom', String(cssW / K.BREITE));
+    }
+    Grafik.malKulisse(kulisse, window.innerWidth, window.innerHeight, Math.min(2, window.devicePixelRatio || 1));
+    const dpr = window.devicePixelRatio || 1;
+    startFigur.width = Math.round(startFigur.clientWidth * dpr) || 80;
+    startFigur.height = Math.round(startFigur.clientHeight * dpr) || 96;
+    Grafik.zeichne(s, 1);
+  }
+  function planeGroesse() {
+    if (groesseGeplant) return;
+    groesseGeplant = true;
+    requestAnimationFrame(passeGroesseAn);
+  }
+  if ('ResizeObserver' in window) new ResizeObserver(planeGroesse).observe(buehne);
+  window.addEventListener('resize', planeGroesse);
+  window.addEventListener('orientationchange', planeGroesse);
+
+  // ---------- Fenster (Start, Pause, Ende) ----------
+  function zeigeFenster(id) {
+    for (const sec of fenster.querySelectorAll('section')) sec.hidden = sec.id !== id;
+    fenster.hidden = !id;
+    app.inert = !!id;
+    if (id) {
+      const sec = $(id);
+      fenster.querySelectorAll('[data-titel]').forEach(t => t.removeAttribute('id'));
+      sec.querySelector('[data-titel]').id = 'fensterTitel';
+      const knopf = sec.querySelector('.btn.main');
+      if (knopf) knopf.focus({ preventScroll: true });
+      if (id === 'fStart' || id === 'fEnde') planeGroesse();
+    } else {
+      canvas.focus({ preventScroll: true });
+    }
+  }
+
+  function setzeZustandsKlasse() {
+    if (wurzel.dataset.zustand !== s.zustand) wurzel.dataset.zustand = s.zustand;
+  }
+
+  // ---------- Meldung auf dem Spielfeld ----------
+  function zeigeMeldung(gross, klein) {
+    meldung.replaceChildren(gross);
+    if (klein) {
+      const k = document.createElement('small');
+      k.textContent = klein;
+      meldung.append(k);
+    }
+    meldung.hidden = false;
+  }
+  function versteckeMeldung() { meldung.hidden = true; }
+
+  // ---------- Spieleingabe (Taste, Klick, Tipp, Start-Knöpfe) ----------
+  function schub() {
+    Ton.wecke();
+    const ergebnis = eingabe(s);
+    if (ergebnis === 'start') neuerVersuch();
+    else if (ergebnis === 'weiter') versteckeMeldung();
+    return ergebnis;
+  }
+
+  function neuerVersuch() {
+    endeGezeigt = false;
+    Grafik.effekteLeeren();
+    versteckeMeldung();
+    $('ansage').textContent = '';
+    zeigeFenster(null);
+  }
+
+  function pause() {
+    if (!pausiere(s)) return false;
+    $('pausePunkte').textContent = s.punkte;
+    versteckeMeldung();
+    zeigeFenster('fPause');
+    return true;
+  }
+
+  function weiter() {
+    Ton.wecke();
+    if (!setzeFort(s)) return;
+    zeigeFenster(null);
+    zeigeMeldung('BEREIT?', wurzel.classList.contains('touch') ? 'Tippen – dann geht es weiter' : 'Leertaste oder Klick – dann geht es weiter');
+  }
+
+  $('losKnopf').addEventListener('click', schub);
+  $('nochmalKnopf').addEventListener('click', schub);
+  $('neuKnopf').addEventListener('click', () => {
+    Ton.wecke();
+    starte(s);
+    neuerVersuch();
+  });
+  $('weiterKnopf').addEventListener('click', weiter);
+  $('pauseKnopf').addEventListener('click', pause);
+
+  // Anderer Tab, App im Hintergrund oder Fenster verliert den Fokus: automatisch pausieren.
+  // Weiter geht es nur bewusst über „Weiter“.
+  document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
+  window.addEventListener('blur', () => pause());
+  window.addEventListener('pagehide', () => { pause(); });
+
+  Eingabe.init({
+    buehne,
+    canvas,
+    fenster,
+    beiSchub: schub,
+    beiPause: () => {
+      if (s.zustand === ZUSTAND.PAUSE) { weiter(); return true; }
+      return pause();
+    },
+    darfFensterStarten: () => !fenster.hidden && kannStarten(s),
+    beiTouch: aufTouch,
+  });
+
+  // ---------- Ereignisse aus der Logik ----------
+  function verarbeiteEreignisse() {
+    if (!s.ereignisse.length) return;
+    for (const e of s.ereignisse.splice(0)) {
+      switch (e.typ) {
+        case 'impuls':
+          Ton.impuls();
+          Grafik.impulsEffekt(s);
+          break;
+        case 'punkt':
+          Ton.punkt();
+          break;
+        case 'unfall':
+          Ton.unfall();
+          if (e.art === 'wasser') Ton.platsch();
+          Grafik.unfallEffekt(s, e.art);
+          break;
+      }
+    }
+  }
+
+  function zeigeEnde() {
+    endeGezeigt = true;
+    const neu = s.punkte > rekord;
+    if (neu) {
+      rekord = s.punkte;
+      Speicher.setzeRekord(rekord);
+      Ton.rekord(0.05);
+      Grafik.rekordEffekt();
+    }
+    $('ePunkte').textContent = s.punkte;
+    $('eRekord').textContent = rekord;
+    $('neuerRekord').hidden = !neu;
+    const spruch = $('spruch');
+    // Gelegentlich ein kurzer Spruch (nicht bei einem neuen Rekord, der wird gefeiert)
+    if (!neu && Math.random() < 0.55) {
+      spruch.textContent = SPRUECHE[Math.floor(Math.random() * SPRUECHE.length)];
+      spruch.hidden = false;
+    } else {
+      spruch.hidden = true;
+    }
+    for (const el of document.querySelectorAll('.js-rekord')) el.textContent = rekord;
+    $('ansage').textContent = `Bruchlandung. ${s.punkte} Punkte. Rekord ${rekord}.${neu ? ' Neuer Rekord!' : ''}`;
+    zeigeFenster('fEnde');
+  }
+
+  // ---------- Die eine Spielschleife ----------
+  let letzte = null;
+  let rest = 0;
+  function bild(jetzt) {
+    requestAnimationFrame(bild);
+    let dt = letzte === null ? 0 : (jetzt - letzte) / 1000;
+    letzte = jetzt;
+    if (!(dt >= 0)) dt = 0;
+    if (dt > K.MAX_FRAME) dt = K.MAX_FRAME;   // nach Tabwechsel oder Ruckler kein Riesensprung
+
+    if (s.zustand !== ZUSTAND.PAUSE) {
+      rest += dt;
+      let n = 0;
+      while (rest >= K.SCHRITT && n < K.MAX_SCHRITTE) {
+        schritt(s, K.SCHRITT);
+        rest -= K.SCHRITT;
+        n++;
+      }
+      if (n >= K.MAX_SCHRITTE) rest = 0;
+      Grafik.effekteSchritt(dt, s);
+    } else {
+      rest = 0;
+    }
+    verarbeiteEreignisse();
+    if (s.zustand === ZUSTAND.ENDE && !endeGezeigt && s.unfall.zeit >= K.SPERRE_NACH_UNFALL) zeigeEnde();
+    setzeZustandsKlasse();
+    Grafik.zeichne(s, s.zustand === ZUSTAND.SPIELEN ? rest / K.SCHRITT : 1);
+    if (!fenster.hidden && !$('fStart').hidden) Grafik.malStartFigur(startFigur, jetzt / 1000);
+  }
+
+  for (const el of document.querySelectorAll('.js-rekord')) el.textContent = rekord;
+  zeigeFenster('fStart');
+  setzeZustandsKlasse();
+  passeGroesseAn();
+  if (document.fonts && document.fonts.load) document.fonts.load('28px "Press Start 2P"').catch(() => {});
+  requestAnimationFrame(bild);
+
+  // Offline-Fähigkeit wie bei den anderen Pixelhafen-Spielen
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+
+  // Für automatische Tests (nur mit ?test in der Adresse)
+  if (/[?&]test\b/.test(location.search)) {
+    window.hafenhopser = {
+      s, K, ZUSTAND, eingabe, schritt, starte, pausiere, setzeFort, Speicher,
+      get rekord() { return rekord; },
+    };
+  }
+})();
+
+</script>
+</body>
+</html>
