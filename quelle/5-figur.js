@@ -4,7 +4,8 @@
 // mit dickem dunklem Umriss, damit er auch klein klar zu erkennen ist.
 // Koordinaten in Spielpunkten, (0|0) = Mitte der Trefferfläche.
 // Die Figur schaut nach rechts; der Raketenrucksack sitzt auf dem Rücken (links).
-// Jede Pose wird pro Bildschirmmaßstab einmal gemalt und zwischengespeichert.
+// Die Figur wird jedes Bild neu gezeichnet: So bewegen sich Beine, Jacke
+// und Mütze fließend statt in harten Posensprüngen.
 // ===================================================================
 
 const Figur = (() => {
@@ -117,27 +118,30 @@ const Figur = (() => {
     strich(g, hx, hy, fx, fy, 4.2, hinten ? F.hoseD : F.hose);
   }
 
-  const BEINE = {
-    normal: [[-6, 24], [5, 24]],
-    hoch: [[-11, 19], [-1, 20]],
-    flattern0: [[-5, 26], [6, 21]],
-    flattern1: [[-8, 21], [4, 26]],
-  };
+  const mix = (a, b, u) => a + (b - a) * u;
 
-  function beine(g, art) {
-    const [hinten, vorn] = BEINE[art] || BEINE.normal;
-    bein(g, -3, 12, hinten[0], hinten[1] - 7, true);
-    stiefel(g, hinten[0], hinten[1], true);
-    bein(g, 4, 12, vorn[0], vorn[1] - 7, false);
-    stiefel(g, vorn[0], vorn[1], false);
+  // Beine fließend: hub 0 = hängen, 1 = hochgezogen; schwung schlenkert gegenläufig
+  function beine(g, hub, schwung) {
+    const hx = mix(-6, -11, hub) + schwung * 1.2;
+    const hy = mix(24, 19, hub) + schwung * 2.6;
+    const vx = mix(5, -1, hub) - schwung * 1.2;
+    const vy = mix(24, 20, hub) - schwung * 2.6;
+    bein(g, -3, 12, hx, hy - 7, true);
+    stiefel(g, hx, hy, true);
+    bein(g, 4, 12, vx, vy - 7, false);
+    stiefel(g, vx, vy, false);
   }
 
-  function jacke(g, flattern) {
+  // Jacke mit weich flatterndem Saum (saum -1 … 1)
+  function jacke(g, saum) {
     g.beginPath();
     g.moveTo(-5, -7);
     g.bezierCurveTo(-14, -5, -15, 8, -13, 14);
-    if (flattern === 1) { g.lineTo(-16, 18); g.lineTo(-6, 16); g.lineTo(5, 16.5); g.lineTo(14, 15); }
-    else { g.lineTo(-12, 16.5); g.lineTo(-2, 17); g.lineTo(8, 16); g.lineTo(16, 18.5); g.lineTo(14, 14); }
+    g.lineTo(-12.5 - Math.max(0, saum) * 2.5, 16.8 + saum * 1.4);
+    g.lineTo(-2, 17 - saum * 0.4);
+    g.lineTo(8, 16.2 + saum * 0.6);
+    g.lineTo(15.5 + Math.max(0, -saum) * 1.5, 17.6 - saum * 1.4);
+    g.lineTo(14, 14);
     g.bezierCurveTo(16, 6, 15, -5, 9, -7);
     g.closePath();
     g.save(); g.clip();
@@ -199,9 +203,9 @@ const Figur = (() => {
     form(g, F.gelb, 1.6);
   }
 
-  function arm(g, hoch) {
+  function arm(g, heben) {
     const hx = 16;
-    const hy = hoch ? 2 : 8;
+    const hy = mix(8, 2, heben);
     strich(g, 3, 2, hx - 1, hy, 7.6, F.navy);
     strich(g, 3, 2, hx - 1, hy, 5, F.gelb);
     strich(g, hx - 3.5, hy - 0.3, hx - 2.3, hy, 5, F.gelbD);
@@ -246,39 +250,32 @@ const Figur = (() => {
     g.restore();
   }
 
-  // Malt eine Pose in einen fertigen Ausschnitt mit Maßstab sk (Bildpunkte pro Spielpunkt)
-  // pose: { beine, kappeDy, jacke, gesicht: 'ernst'|'verdutzt', schief }
-  function male(pose, sk) {
+  // Zeichnet die Figur in den Kontext g. Der Kontext steht schon auf dem Mittelpunkt
+  // der Trefferfläche und ist in Spielpunkten skaliert.
+  // z: { hub 0…1, schwung -1…1, saum -1…1, arm 0…1, kappe (Versatz), gesicht, schief }
+  function zeichne(g, z) {
+    g.save();
+    g.scale(GROESSE, GROESSE);
+    g.lineJoin = 'round';
+    rucksack(g);
+    beine(g, z.hub || 0, z.schwung || 0);
+    jacke(g, z.saum || 0);
+    kopf(g, z.gesicht || 'ernst');
+    kragen(g);
+    muetze(g, z.kappe || 0, !!z.schief);
+    arm(g, z.arm || 0);
+    g.restore();
+  }
+
+  // Einzelbild für Icons und Vorschauen (sk = Bildpunkte pro Spielpunkt)
+  function bild(z, sk) {
     const c = document.createElement('canvas');
     c.width = Math.ceil(W * GROESSE * sk);
     c.height = Math.ceil(H * GROESSE * sk);
     const g = c.getContext('2d');
-    g.scale(sk * GROESSE, sk * GROESSE);
-    g.translate(ANKER.x, ANKER.y);
-    g.lineJoin = 'round';
-    rucksack(g);
-    beine(g, pose.beine);
-    jacke(g, pose.jacke || 0);
-    kopf(g, pose.gesicht);
-    kragen(g);
-    muetze(g, pose.kappeDy ? pose.kappeDy * 1.6 : 0, !!pose.schief);
-    arm(g, pose.beine === 'hoch');
-    return c;
-  }
-
-  const speicher = new Map();
-  let speicherSk = 0;
-  function schluessel(p) {
-    return `${p.beine}|${p.kappeDy || 0}|${p.jacke || 0}|${p.gesicht}|${p.schief ? 1 : 0}`;
-  }
-
-  // Liefert die Pose für den Bildschirmmaßstab sk (Bildpunkte pro Spielpunkt)
-  function bild(pose, sk) {
-    sk = Math.round(sk * 100) / 100;
-    if (sk !== speicherSk) { speicher.clear(); speicherSk = sk; }
-    const key = schluessel(pose);
-    let c = speicher.get(key);
-    if (!c) { c = male(pose, sk); speicher.set(key, c); }
+    g.scale(sk, sk);
+    g.translate(ANKER.x * GROESSE, ANKER.y * GROESSE);
+    zeichne(g, z);
     return c;
   }
 
@@ -286,6 +283,6 @@ const Figur = (() => {
     W: W * GROESSE, H: H * GROESSE,
     ANKER: { x: ANKER.x * GROESSE, y: ANKER.y * GROESSE },
     DUESE: { x: DUESE.x * GROESSE, y: DUESE.y * GROESSE },
-    F, bild,
+    F, zeichne, bild,
   };
 })();

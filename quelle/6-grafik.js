@@ -96,7 +96,7 @@ const Grafik = (() => {
 
   function baueEbenen() {
     // ---- Himmel, Sonne und Hafenbecken (steht still) ----
-    const himmel = leinwand(B * skala, K.WASSER * skala);
+    const himmel = leinwand(B * skala, H * skala);
     const hp = maler(himmel.getContext('2d'), skala);
     const baender = [
       [0, '#6FCBF2'], [110, '#80D3F4'], [190, '#93DCF6'], [250, '#A7E4F7'],
@@ -117,6 +117,10 @@ const Grafik = (() => {
       const bis = i + 1 < wasserBaender.length ? wasserBaender[i + 1][0] : K.WASSER;
       hp.r(0, y, B, bis - y, f);
     });
+    hp.r(0, K.WASSER, B, 6, '#2A86B8');
+    hp.r(0, K.WASSER + 6, B, 14, '#1F6F9E');
+    hp.r(0, K.WASSER + 20, B, 16, '#185A85');
+    hp.r(0, K.WASSER + 36, B, H - K.WASSER - 36, '#123F60');
     for (const [x, y, w] of [[20, 462, 40], [150, 466, 24], [230, 478, 56], [60, 506, 30], [300, 512, 34], [190, 540, 46], [24, 560, 28]]) {
       hp.r(x, y, w, 2, 'rgba(255, 255, 255, 0.28)');
     }
@@ -262,7 +266,32 @@ const Grafik = (() => {
       for (let i = 0; i < 8; i++) sp.r(716 - (2 + i * 1.5), 452 + i * 4, 2 + i * 1.5, 4, '#7FCFD0');
     }, 'rgba(205, 238, 250, 0.1)');
 
-    ebenen = { himmel, wolken, fern, mitte, schiffe };
+    // ---- Kranbahn oben (Muster wiederholt sich alle 48 Punkte) ----
+    const kranbahn = ebene(B + 48, 0, K.DECKE + 2, k => {
+      k.r(0, 0, B + 48, 9, '#1D3A57');
+      k.r(0, 0, B + 48, 2, '#3B6286');
+      for (let x = 6; x < B + 48; x += 24) k.r(x, 4, 2, 2, '#7FA3C2');
+      // Gelb-blaue Warnstreifen: hier ist die obere Grenze
+      k.r(0, 9, B + 48, 5, NAVY);
+      for (let x = -16; x < B + 56; x += 16) for (let j = 0; j < 5; j++) k.r(x + j, 9 + j, 8, 1, GELB);
+      k.r(0, K.DECKE, B + 48, 2, 'rgba(16, 36, 58, 0.28)');
+    });
+
+    // ---- Schaumkronen (ziehen mit der Welt) und Wellenstriche (etwas langsamer) ----
+    const schaum = ebene(B + 32, K.WASSER, 4, w => {
+      for (let x = 0; x < B + 32; x += 32) {
+        w.r(x, K.WASSER, 14, 2, '#D9F6F8');
+        w.r(x + 14, K.WASSER + 2, 6, 2, '#9EE3EE');
+      }
+    });
+    const wellen = ebene(B + 192, K.WASSER + 10, 38, w => {
+      for (let x = 0; x < B + 192; x += 48) w.r(x, K.WASSER + 12, 12, 2, '#3A97C6');
+      for (let x = 20; x < B + 192; x += 64) w.r(x, K.WASSER + 27, 16, 2, '#2D7AA6');
+      for (let x = 8; x < B + 192; x += 96) w.r(x, K.WASSER + 44, 20, 2, '#1D5A80');
+    });
+
+    ebenen = { himmel, wolken, fern, mitte, schiffe, kranbahn, schaum, wellen };
+    punkteBild = null;
   }
 
   // Zeichnet eine Kachel-Ebene verschoben und nahtlos wiederholt
@@ -290,35 +319,19 @@ const Grafik = (() => {
     }
   }
 
+  // Kachel nach links schieben; periode = Musterlänge, damit es nahtlos weiterläuft
+  function schiebe(e, verschiebung, periode) {
+    const off = Math.round((((verschiebung % periode) + periode) % periode) * skala);
+    ctx.drawImage(e.c, -off, Math.round(e.y0 * skala));
+  }
+
   function zeichneVorderWasser(strecke) {
-    p.r(0, K.WASSER, B, 6, '#2A86B8');
-    p.r(0, K.WASSER + 6, B, 14, '#1F6F9E');
-    p.r(0, K.WASSER + 20, B, 16, '#185A85');
-    p.r(0, K.WASSER + 36, B, H - K.WASSER - 36, '#123F60');
-    // Schaumkronen und Wellenstriche ziehen mit der Welt mit
-    const welle = (periode, faktor, y, w, h, farbe, versatz = 0) => {
-      const off = (strecke * faktor + versatz) % periode;
-      for (let x = -off; x < B; x += periode) p.r(x, y, w, h, farbe);
-    };
-    welle(32, 1, K.WASSER, 14, 2, '#D9F6F8');
-    welle(32, 1, K.WASSER + 2, 6, 2, '#9EE3EE', -14);
-    welle(44, 0.9, K.WASSER + 12, 12, 2, '#3A97C6');
-    welle(58, 0.8, K.WASSER + 27, 16, 2, '#2D7AA6', 20);
-    welle(70, 0.7, K.WASSER + 44, 20, 2, '#1D5A80', 8);
+    schiebe(ebenen.wellen, strecke * 0.85, 192);
+    schiebe(ebenen.schaum, strecke, 32);
   }
 
   function zeichneKranbahn(strecke) {
-    p.r(0, 0, B, 9, '#1D3A57');
-    p.r(0, 0, B, 2, '#3B6286');
-    const off = strecke % 24;
-    for (let x = -off + 6; x < B; x += 24) p.r(x, 4, 2, 2, '#7FA3C2');
-    // Gelb-blaue Warnstreifen: hier ist die obere Grenze
-    p.r(0, 9, B, 5, NAVY);
-    const o2 = strecke % 16;
-    for (let x = -o2 - 16; x < B + 8; x += 16) {
-      for (let k = 0; k < 5; k++) p.r(x + k, 9 + k, 8, 1, GELB);
-    }
-    p.r(0, K.DECKE, B, 2, 'rgba(16, 36, 58, 0.28)');
+    schiebe(ebenen.kranbahn, strecke, 48);
   }
 
   // ---------- Hindernisse ----------
@@ -394,10 +407,25 @@ const Grafik = (() => {
     return { n, h: hoehe / n };
   }
 
+  // Ein Hindernis wird einmal in ein eigenes Bild gemalt und danach nur verschoben.
+  // Das spart pro Bild Hunderte Zeichenbefehle (wichtig für Handys).
   function zeichneHindernis(h, strecke) {
+    const sx = h.x - strecke;
+    if (sx > B + 4 || sx + K.HINDERNIS_B < -4) return;
+    if (!h.bild || h.bildSkala !== skala) {
+      const c = leinwand(K.HINDERNIS_B * skala, H * skala);
+      const hauptMaler = p;
+      p = maler(c.getContext('2d'), skala);
+      malHindernis(h, 0);
+      p = hauptMaler;
+      h.bild = c;
+      h.bildSkala = skala;
+    }
+    ctx.drawImage(h.bild, Math.round(sx * skala), 0);
+  }
+
+  function malHindernis(h, x) {
     const W = K.HINDERNIS_B;
-    const x = Math.round((h.x - strecke) * skala) / skala;
-    if (x > B + 4 || x + W < -4) return;
     const z = zufallsGenerator(h.saat);
     const farbe = () => CONTAINER_FARBEN[Math.floor(z() * CONTAINER_FARBEN.length)];
     const deko = () => (z() < 0.55 ? 1 + Math.floor(z() * 5) : 0);
@@ -562,19 +590,35 @@ const Grafik = (() => {
     return s.figur.y;
   }
 
-  function waehlePose(s) {
-    const f = s.figur;
-    if (s.zustand === ZUSTAND.ENDE) return { beine: 'flattern0', gesicht: 'verdutzt', schief: true, jacke: 1 };
+  const glatt = u => u * u * (3 - 2 * u);
+
+  // Fließende Bewegung statt fester Posen: Beine ziehen nach dem Schub weich hoch und
+  // sinken wieder, im Fall schlenkern Stiefel und Jackensaum, die Mütze wippt kurz.
+  function bewegung(s) {
+    const t = s.zeit;
+    const ruhig = reduziert ? 0 : 1;
+    if (s.zustand === ZUSTAND.ENDE) {
+      const u = s.unfall.zeit;
+      return {
+        hub: 0.2, arm: 0.3, kappe: 0, gesicht: 'verdutzt', schief: true,
+        schwung: ruhig * Math.sin(u * 9) * 0.8 * Math.exp(-u * 1.5),
+        saum: ruhig * Math.sin(u * 7) * 0.5 * Math.exp(-u),
+      };
+    }
     if (s.zustand !== ZUSTAND.SPIELEN) {
-      const fl = Math.floor(s.zeit * 5) % 2;
-      return { beine: fl ? 'flattern1' : 'flattern0', gesicht: 'ernst', jacke: fl };
+      return { hub: 0.15, arm: 0.2, kappe: 0, gesicht: 'ernst', schwung: ruhig * Math.sin(t * 4) * 0.5, saum: ruhig * Math.sin(t * 3.2) * 0.6 };
     }
-    if (f.schub < K.SCHUB_POSE) return { beine: 'hoch', gesicht: 'ernst', kappeDy: f.schub < 0.08 ? -1 : 0, jacke: 0 };
-    if (f.vy > 80) {
-      const fl = Math.floor(s.zeit * 14) % 2;
-      return { beine: fl ? 'flattern1' : 'flattern0', gesicht: 'ernst', jacke: fl };
-    }
-    return { beine: 'normal', gesicht: 'ernst', jacke: 0 };
+    const f = s.figur;
+    const u = f.schub;
+    const hub = glatt(u < 0.06 ? u / 0.06 : Math.max(0, 1 - (u - 0.06) / 0.34));
+    const fall = Math.max(0, Math.min(1, f.vy / K.MAX_FALL));
+    const k = Math.min(1, u / 0.3);
+    return {
+      hub, arm: hub, gesicht: 'ernst',
+      schwung: ruhig * Math.sin(t * 16) * fall * (1 - hub) * 0.9,
+      saum: ruhig * Math.sin(t * 19 + 1) * (0.25 + 0.75 * fall),
+      kappe: ruhig * -2.2 * Math.sin(Math.PI * k) * (1 - k * 0.5),
+    };
   }
 
   function zeichneFigur(s, alpha, dt) {
@@ -583,7 +627,7 @@ const Grafik = (() => {
     if (s.zustand === ZUSTAND.SPIELEN) {
       y = s.vorher.y + (s.figur.y - s.vorher.y) * alpha;
       const vy = s.figur.vy;
-      ziel = vy < 0 ? Math.max(-0.3, (vy / -K.IMPULS) * -0.3) : Math.min(0.62, (vy / K.MAX_FALL) * 0.62);
+      ziel = vy < 0 ? Math.max(-0.26, (vy / -K.IMPULS) * -0.26) : Math.min(0.5, (vy / K.MAX_FALL) * 0.5);
     } else if (s.zustand === ZUSTAND.ENDE) {
       const t = s.unfall.zeit;
       y = s.figur.y;
@@ -594,15 +638,12 @@ const Grafik = (() => {
       ziel = 0;
     }
     if (reduziert) anzeigeWinkel = ziel * 0.6;
-    else anzeigeWinkel += (ziel - anzeigeWinkel) * Math.min(1, dt * 14);
+    else anzeigeWinkel += (ziel - anzeigeWinkel) * Math.min(1, dt * 10);
 
-    const bild = Figur.bild(waehlePose(s), skala);
     ctx.save();
-    ctx.setTransform(1, 0, 0, 1, Math.round(K.FIGUR_X * skala), Math.round(y * skala));
+    ctx.setTransform(skala, 0, 0, skala, K.FIGUR_X * skala, y * skala);
     ctx.rotate(anzeigeWinkel);
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(bild, -Math.round(Figur.ANKER.x * skala), -Math.round(Figur.ANKER.y * skala));
+    Figur.zeichne(ctx, bewegung(s));
     ctx.restore();
 
     if (s.zustand === ZUSTAND.ENDE) zeichneVerdutzt(s, y);
@@ -640,13 +681,37 @@ const Grafik = (() => {
     ctx.restore();
   }
 
+  // Die Punktezahl wird nur neu gemalt, wenn sie sich ändert
+  let punkteBild = null;
   function zeichnePunkte(s) {
     if (s.punkte !== letztePunkte) {
       if (s.punkte > letztePunkte) punktePop = 0.22;
       letztePunkte = s.punkte;
     }
-    const g = 28 + (reduziert ? 0 : (punktePop / 0.22) * 8);
-    text(String(s.punkte), B / 2, 30 - (g - 28) / 2, g, CREME);
+    if (!punkteBild || punkteBild.wert !== s.punkte || punkteBild.sk !== skala || punkteBild.schrift !== (document.fonts ? document.fonts.status : 'loaded')) {
+      const inhalt = String(s.punkte);
+      const groesse = 28;
+      const c = leinwand((inhalt.length * groesse + 24) * skala, (groesse + 16) * skala);
+      const g = c.getContext('2d');
+      g.scale(skala, skala);
+      g.font = `${groesse}px "Press Start 2P", "Courier New", monospace`;
+      g.textAlign = 'center';
+      g.textBaseline = 'top';
+      g.lineJoin = 'round';
+      g.lineWidth = groesse * 0.42;
+      g.strokeStyle = NAVY;
+      const mx = (inhalt.length * groesse + 24) / 2;
+      g.strokeText(inhalt, mx, 7);
+      g.fillStyle = CREME;
+      g.fillText(inhalt, mx, 7);
+      punkteBild = { c, wert: s.punkte, sk: skala, b: inhalt.length * groesse + 24, h: groesse + 16, schrift: document.fonts ? document.fonts.status : 'loaded' };
+    }
+    const f = 1 + (reduziert ? 0 : (punktePop / 0.22) * 0.28);
+    const w = punkteBild.b * f;
+    const hh = punkteBild.h * f;
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(punkteBild.c, Math.round((B / 2 - w / 2) * skala), Math.round((30 - 7 * f) * skala), Math.round(w * skala), Math.round(hh * skala));
+    ctx.imageSmoothingEnabled = false;
   }
 
   // ===================================================================
@@ -709,26 +774,30 @@ const Grafik = (() => {
     const g = ziel.getContext('2d');
     g.setTransform(1, 0, 0, 1, 0, 0);
     g.clearRect(0, 0, ziel.width, ziel.height);
-    const px = (ziel.height * 0.86) / Figur.H;
-    const fl = Math.floor(t * 5) % 2;
-    const schub = !reduziert && (t % 1.2) < 0.18;
-    const pose = schub ? { beine: 'hoch', gesicht: 'ernst', kappeDy: -1 } : { beine: fl ? 'flattern1' : 'flattern0', gesicht: 'ernst', jacke: fl };
-    const bild = Figur.bild(pose, px);
-    const bob = reduziert ? 0 : Math.round(Math.sin(t * 2.6) * px * 1.5);
-    const x = Math.round((ziel.width - bild.width) / 2);
-    const y = Math.round((ziel.height - bild.height) / 2 - px * 2) + bob;
+    const sk = (ziel.height * 0.86) / Figur.H;
+    const zyklus = t % 1.2;
+    const u = Math.min(1, zyklus / 0.4);
+    const hub = reduziert ? 0.15 : glatt(zyklus < 0.06 ? zyklus / 0.06 : Math.max(0, 1 - (zyklus - 0.06) / 0.34));
+    const bob = reduziert ? 0 : Math.sin(t * 2.6) * sk * 1.5;
+    const cx = ziel.width / 2 - (Figur.W / 2 - Figur.ANKER.x) * sk;
+    const cy = ziel.height / 2 - (Figur.H / 2 - Figur.ANKER.y) * sk - sk * 2 + bob;
     // Flämmchen aus der Düse
-    const dx = x + (Figur.ANKER.x + Figur.DUESE.x) * px;
-    const dy = y + (Figur.ANKER.y + Figur.DUESE.y) * px;
+    const dx = cx + Figur.DUESE.x * sk;
+    const dy = cy + Figur.DUESE.y * sk;
     const flamme = [['#FFD35A', 0], ['#FF805B', 1], ['#24D6CD', 2]];
     for (const [farbe, k] of flamme) {
       if (reduziert && k > 0) continue;
       const len = reduziert ? 1 : 1 + ((Math.floor(t * 12) + k) % 3);
       g.fillStyle = farbe;
-      g.fillRect(dx - px + k * px * 0.5, dy + px * (1 + k), px * 2 - k * px * 0.5, px * len);
+      g.fillRect(dx - sk * 1.5 + k * sk * 0.5, dy + sk * (1 + k * 1.5), sk * 3 - k * sk, sk * 1.5 * len);
     }
-    g.drawImage(bild, x, y);
-    return bild;
+    g.setTransform(sk, 0, 0, sk, cx, cy);
+    Figur.zeichne(g, {
+      hub, arm: hub, gesicht: 'ernst',
+      kappe: reduziert ? 0 : -2.2 * Math.sin(Math.PI * u) * (1 - u * 0.5),
+      schwung: reduziert ? 0 : Math.sin(t * 4) * 0.5 * (1 - hub),
+      saum: reduziert ? 0 : Math.sin(t * 3.2) * 0.6,
+    });
   }
 
   // Dekorative Hafenkulisse an den Seiten großer Bildschirme (wird nur bei Größenänderung gemalt)
