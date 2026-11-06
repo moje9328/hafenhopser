@@ -23,9 +23,8 @@ const K = {
   // ---- Figur ----
   FIGUR_X: 104,              // Mitte der Figur, bleibt im linken Drittel
   FIGUR_START_Y: 300,
-  TREFFER_B: 22,             // Trefferfläche (kleiner als die sichtbare Figur von etwa 30 × 44)
+  TREFFER_B: 22,             // Trefferfläche (kleiner als die sichtbare Figur von etwa 34 × 48)
   TREFFER_H: 26,
-  KUNST_PIXEL: 1.5,          // ein Pixel der Figurengrafik = 1,5 Spielpunkte
 
   // ---- Flugphysik ----
   SCHWERKRAFT: 1450,         // Beschleunigung nach unten

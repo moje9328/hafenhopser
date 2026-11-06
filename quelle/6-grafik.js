@@ -449,9 +449,8 @@ const Grafik = (() => {
   }
 
   function duesenPos(y, winkel) {
-    const k = K.KUNST_PIXEL;
-    const dx = (Figur.DUESE.x - Figur.ANKER.x) * k;
-    const dy = (Figur.DUESE.y - Figur.ANKER.y) * k;
+    const dx = Figur.DUESE.x;
+    const dy = Figur.DUESE.y;
     const c = Math.cos(winkel);
     const si = Math.sin(winkel);
     return { x: K.FIGUR_X + dx * c - dy * si, y: y + dx * si + dy * c };
@@ -597,17 +596,13 @@ const Grafik = (() => {
     if (reduziert) anzeigeWinkel = ziel * 0.6;
     else anzeigeWinkel += (ziel - anzeigeWinkel) * Math.min(1, dt * 14);
 
-    const px = Math.max(1, Math.round(K.KUNST_PIXEL * skala));
-    const bild = Figur.bild(waehlePose(s), px);
+    const bild = Figur.bild(waehlePose(s), skala);
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, Math.round(K.FIGUR_X * skala), Math.round(y * skala));
-    if (Math.abs(anzeigeWinkel) > 0.01) {
-      ctx.rotate(anzeigeWinkel);
-      ctx.imageSmoothingEnabled = true;
-    } else {
-      ctx.imageSmoothingEnabled = false;
-    }
-    ctx.drawImage(bild, -Math.round(Figur.ANKER.x * px), -Math.round(Figur.ANKER.y * px));
+    ctx.rotate(anzeigeWinkel);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(bild, -Math.round(Figur.ANKER.x * skala), -Math.round(Figur.ANKER.y * skala));
     ctx.restore();
 
     if (s.zustand === ZUSTAND.ENDE) zeichneVerdutzt(s, y);
@@ -714,17 +709,17 @@ const Grafik = (() => {
     const g = ziel.getContext('2d');
     g.setTransform(1, 0, 0, 1, 0, 0);
     g.clearRect(0, 0, ziel.width, ziel.height);
-    const px = Math.max(1, Math.floor((ziel.height * 0.78) / Figur.H));
+    const px = (ziel.height * 0.86) / Figur.H;
     const fl = Math.floor(t * 5) % 2;
     const schub = !reduziert && (t % 1.2) < 0.18;
     const pose = schub ? { beine: 'hoch', gesicht: 'ernst', kappeDy: -1 } : { beine: fl ? 'flattern1' : 'flattern0', gesicht: 'ernst', jacke: fl };
     const bild = Figur.bild(pose, px);
     const bob = reduziert ? 0 : Math.round(Math.sin(t * 2.6) * px * 1.5);
-    const x = Math.round((ziel.width - Figur.W * px) / 2);
-    const y = Math.round((ziel.height - Figur.H * px) / 2 - px * 2) + bob;
+    const x = Math.round((ziel.width - bild.width) / 2);
+    const y = Math.round((ziel.height - bild.height) / 2 - px * 2) + bob;
     // Flämmchen aus der Düse
-    const dx = x + Figur.DUESE.x * px;
-    const dy = y + Figur.DUESE.y * px;
+    const dx = x + (Figur.ANKER.x + Figur.DUESE.x) * px;
+    const dy = y + (Figur.ANKER.y + Figur.DUESE.y) * px;
     const flamme = [['#FFD35A', 0], ['#FF805B', 1], ['#24D6CD', 2]];
     for (const [farbe, k] of flamme) {
       if (reduziert && k > 0) continue;
@@ -732,8 +727,7 @@ const Grafik = (() => {
       g.fillStyle = farbe;
       g.fillRect(dx - px + k * px * 0.5, dy + px * (1 + k), px * 2 - k * px * 0.5, px * len);
     }
-    g.imageSmoothingEnabled = false;
-    g.drawImage(Figur.bild(pose, px), x, y);
+    g.drawImage(bild, x, y);
     return bild;
   }
 
