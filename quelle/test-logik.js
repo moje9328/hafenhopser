@@ -7,14 +7,15 @@ const vm = require('vm');
 
 const ordner = __dirname;
 const schnell = process.argv.includes('schnell');
-const code = ['1-einstellungen.js', '2-logik.js', '3-speicher.js'].map(n => fs.readFileSync(path.join(ordner, n), 'utf8')).join('\n');
+const code = ['1-einstellungen.js', '2-level.js', '3-logik.js', '4-speicher.js'].map(n => fs.readFileSync(path.join(ordner, n), 'utf8')).join('\n');
 
 function lade(fensterObjekt) {
   const ctx = { window: fensterObjekt || {} };
   vm.createContext(ctx);
   vm.runInContext(code + `
 ;this.api = { K, ZUSTAND, erstelleSpiel, neuStart, starte, eingabe, schritt, pausiere, setzeFort, kannStarten,
-  tempoBei, lueckeBei, versatzBei, erlaubterVersatz, steigRate, pruefeKollision, trefferFlaeche, fuelleHindernisse, Speicher };`, ctx);
+  tempoBei, lueckeBei, versatzBei, erlaubterVersatz, steigRate, pruefeKollision, trefferFlaeche, fuelleHindernisse, Speicher,
+  erstelleKonfig, waehle, LEVEL, GEBIETE, STUFEN, sternPos, windBei, ENDLOS_NORMAL };`, ctx);
   return ctx.api;
 }
 const api = lade();
@@ -68,7 +69,7 @@ abschnitt('Schwerkraft und Fallgrenze');
   const s = neu();
   s.figur.y = 100; s.figur.vy = 0;
   s.hindernisse = []; s.erzeugt = 9999;   // keine Hindernisse im Weg
-  s.hindernisse.push({ i: 0, x: 1e9, oben: 0, unten: 1, gezaehlt: false, saat: 1 });
+  s.hindernisse.push({ i: 0, x: 1e9, b: 64, oben: 0, unten: 1, gezaehlt: false, saat: 1 });
   let maxV = 0;
   for (let i = 0; i < 120 && s.zustand === ZUSTAND.SPIELEN; i++) { schritt(s, dt); maxV = Math.max(maxV, s.figur.vy); }
   pruefe(maxV <= K.MAX_FALL + 1e-9, 'Fallgeschwindigkeit begrenzt');
@@ -197,12 +198,13 @@ abschnitt('Faire Hindernisfolgen (viele Startwerte)');
     starte(t, saat);
     const liste = [...t.hindernisse];
     while (liste.length < 160) { t.strecke += K.ABSTAND; api.fuelleHindernisse(t); for (const h of t.hindernisse) if (!liste.includes(h)) liste.push(h); }
-    let vorherMitte = K.FIGUR_START_Y; let vorherLuecke = K.LUECKE_START;
+    let vorherMitte = K.FIGUR_START_Y; let vorherLuecke = lueckeBei(0);
     for (const h of liste) {
       anzahl++;
       const luecke = h.unten - h.oben;
       const mitte = (h.oben + h.unten) / 2;
       pruefe(Math.abs(luecke - lueckeBei(h.i)) < 1e-6, 'Lückengröße wie geplant');
+      pruefe(h.b === K.HINDERNIS_B && h.amp === 0 && !h.muenze, 'Endlos: normale Container, keine Sterne');
       pruefe(luecke >= K.LUECKE_MIN - 1e-6, 'Lücke nie kleiner als das Minimum');
       pruefe(h.oben >= K.LUECKE_OBEN_MIN - 1e-6 && h.unten <= K.LUECKE_UNTEN_MAX + 1e-6, 'Abstand zu Kranbahn und Wasser');
       const erlaubt = erlaubterVersatz(h.i, vorherLuecke, luecke);
@@ -222,33 +224,84 @@ abschnitt('Faire Hindernisfolgen (viele Startwerte)');
 
 // ---------------------------------------------------------------
 // Bot: spielt wie ein Mensch mit begrenzter Reaktion (höchstens ~7 Tipps pro Sekunde),
-// entscheidet nur einmal pro Bild und sieht nur die nächste Lücke.
-function botSpiel(saat, bildrate, ziel, jitter = 0) {
-  const s = erstelleSpiel();
+// entscheidet nur einmal pro Bild und sieht nur die nächsten Lücken.
+// rauschen > 0 macht ihn ungenauer (zum Messen der Schwierigkeit).
+function botSpiel(saat, bildrate, ziel, jitter = 0, konfig = null, rauschen = 0) {
+  const s = erstelleSpiel(konfig || undefined);
   starte(s, saat);
   let rest = 0; let seitTipp = 0; let zeit = 0;
   const z = (() => { let a = saat * 7 + 1; return () => { a = (a * 16807) % 2147483647; return a / 2147483647; }; })();
-  while (s.zustand === ZUSTAND.SPIELEN && s.punkte < ziel && zeit < 600) {
+  let fehlgriff = 0;
+  const amEnde = () => s.zustand !== ZUSTAND.SPIELEN || s.punkte >= ziel;
+  while (!amEnde() && zeit < 600) {
     let frame = 1 / bildrate;
     if (jitter) frame *= 1 + (z() * 2 - 1) * jitter;
     zeit += frame;
     rest += Math.min(frame, K.MAX_FRAME);
     while (rest >= K.SCHRITT) { schritt(s, K.SCHRITT); rest -= K.SCHRITT; }
     seitTipp += frame;
-    if (s.zustand !== ZUSTAND.SPIELEN) break;
+    if (amEnde()) break;
     const x = s.strecke + K.FIGUR_X - K.TREFFER_B / 2;
-    const idx = s.hindernisse.findIndex(o => o.x + K.HINDERNIS_B > x);
+    const idx = s.hindernisse.findIndex(o => o.x + o.b > x);
     const a = s.hindernisse[idx];
+    if (!a) continue;
     const b = s.hindernisse[idx + 1];
-    // Ziel: etwas unter der Lückenmitte; ein Impuls trägt danach ~60 Punkte nach oben.
-    // Schon in der Lücke peilt der Bot die nächste an, bleibt aber in der aktuellen.
+    const tempo = s.konfig.tempo(s.punkte);
+    // Schwebende Lücken: der Bot schätzt, wo sie bei seiner Ankunft sind (wie ein Mensch, der hinschaut)
+    const lage = o => {
+      if (!o.amp) return { oben: o.oben, unten: o.unten };
+      const t = Math.max(0, (o.x - (x + K.TREFFER_B)) / tempo);
+      const v = o.amp * Math.sin(o.frq * (s.flugzeit + Math.min(t, 0.6)) + o.phase);
+      const jetzt = o.versatz;
+      const vv = t > 0 ? v : jetzt;
+      return { oben: o.oben0 + vv, unten: o.unten0 + vv };
+    };
+    const la = lage(a);
     const tief = o => o.unten - Math.min(44, (o.unten - o.oben) * 0.3);
-    let zielY = tief(a);
-    if (b && x + K.TREFFER_B > a.x - 30) zielY = Math.max(a.oben + 80, Math.min(tief(a), tief(b)));   // Schubhöhe ~58 + halbe Figur
-    if (s.figur.y > zielY && s.figur.vy > -60 && seitTipp > 0.14) { eingabe(s); seitTipp = 0; }
+    let zielY = tief(la);
+    if (b && x + K.TREFFER_B > a.x - 30 && !a.lang) {
+      const lb = lage(b);
+      zielY = Math.min(tief(la), tief(lb));
+    }
+    // Nie so hoch tippen, dass der Schub an die Oberkante trägt: Schubhöhe hängt vom Wind ab,
+    // schwebende Lücken brauchen etwas Reserve
+    const steig = K.IMPULS * K.IMPULS / (2 * (K.SCHWERKRAFT + Math.min(0, s.wind.a, s.wind.warnung < 0 ? -s.konfig.wind : 0)));
+    zielY = Math.max(zielY, la.oben + K.TREFFER_H / 2 + steig + 8 + a.amp * 0.5);
+    // Stern in der Lücke: etwas darunter zielen, damit der Schub durch den Stern trägt
+    if (a.muenze && !a.geholt && !rauschen) zielY = Math.min(zielY, (la.oben + la.unten) / 2 + 22);
+    // Wind: bei Böe nach unten früher tippen, bei Böe nach oben später
+    if (s.wind.richtung) zielY -= 10 * s.wind.richtung * (s.wind.anteil || 0.5);
+    zielY += fehlgriff;
+    const abstand = 0.14 + (rauschen ? z() * 0.08 : 0);
+    // Vorausschau: Würde ein Tipp jetzt (ohne weitere Tipps) gegen eine Oberkante tragen? Dann lieber nicht.
+    // Droht die Unterkante der aktuellen Lücke, bevor die Figur sie verlassen hat?
+    const gleichUnten = () => {
+      if (s.figur.y <= la.unten - K.TREFFER_H / 2 - 14) return false;
+      const raus = (a.x + a.b - x) / tempo;
+      const rein = Math.max(0, a.x - (x + K.TREFFER_B)) / tempo;
+      const bisUnten = (la.unten - K.TREFFER_H / 2 - s.figur.y) / Math.max(1, s.figur.vy);
+      return bisUnten < raus && bisUnten + 0.05 > rein;
+    };
+    const stoesstAn = () => {
+      let y = s.figur.y; let vy = K.IMPULS; let px = s.strecke + K.FIGUR_X;
+      const g = K.SCHWERKRAFT + s.wind.a;
+      for (let tt = 0; tt < 0.9; tt += 0.02) {
+        vy = Math.min(vy + g * 0.02, K.MAX_FALL); y += vy * 0.02; px += tempo * 0.02;
+        for (const o of s.hindernisse.slice(Math.max(0, idx), idx + 3)) {
+          if (px + K.TREFFER_B / 2 <= o.x || px - K.TREFFER_B / 2 >= o.x + o.b) continue;
+          const v = o.amp ? o.amp * Math.sin(o.frq * (s.flugzeit + tt) + o.phase) : 0;
+          if (y - K.TREFFER_H / 2 < o.oben0 + v + 3) return true;
+        }
+      }
+      return false;
+    };
+    if (s.figur.y > zielY && s.figur.vy > -60 && seitTipp > abstand && (gleichUnten() || !stoesstAn())) {
+      eingabe(s); seitTipp = 0;
+      if (rauschen) fehlgriff = (z() * 2 - 1) * rauschen;
+    }
     s.ereignisse.length = 0;
   }
-  return { punkte: s.punkte, unfall: s.unfall && s.unfall.art, zeit };
+  return { punkte: s.punkte, unfall: s.unfall && s.unfall.art, zeit, sterne: s.sterne, ziel: s.zustand === ZUSTAND.ZIEL };
 }
 
 abschnitt('Bot spielt bei verschiedenen Bildraten');
@@ -296,6 +349,103 @@ abschnitt('Gleiches Tempo bei allen Bildraten');
     pruefe(Math.abs(e.y - ref.y) < 18, `Flughöhe bei ${e.rate} Hz fast gleich (Abweichung nur durch Bildzeitpunkt der Eingabe)`);
   }
   console.log('  ' + ergebnis.map(e => `${e.rate} Hz: Strecke ${e.strecke.toFixed(1)}, Höhe ${e.y.toFixed(1)}`).join(' | '));
+}
+
+abschnitt('Level: Aufbau, Fairness, Sterne, Ziel');
+{
+  const { LEVEL, GEBIETE, erstelleKonfig, waehle } = api;
+  pruefe(LEVEL.length === 32 && GEBIETE.length === 7, '32 Level in 7 Gebieten');
+  pruefe(GEBIETE.every((g, gi) => LEVEL.filter(l => l.g === gi).length >= 4), 'jedes Gebiet hat mindestens 4 Level');
+  for (const L of LEVEL) {
+    for (const st of ['leicht', 'normal', 'schwer']) {
+      const k = erstelleKonfig('level', L.nr, st);
+      // Gleicher Aufbau bei jedem Versuch
+      const a1 = erstelleSpiel(k); starte(a1); while (a1.erzeugt < k.anzahl) { a1.strecke += 400; api.fuelleHindernisse(a1); }
+      const a2 = erstelleSpiel(k); starte(a2); const l2 = [...a2.hindernisse];
+      pruefe(Math.abs(l2[0].mitte0 - a1.hindernisse.find(h => h.i === 0)?.mitte0 || 0) < 1e-9 || a1.hindernisse[0].i > 0, `Level ${L.nr}: fester Aufbau`);
+      // Alle Hindernisse prüfen
+      const s = erstelleSpiel(k); starte(s); const liste = [...s.hindernisse];
+      while (s.erzeugt < k.anzahl) { s.strecke += 300; api.fuelleHindernisse(s); for (const h of s.hindernisse) if (!liste.includes(h)) liste.push(h); }
+      pruefe(liste.length === k.anzahl, `Level ${L.nr} (${st}): ${k.anzahl} Hindernisse`);
+      pruefe(liste.filter(h => h.muenze).length === 3, `Level ${L.nr} (${st}): genau 3 Sterne`);
+      let vor = { mitte: K.FIGUR_START_Y, luecke: k.luecke(0), amp: 0 };
+      const schub = (K.IMPULS * K.IMPULS) / (2 * (K.SCHWERKRAFT - k.wind));
+      for (const h of liste) {
+        const luecke = h.unten0 - h.oben0;
+        pruefe(h.oben0 - h.amp >= K.LUECKE_OBEN_MIN - 1e-6 && h.unten0 + h.amp <= K.LUECKE_UNTEN_MAX + 1e-6, `Level ${L.nr}: Lücke bleibt im Rahmen`);
+        pruefe(luecke >= schub + K.TREFFER_H + K.LUECKE_RESERVE - 1e-6, `Level ${L.nr}: Lücke größer als Schubweg + Figur + Luft`);
+        if (h.amp) pruefe(luecke - 2 * 0 >= schub + K.TREFFER_H + K.SCHWEBE_RESERVE + h.amp - 1e-6, `Level ${L.nr}: Schwebeweg lässt Platz`);
+        pruefe(Math.abs(h.mitte0 - vor.mitte) <= erlaubterVersatz(k, h.i, vor, { luecke, amp: h.amp }) + 1e-6, `Level ${L.nr} (${st}): Versatz machbar bei Hindernis ${h.i}`);
+        vor = { mitte: h.mitte0, luecke, amp: h.amp };
+      }
+    }
+  }
+  // Ziel und Sterne
+  const k = erstelleKonfig('level', 1, 'normal');
+  const s = erstelleSpiel(k); starte(s); ereignisse(s);
+  for (let n = 0; n < 20000 && s.zustand === ZUSTAND.SPIELEN; n++) {
+    const h = s.hindernisse.find(o => o.x + o.b > s.strecke + K.FIGUR_X - 30) || s.hindernisse[s.hindernisse.length - 1];
+    s.figur.y = (h.oben + h.unten) / 2; s.figur.vy = 0; schritt(s, dt);
+  }
+  const e = ereignisse(s);
+  pruefe(s.zustand === ZUSTAND.ZIEL, 'Level 1 endet im Ziel');
+  pruefe(s.punkte === k.anzahl && s.sterne === 3, 'mittig geflogen: alle Punkte und alle 3 Sterne');
+  pruefe(e.filter(x => x.typ === 'stern').length === 3 && e.filter(x => x.typ === 'ziel').length === 1, 'genau 3 Stern- und 1 Ziel-Ereignis');
+  pruefe(eingabe(s) === null && !pausiere(s), 'im Ziel: keine Eingabe, keine Pause');
+  laufe(s, 1);
+  pruefe(s.zustand === ZUSTAND.ZIEL, 'Ziel bleibt Ziel');
+  waehle(s, erstelleKonfig('endlos', 0, 'normal'));
+  pruefe(s.zustand === ZUSTAND.START && s.hindernisse.length === 0, 'Zurück ins Menü setzt alles zurück');
+}
+
+abschnitt('Bot fliegt alle Level (alle Stufen, mehrere Bildraten)');
+{
+  const { LEVEL, erstelleKonfig } = api;
+  let gesamt = 0; let ziel = 0; const fehlschlaege = [];
+  const raten = schnell ? [[60, 0]] : [[30, 0], [60, 0], [60, 0.5], [144, 0]];
+  for (const L of LEVEL) for (const st of ['leicht', 'normal', 'schwer']) for (const [r, j] of raten) {
+    const e = botSpiel(3, r, 1e9, j, erstelleKonfig('level', L.nr, st));
+    gesamt++; if (e.ziel) ziel++; else fehlschlaege.push(`${L.nr}/${st}/${r}Hz`);
+  }
+  console.log(`  ${ziel}/${gesamt} Läufe im Ziel`, fehlschlaege.length ? fehlschlaege : '');
+  pruefe(ziel === gesamt, 'jedes Level ist auf jeder Stufe schaffbar');
+}
+
+abschnitt('Wind');
+{
+  const { erstelleKonfig } = api;
+  const k = erstelleKonfig('level', 22, 'normal');
+  const s = erstelleSpiel(k); starte(s);
+  pruefe(s.windPlan.length > 20, 'Böenplan vorhanden');
+  pruefe(s.windPlan[0].start >= K.WIND_ERSTE, 'erste Böe nicht sofort');
+  let warnung = false; let max = 0;
+  for (let t = 0; t < 60; t += 0.01) { const w = api.windBei(s, t); if (w.warnung) warnung = true; max = Math.max(max, Math.abs(w.a)); }
+  pruefe(warnung, 'vor jeder Böe gibt es einen Hinweis');
+  pruefe(Math.abs(max - k.wind) < 1e-6, 'Böenstärke wie eingestellt');
+  const ohne = erstelleSpiel(erstelleKonfig('level', 1, 'normal')); starte(ohne);
+  pruefe(ohne.windPlan.length === 0, 'ohne Wind kein Plan');
+}
+
+abschnitt('Levelfortschritt speichern');
+{
+  const daten = {};
+  const L = lade({ localStorage: { getItem: k => (k in daten ? daten[k] : null), setItem: (k, v) => { daten[k] = String(v); } } });
+  pruefe(L.Speicher.fortschritt().geschafft.length === 0, 'leer am Anfang');
+  let r = L.Speicher.levelGeschafft(1, 2);
+  pruefe(r.erstmals && r.mehrSterne, 'erstes Geschafft');
+  r = L.Speicher.levelGeschafft(1, 1);
+  pruefe(!r.erstmals && !r.mehrSterne && L.Speicher.fortschritt().sterne[1] === 2, 'bestes Sternergebnis bleibt');
+  L.Speicher.levelGeschafft(1, 3);
+  pruefe(L.Speicher.fortschritt().sterne[1] === 3, 'mehr Sterne werden gemerkt');
+  daten['pixelhafen.hafenhopser.v1.level'] = '{kaputt';
+  pruefe(L.Speicher.fortschritt().geschafft.length === 0, 'kaputter Spielstand: sauber leer');
+  L.Speicher.setzeRekord(12, 'schwer'); L.Speicher.setzeRekord(7);
+  pruefe(L.Speicher.rekord('schwer') === 12 && L.Speicher.rekord('normal') === 7 && L.Speicher.rekord('leicht') === 0, 'Rekord je Stufe');
+  pruefe(daten['pixelhafen.hafenhopser.v1.rekord'] === '7', 'alter Normal-Rekord behält seine Kennung');
+  L.Speicher.setzeStufe('schwer');
+  pruefe(L.Speicher.stufe() === 'schwer', 'Stufe gespeichert');
+  daten['pixelhafen.hafenhopser.v1.stufe'] = 'quatsch';
+  pruefe(L.Speicher.stufe() === 'normal', 'unbekannte Stufe ergibt Normal');
 }
 
 abschnitt('Speicher mit und ohne localStorage');

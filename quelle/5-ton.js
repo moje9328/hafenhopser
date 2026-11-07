@@ -163,6 +163,23 @@ const Ton = (() => {
       knatter.stop(p0 + 0.4); takt.stop(p0 + 0.4);
     },
 
+    // Stern eingesammelt: helles Glitzer-Arpeggio, mit jedem Stern eine Stufe höher
+    stern(nummer = 1) {
+      if (!bereit()) return;
+      const basis = [784, 880, 988][Math.max(0, Math.min(2, nummer - 1))];
+      [1, 1.25, 1.5, 2].forEach((f, i) => {
+        ton(basis * f, basis * f, 0.14, { typ: 'triangle', laut: 0.2, start: i * 0.045 });
+        ton(basis * f * 2, basis * f * 2, 0.08, { typ: 'sine', laut: 0.05, start: i * 0.045 });
+      });
+    },
+
+    // Böe: weiches Rauschen, das steigt (Aufwind) oder fällt (Fallwind)
+    wind(richtung) {
+      if (!bereit()) return;
+      const hoch = richtung < 0;
+      rauschStoss(0.7, { laut: 0.12, typ: 'bandpass', f1: hoch ? 500 : 1600, f2: hoch ? 1600 : 450, q: 1.4 });
+    },
+
     // Kleines Platschen zusätzlich bei Wasserlandung
     platsch() {
       if (!bereit()) return;

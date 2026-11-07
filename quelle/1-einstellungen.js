@@ -63,10 +63,22 @@ const K = {
   FAIR_FAKTOR: 0.75,
   FAIR_SICHERHEIT: 10,       // Abstand zur Lückenkante, der als Reserve bleibt
 
+  // ---- Level-Bausteine ----
+  LANG_B: 136,               // lange Container (Tunnel) statt 64
+  LANG_EXTRA: 10,            // im Tunnel ist die Lücke etwas größer
+  SCHWEBE_FRQ: [1.0, 1.6],   // schwebende Container: Kreisfrequenz (rad/s)
+  LUECKE_RESERVE: 40,        // jede Lücke: Schubweg + Figur + so viel Luft (wichtig bei Aufwind)
+  SCHWEBE_RESERVE: 24,       // so viel Luft bleibt in einer schwebenden Lücke neben dem Schubweg
+  MUENZE_RADIUS: 21,         // so nah muss die Figurmitte an den Stern
+  WIND_WARNUNG: 1.0,         // so lange vor einer Böe erscheint der Hinweis
+  WIND_RAMPE: 0.35,          // Böen schwellen weich an und ab
+  WIND_ERSTE: 3.4,           // erste Böe frühestens nach so vielen Sekunden Flug
+  ZIEL_ZEIT: 1.1,            // so lange fliegt die Figur nach dem Ziel noch aus
+
   // ---- Ablauf ----
   SPERRE_NACH_UNFALL: 0.32,  // so lange werden Eingaben nach einem Unfall ignoriert
   SCHUB_POSE: 0.16,          // so lange zeigt die Figur nach einem Tipp „Beine hoch“
 
   // ---- Effekte ----
-  MAX_PARTIKEL: 90,
+  MAX_PARTIKEL: 130,
 };

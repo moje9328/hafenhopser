@@ -264,6 +264,80 @@
   .btn.main:active { box-shadow: 0 2px 0 var(--gelb-kante); }
   .btn.klein { min-height: 44px; font-size: 15px; }
 
+  /* ---------- Schwierigkeit ---------- */
+  .stufenwahl { margin: 14px 0 0; padding: 0; border: 0; }
+  .stufenwahl legend { margin-bottom: 6px; padding: 0; color: var(--muted); font: 9px/1.6 var(--retro); }
+  .stufen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .stufe {
+    min-height: 44px;
+    padding: 6px 4px;
+    color: var(--text);
+    background: var(--surface-2);
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    font: 600 14px/1.2 var(--body);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .stufe[aria-pressed="true"] { color: var(--auf-gelb); background: var(--tuerkis); border-color: var(--bg); box-shadow: 0 0 0 2px var(--tuerkis); }
+  .stufe small { display: block; margin-top: 2px; color: inherit; font-size: 11px; font-weight: 400; opacity: 0.8; }
+
+  /* ---------- Levelauswahl ---------- */
+  #fLevel .kopfzeile { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .sternsumme { color: var(--gelb); font: 11px/1.4 var(--retro); white-space: nowrap; }
+  .sternsumme svg, .lvl svg, .zahlen svg { width: 1em; height: 1em; vertical-align: -0.12em; }
+  .gebiet { margin: 14px 0 0; }
+  .gebiet-kopf {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 0 0 6px;
+    padding: 7px 10px;
+    color: var(--text);
+    border-radius: 8px;
+    font: 9px/1.5 var(--retro);
+    text-shadow: 1px 1px 0 var(--bg), -1px 1px 0 var(--bg), 1px -1px 0 var(--bg), -1px -1px 0 var(--bg);
+  }
+  .gebiet-kopf span:last-child { white-space: nowrap; color: var(--gelb); }
+  .gebiet-info { margin: 0 0 6px; color: var(--muted); font-size: 13px; line-height: 1.35; }
+  .gebiet-info b { color: var(--tuerkis); font-weight: 600; }
+  .levelgitter { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+  .lvl {
+    display: grid;
+    place-items: center;
+    gap: 2px;
+    min-height: 54px;
+    padding: 6px 2px 5px;
+    color: var(--text);
+    background: var(--surface-2);
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    font: 13px/1 var(--retro);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .lvl:hover:not(:disabled) { filter: brightness(1.15); }
+  .lvl .mini { display: flex; gap: 1px; color: rgba(255, 244, 220, 0.25); font-size: 10px; }
+  .lvl .mini .an { color: var(--gelb); }
+  .lvl.geschafft { border-color: var(--tuerkis); }
+  .lvl.naechstes { color: var(--auf-gelb); background: var(--gelb); border-color: var(--bg); box-shadow: 0 0 0 2px var(--gelb); }
+  .lvl.naechstes .mini { color: rgba(16, 36, 58, 0.35); }
+  .lvl:disabled { cursor: not-allowed; opacity: 0.42; }
+  .lvl:disabled .mini { display: none; }
+  .lvl .schloss { width: 12px; height: 12px; color: var(--muted); }
+
+  /* ---------- Geschafft ---------- */
+  .levelname { margin: 8px 0 0; color: var(--muted); font: 10px/1.6 var(--retro); }
+  .grosssterne { display: flex; justify-content: center; gap: 12px; margin: 16px 0 4px; }
+  .grosssterne svg { width: 52px; height: 52px; color: rgba(255, 244, 220, 0.18); filter: drop-shadow(0 3px 0 var(--bg)); }
+  .grosssterne svg.an { color: var(--gelb); animation: sternda 0.45s cubic-bezier(.3, 1.6, .5, 1) both; }
+  .grosssterne svg.an:nth-child(2) { animation-delay: 0.18s; }
+  .grosssterne svg.an:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes sternda { from { transform: scale(0.2) rotate(-30deg); opacity: 0; } }
+  .hinweis { margin: 10px 0 0; color: var(--muted); font-size: 15px; text-align: center; }
+  .neugebiet { margin: 12px 0 0; padding: 10px 12px; color: var(--auf-gelb); background: var(--tuerkis); border-radius: 8px; font: 10px/1.6 var(--retro); text-align: center; }
+
   /* ---------- Schmale Geräte ---------- */
   @media (max-width: 380px) {
     #buehne { padding: 8px; }
@@ -284,6 +358,10 @@
     .rekord { margin-top: 8px; }
     .zahlen { margin-top: 8px; }
     .knoepfe { grid-template-columns: 1fr 1fr; margin-top: 12px; }
+    .levelgitter { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+    .stufenwahl { margin-top: 8px; }
+    .grosssterne { margin: 8px 0 0; }
+    .grosssterne svg { width: 40px; height: 40px; }
     .hudknoepfe { top: 6px; right: 6px; gap: 4px; }
     .rund { width: 40px; height: 40px; }
   }
@@ -292,12 +370,15 @@
   @media (prefers-reduced-motion: reduce) {
     .btn:active { transform: none; }
     .hervor { animation: none; }
+    .grosssterne svg.an { animation: none; }
   }
 </style>
 </head>
 <body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="stern" viewBox="0 0 24 24"><path fill="currentColor" stroke="#10243A" stroke-width="1.6" stroke-linejoin="round" d="M12 1.8l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.6l-6.3 3.6 1.5-7.1L1.8 9.2 9 8.4z"/></symbol>
+  <symbol id="schloss" viewBox="0 0 12 12"><path fill="currentColor" d="M3 5V4a3 3 0 0 1 6 0v1h1v7H2V5zm2 0h2V4a1 1 0 0 0-2 0z"/></symbol>
   <symbol id="logo" viewBox="0 0 11 11"><path fill="currentColor" d="M5 0h1v2H5zM3 2h5v1H3zM5 3h1v5H5zM1 6h1v1H1zM9 6h1v1H9zM1 7h2v1H1zM8 7h2v1H8zM2 8h3v1H2zM6 8h3v1H6zM3 9h5v1H3z"/></symbol>
 </svg>
 
@@ -334,33 +415,69 @@
       </div>
       <p class="unterzeile">Der Hafen ruft. Dein Jetpack hustet.</p>
       <p class="steuerinfo"><span class="nurMaus"><b>Leertaste</b>, <b>Pfeil hoch</b>, <b>W</b> oder <b>Klick</b> gibt einen kurzen Schub. <b>P</b> oder <b>Esc</b> pausiert.</span><span class="nurTouch"><b>Tippe</b> irgendwo auf den Bildschirm für einen kurzen Schub. Flieg durch die Lücken, nicht ins Wasser.</span></p>
-      <p class="rekord">REKORD <b class="js-rekord">0</b></p>
+      <fieldset class="stufenwahl">
+        <legend>SCHWIERIGKEIT</legend>
+        <div class="stufen" data-stufen></div>
+      </fieldset>
       <div class="knoepfe">
-        <button class="btn main" id="losKnopf" type="button">Losfliegen</button>
-        <a class="btn klein" href="https://moje9328.github.io/spiele/">Zur Pixelhafen-Seite</a>
+        <button class="btn main" id="abenteuerKnopf" type="button">Level spielen</button>
+        <button class="btn" id="endlosKnopf" type="button">Endlos fliegen</button>
       </div>
+      <p class="rekord">ENDLOS-REKORD <b class="js-rekord">0</b> · STERNE <b class="js-sterne">0</b></p>
+      <div class="knoepfe"><a class="btn klein" href="https://moje9328.github.io/spiele/">Zur Pixelhafen-Seite</a></div>
+    </section>
+
+    <section id="fLevel" hidden>
+      <div class="kopfzeile">
+        <h2 data-titel>Levelauswahl</h2>
+        <span class="sternsumme"><svg aria-hidden="true"><use href="#stern"/></svg> <span class="js-sterne">0</span>/<span id="sterneMax">96</span></span>
+      </div>
+      <fieldset class="stufenwahl">
+        <legend>SCHWIERIGKEIT</legend>
+        <div class="stufen" data-stufen></div>
+      </fieldset>
+      <div id="levelListe"></div>
+      <div class="knoepfe"><button class="btn klein" id="zurueckKnopf" type="button">Zurück</button></div>
     </section>
 
     <section id="fPause" hidden>
       <h2 data-titel>Verschnaufpause</h2>
+      <p class="levelname" id="pauseLevel" hidden></p>
       <p class="rekord">PUNKTE <b id="pausePunkte">0</b></p>
       <div class="knoepfe">
         <button class="btn main" id="weiterKnopf" type="button">Weiter</button>
         <button class="btn klein" id="neuKnopf" type="button">Neu starten</button>
+        <button class="btn klein" id="pauseMenueKnopf" type="button">Levelauswahl</button>
       </div>
     </section>
 
     <section id="fEnde" hidden>
       <h2 data-titel>Das war wohl eine Bruchlandung.</h2>
+      <p class="levelname" id="endeLevel" hidden></p>
       <p class="spruch" id="spruch" hidden></p>
       <p class="hervor" id="neuerRekord" hidden>NEUER REKORD!</p>
       <dl class="zahlen">
-        <div class="gross"><dt>Punkte</dt><dd id="ePunkte">0</dd></div>
-        <div><dt>Persönlicher Rekord</dt><dd id="eRekord">0</dd></div>
+        <div class="gross"><dt id="ePunkteText">Punkte</dt><dd id="ePunkte">0</dd></div>
+        <div id="eRekordZeile"><dt id="eRekordText">Persönlicher Rekord</dt><dd id="eRekord">0</dd></div>
       </dl>
       <div class="knoepfe">
         <button class="btn main" id="nochmalKnopf" type="button">Noch einmal</button>
-        <a class="btn klein" href="https://moje9328.github.io/spiele/">Zur Pixelhafen-Seite</a>
+        <button class="btn klein" id="endeMenueKnopf" type="button">Levelauswahl</button>
+      </div>
+    </section>
+
+    <section id="fGeschafft" hidden>
+      <h2 data-titel><span id="geschafftTitel">Geschafft!</span></h2>
+      <p class="levelname" id="geschafftLevel"></p>
+      <div class="grosssterne" id="grossSterne" aria-hidden="true">
+        <svg><use href="#stern"/></svg><svg><use href="#stern"/></svg><svg><use href="#stern"/></svg>
+      </div>
+      <p class="hinweis" id="geschafftText"></p>
+      <p class="neugebiet" id="neuesGebiet" hidden></p>
+      <div class="knoepfe">
+        <button class="btn main" id="naechstesKnopf" type="button">Nächstes Level</button>
+        <button class="btn klein" id="wiederholenKnopf" type="button">Noch einmal</button>
+        <button class="btn klein" id="geschafftMenueKnopf" type="button">Levelauswahl</button>
       </div>
     </section>
 

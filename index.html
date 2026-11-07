@@ -264,6 +264,80 @@
   .btn.main:active { box-shadow: 0 2px 0 var(--gelb-kante); }
   .btn.klein { min-height: 44px; font-size: 15px; }
 
+  /* ---------- Schwierigkeit ---------- */
+  .stufenwahl { margin: 14px 0 0; padding: 0; border: 0; }
+  .stufenwahl legend { margin-bottom: 6px; padding: 0; color: var(--muted); font: 9px/1.6 var(--retro); }
+  .stufen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .stufe {
+    min-height: 44px;
+    padding: 6px 4px;
+    color: var(--text);
+    background: var(--surface-2);
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    font: 600 14px/1.2 var(--body);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .stufe[aria-pressed="true"] { color: var(--auf-gelb); background: var(--tuerkis); border-color: var(--bg); box-shadow: 0 0 0 2px var(--tuerkis); }
+  .stufe small { display: block; margin-top: 2px; color: inherit; font-size: 11px; font-weight: 400; opacity: 0.8; }
+
+  /* ---------- Levelauswahl ---------- */
+  #fLevel .kopfzeile { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .sternsumme { color: var(--gelb); font: 11px/1.4 var(--retro); white-space: nowrap; }
+  .sternsumme svg, .lvl svg, .zahlen svg { width: 1em; height: 1em; vertical-align: -0.12em; }
+  .gebiet { margin: 14px 0 0; }
+  .gebiet-kopf {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 0 0 6px;
+    padding: 7px 10px;
+    color: var(--text);
+    border-radius: 8px;
+    font: 9px/1.5 var(--retro);
+    text-shadow: 1px 1px 0 var(--bg), -1px 1px 0 var(--bg), 1px -1px 0 var(--bg), -1px -1px 0 var(--bg);
+  }
+  .gebiet-kopf span:last-child { white-space: nowrap; color: var(--gelb); }
+  .gebiet-info { margin: 0 0 6px; color: var(--muted); font-size: 13px; line-height: 1.35; }
+  .gebiet-info b { color: var(--tuerkis); font-weight: 600; }
+  .levelgitter { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+  .lvl {
+    display: grid;
+    place-items: center;
+    gap: 2px;
+    min-height: 54px;
+    padding: 6px 2px 5px;
+    color: var(--text);
+    background: var(--surface-2);
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    font: 13px/1 var(--retro);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .lvl:hover:not(:disabled) { filter: brightness(1.15); }
+  .lvl .mini { display: flex; gap: 1px; color: rgba(255, 244, 220, 0.25); font-size: 10px; }
+  .lvl .mini .an { color: var(--gelb); }
+  .lvl.geschafft { border-color: var(--tuerkis); }
+  .lvl.naechstes { color: var(--auf-gelb); background: var(--gelb); border-color: var(--bg); box-shadow: 0 0 0 2px var(--gelb); }
+  .lvl.naechstes .mini { color: rgba(16, 36, 58, 0.35); }
+  .lvl:disabled { cursor: not-allowed; opacity: 0.42; }
+  .lvl:disabled .mini { display: none; }
+  .lvl .schloss { width: 12px; height: 12px; color: var(--muted); }
+
+  /* ---------- Geschafft ---------- */
+  .levelname { margin: 8px 0 0; color: var(--muted); font: 10px/1.6 var(--retro); }
+  .grosssterne { display: flex; justify-content: center; gap: 12px; margin: 16px 0 4px; }
+  .grosssterne svg { width: 52px; height: 52px; color: rgba(255, 244, 220, 0.18); filter: drop-shadow(0 3px 0 var(--bg)); }
+  .grosssterne svg.an { color: var(--gelb); animation: sternda 0.45s cubic-bezier(.3, 1.6, .5, 1) both; }
+  .grosssterne svg.an:nth-child(2) { animation-delay: 0.18s; }
+  .grosssterne svg.an:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes sternda { from { transform: scale(0.2) rotate(-30deg); opacity: 0; } }
+  .hinweis { margin: 10px 0 0; color: var(--muted); font-size: 15px; text-align: center; }
+  .neugebiet { margin: 12px 0 0; padding: 10px 12px; color: var(--auf-gelb); background: var(--tuerkis); border-radius: 8px; font: 10px/1.6 var(--retro); text-align: center; }
+
   /* ---------- Schmale Geräte ---------- */
   @media (max-width: 380px) {
     #buehne { padding: 8px; }
@@ -284,6 +358,10 @@
     .rekord { margin-top: 8px; }
     .zahlen { margin-top: 8px; }
     .knoepfe { grid-template-columns: 1fr 1fr; margin-top: 12px; }
+    .levelgitter { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+    .stufenwahl { margin-top: 8px; }
+    .grosssterne { margin: 8px 0 0; }
+    .grosssterne svg { width: 40px; height: 40px; }
     .hudknoepfe { top: 6px; right: 6px; gap: 4px; }
     .rund { width: 40px; height: 40px; }
   }
@@ -292,12 +370,15 @@
   @media (prefers-reduced-motion: reduce) {
     .btn:active { transform: none; }
     .hervor { animation: none; }
+    .grosssterne svg.an { animation: none; }
   }
 </style>
 </head>
 <body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="stern" viewBox="0 0 24 24"><path fill="currentColor" stroke="#10243A" stroke-width="1.6" stroke-linejoin="round" d="M12 1.8l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.6l-6.3 3.6 1.5-7.1L1.8 9.2 9 8.4z"/></symbol>
+  <symbol id="schloss" viewBox="0 0 12 12"><path fill="currentColor" d="M3 5V4a3 3 0 0 1 6 0v1h1v7H2V5zm2 0h2V4a1 1 0 0 0-2 0z"/></symbol>
   <symbol id="logo" viewBox="0 0 11 11"><path fill="currentColor" d="M5 0h1v2H5zM3 2h5v1H3zM5 3h1v5H5zM1 6h1v1H1zM9 6h1v1H9zM1 7h2v1H1zM8 7h2v1H8zM2 8h3v1H2zM6 8h3v1H6zM3 9h5v1H3z"/></symbol>
 </svg>
 
@@ -334,33 +415,69 @@
       </div>
       <p class="unterzeile">Der Hafen ruft. Dein Jetpack hustet.</p>
       <p class="steuerinfo"><span class="nurMaus"><b>Leertaste</b>, <b>Pfeil hoch</b>, <b>W</b> oder <b>Klick</b> gibt einen kurzen Schub. <b>P</b> oder <b>Esc</b> pausiert.</span><span class="nurTouch"><b>Tippe</b> irgendwo auf den Bildschirm für einen kurzen Schub. Flieg durch die Lücken, nicht ins Wasser.</span></p>
-      <p class="rekord">REKORD <b class="js-rekord">0</b></p>
+      <fieldset class="stufenwahl">
+        <legend>SCHWIERIGKEIT</legend>
+        <div class="stufen" data-stufen></div>
+      </fieldset>
       <div class="knoepfe">
-        <button class="btn main" id="losKnopf" type="button">Losfliegen</button>
-        <a class="btn klein" href="https://moje9328.github.io/spiele/">Zur Pixelhafen-Seite</a>
+        <button class="btn main" id="abenteuerKnopf" type="button">Level spielen</button>
+        <button class="btn" id="endlosKnopf" type="button">Endlos fliegen</button>
       </div>
+      <p class="rekord">ENDLOS-REKORD <b class="js-rekord">0</b> · STERNE <b class="js-sterne">0</b></p>
+      <div class="knoepfe"><a class="btn klein" href="https://moje9328.github.io/spiele/">Zur Pixelhafen-Seite</a></div>
+    </section>
+
+    <section id="fLevel" hidden>
+      <div class="kopfzeile">
+        <h2 data-titel>Levelauswahl</h2>
+        <span class="sternsumme"><svg aria-hidden="true"><use href="#stern"/></svg> <span class="js-sterne">0</span>/<span id="sterneMax">96</span></span>
+      </div>
+      <fieldset class="stufenwahl">
+        <legend>SCHWIERIGKEIT</legend>
+        <div class="stufen" data-stufen></div>
+      </fieldset>
+      <div id="levelListe"></div>
+      <div class="knoepfe"><button class="btn klein" id="zurueckKnopf" type="button">Zurück</button></div>
     </section>
 
     <section id="fPause" hidden>
       <h2 data-titel>Verschnaufpause</h2>
+      <p class="levelname" id="pauseLevel" hidden></p>
       <p class="rekord">PUNKTE <b id="pausePunkte">0</b></p>
       <div class="knoepfe">
         <button class="btn main" id="weiterKnopf" type="button">Weiter</button>
         <button class="btn klein" id="neuKnopf" type="button">Neu starten</button>
+        <button class="btn klein" id="pauseMenueKnopf" type="button">Levelauswahl</button>
       </div>
     </section>
 
     <section id="fEnde" hidden>
       <h2 data-titel>Das war wohl eine Bruchlandung.</h2>
+      <p class="levelname" id="endeLevel" hidden></p>
       <p class="spruch" id="spruch" hidden></p>
       <p class="hervor" id="neuerRekord" hidden>NEUER REKORD!</p>
       <dl class="zahlen">
-        <div class="gross"><dt>Punkte</dt><dd id="ePunkte">0</dd></div>
-        <div><dt>Persönlicher Rekord</dt><dd id="eRekord">0</dd></div>
+        <div class="gross"><dt id="ePunkteText">Punkte</dt><dd id="ePunkte">0</dd></div>
+        <div id="eRekordZeile"><dt id="eRekordText">Persönlicher Rekord</dt><dd id="eRekord">0</dd></div>
       </dl>
       <div class="knoepfe">
         <button class="btn main" id="nochmalKnopf" type="button">Noch einmal</button>
-        <a class="btn klein" href="https://moje9328.github.io/spiele/">Zur Pixelhafen-Seite</a>
+        <button class="btn klein" id="endeMenueKnopf" type="button">Levelauswahl</button>
+      </div>
+    </section>
+
+    <section id="fGeschafft" hidden>
+      <h2 data-titel><span id="geschafftTitel">Geschafft!</span></h2>
+      <p class="levelname" id="geschafftLevel"></p>
+      <div class="grosssterne" id="grossSterne" aria-hidden="true">
+        <svg><use href="#stern"/></svg><svg><use href="#stern"/></svg><svg><use href="#stern"/></svg>
+      </div>
+      <p class="hinweis" id="geschafftText"></p>
+      <p class="neugebiet" id="neuesGebiet" hidden></p>
+      <div class="knoepfe">
+        <button class="btn main" id="naechstesKnopf" type="button">Nächstes Level</button>
+        <button class="btn klein" id="wiederholenKnopf" type="button">Noch einmal</button>
+        <button class="btn klein" id="geschafftMenueKnopf" type="button">Levelauswahl</button>
       </div>
     </section>
 
@@ -433,27 +550,118 @@ const K = {
   FAIR_FAKTOR: 0.75,
   FAIR_SICHERHEIT: 10,       // Abstand zur Lückenkante, der als Reserve bleibt
 
+  // ---- Level-Bausteine ----
+  LANG_B: 136,               // lange Container (Tunnel) statt 64
+  LANG_EXTRA: 10,            // im Tunnel ist die Lücke etwas größer
+  SCHWEBE_FRQ: [1.0, 1.6],   // schwebende Container: Kreisfrequenz (rad/s)
+  LUECKE_RESERVE: 40,        // jede Lücke: Schubweg + Figur + so viel Luft (wichtig bei Aufwind)
+  SCHWEBE_RESERVE: 24,       // so viel Luft bleibt in einer schwebenden Lücke neben dem Schubweg
+  MUENZE_RADIUS: 21,         // so nah muss die Figurmitte an den Stern
+  WIND_WARNUNG: 1.0,         // so lange vor einer Böe erscheint der Hinweis
+  WIND_RAMPE: 0.35,          // Böen schwellen weich an und ab
+  WIND_ERSTE: 3.4,           // erste Böe frühestens nach so vielen Sekunden Flug
+  ZIEL_ZEIT: 1.1,            // so lange fliegt die Figur nach dem Ziel noch aus
+
   // ---- Ablauf ----
   SPERRE_NACH_UNFALL: 0.32,  // so lange werden Eingaben nach einem Unfall ignoriert
   SCHUB_POSE: 0.16,          // so lange zeigt die Figur nach einem Tipp „Beine hoch“
 
   // ---- Effekte ----
-  MAX_PARTIKEL: 90,
+  MAX_PARTIKEL: 130,
 };
 
 // ===================================================================
-// 2 · SPIELLOGIK
-// Zustände, Flugphysik, Hindernisse, Punkte und Kollisionen.
+// 2 · LEVEL, GEBIETE UND SCHWIERIGKEIT
+// Jedes Level hat einen festen Aufbau (fester Startwert): Wer scheitert,
+// fliegt beim nächsten Versuch durch dieselben Lücken und kann lernen.
+// Werte als [Anfang, Ende] steigen innerhalb des Levels gleichmäßig an.
+// Was davon wirklich fair ist, rechnet die Logik aus der Flugphysik nach
+// (erlaubterVersatz) – die Werte hier sind nur Obergrenzen.
+// ===================================================================
+
+const GEBIETE = [
+  { name: 'Sonnenhafen', text: 'Blauer Himmel, frische Brise. Zum Warmfliegen.', neu: '' },
+  { name: 'Werft im Nebel', text: 'Die Kräne heben und senken ihre Lasten.', neu: 'Schwebende Container' },
+  { name: 'Abendmarkt', text: 'Lange Container: Höhe halten!', neu: 'Container-Tunnel' },
+  { name: 'Nachthafen', text: 'Schneller, enger, dunkler.', neu: 'Alles zusammen' },
+  { name: 'Sturmküste', text: 'Windböen drücken dich hoch oder runter.', neu: 'Windböen' },
+  { name: 'Eishafen', text: 'Kalte Luft, dichter Verkehr.', neu: 'Enge Abstände' },
+  { name: 'Hafenfest', text: 'Das große Finale unterm Feuerwerk.', neu: 'Alles auf einmal' },
+];
+
+// n = Anzahl der Hindernispaare bis zum Ziel
+// tempo, luecke, versatz = [Anfang, Ende]; abstand = Abstand der Hindernisse (Standard 215)
+// bewegt = Anteil schwebender Container, amp = wie weit sie schweben [Anfang, Ende]
+// lang = Anteil langer Container (Tunnel), wind = Stärke der Böen (0 = kein Wind)
+const LEVEL = [
+  // ---- 1 · Sonnenhafen ----
+  { g: 0, name: 'Erster Hopser', n: 8, tempo: [118, 124], luecke: [192, 182], versatz: [30, 60] },
+  { g: 0, name: 'Kistenslalom', n: 12, tempo: [122, 132], luecke: [184, 172], versatz: [45, 85] },
+  { g: 0, name: 'Hafenrundflug', n: 15, tempo: [126, 142], luecke: [176, 162], versatz: [60, 115] },
+  { g: 0, name: 'Möwenkurs', n: 18, tempo: [130, 150], luecke: [170, 155], versatz: [80, 135] },
+  { g: 0, name: 'Großer Kai', n: 22, tempo: [134, 158], luecke: [165, 148], versatz: [90, 155] },
+  // ---- 2 · Werft im Nebel: schwebende Container ----
+  { g: 1, name: 'Schwebende Last', n: 12, tempo: [128, 136], luecke: [182, 172], versatz: [40, 75], bewegt: 0.6, amp: [14, 20] },
+  { g: 1, name: 'Hoch und runter', n: 15, tempo: [130, 144], luecke: [176, 166], versatz: [55, 100], bewegt: 0.75, amp: [18, 26] },
+  { g: 1, name: 'Nebelkräne', n: 18, tempo: [134, 150], luecke: [172, 160], versatz: [65, 120], bewegt: 0.8, amp: [20, 30] },
+  { g: 1, name: 'Helling', n: 20, tempo: [136, 154], luecke: [168, 155], versatz: [75, 130], bewegt: 0.85, amp: [22, 34] },
+  { g: 1, name: 'Stapellauf', n: 24, tempo: [140, 160], luecke: [164, 150], versatz: [85, 150], bewegt: 0.9, amp: [24, 38] },
+  // ---- 3 · Abendmarkt: lange Container ----
+  { g: 2, name: 'Lange Kisten', n: 12, tempo: [128, 138], luecke: [184, 174], versatz: [40, 75], lang: 0.45 },
+  { g: 2, name: 'Tunnelblick', n: 15, tempo: [130, 144], luecke: [180, 168], versatz: [50, 95], lang: 0.5 },
+  { g: 2, name: 'Markthallen', n: 18, tempo: [136, 152], luecke: [174, 160], versatz: [65, 120], lang: 0.5, bewegt: 0.3, amp: [18, 22] },
+  { g: 2, name: 'Lampionkette', n: 20, tempo: [138, 156], luecke: [170, 156], versatz: [75, 130], lang: 0.55, bewegt: 0.4, amp: [20, 26] },
+  { g: 2, name: 'Fischauktion', n: 24, tempo: [142, 162], luecke: [166, 150], versatz: [85, 150], lang: 0.6, bewegt: 0.45, amp: [22, 30] },
+  // ---- 4 · Nachthafen: alles zusammen, schneller ----
+  { g: 3, name: 'Laternenlicht', n: 15, tempo: [140, 150], luecke: [174, 160], versatz: [70, 110], lang: 0.3, bewegt: 0.4, amp: [18, 24] },
+  { g: 3, name: 'Mondschein', n: 18, tempo: [144, 158], luecke: [168, 155], versatz: [80, 130], bewegt: 0.6, amp: [22, 30], abstand: 205 },
+  { g: 3, name: 'Nachtschicht', n: 20, tempo: [148, 164], luecke: [162, 150], versatz: [90, 140], lang: 0.4, bewegt: 0.5, amp: [22, 30] },
+  { g: 3, name: 'Leuchtfeuer', n: 22, tempo: [150, 168], luecke: [158, 146], versatz: [100, 150], lang: 0.3, bewegt: 0.5, amp: [24, 32], abstand: 200 },
+  { g: 3, name: 'Mitternacht', n: 26, tempo: [152, 172], luecke: [155, 142], versatz: [110, 165], lang: 0.4, bewegt: 0.6, amp: [26, 36], abstand: 205 },
+  // ---- 5 · Sturmküste: Windböen ----
+  { g: 4, name: 'Erste Böe', n: 14, tempo: [130, 140], luecke: [186, 176], versatz: [40, 80], wind: 220 },
+  { g: 4, name: 'Gegenwind', n: 18, tempo: [136, 150], luecke: [174, 162], versatz: [65, 115], wind: 300 },
+  { g: 4, name: 'Brandung', n: 21, tempo: [140, 158], luecke: [168, 155], versatz: [75, 130], wind: 330, bewegt: 0.4, amp: [18, 26] },
+  { g: 4, name: 'Sturmflut', n: 25, tempo: [144, 164], luecke: [162, 148], versatz: [85, 150], wind: 360, lang: 0.3, bewegt: 0.4, amp: [20, 30] },
+  // ---- 6 · Eishafen: enge Abstände ----
+  { g: 5, name: 'Frostflug', n: 16, tempo: [140, 154], luecke: [170, 158], versatz: [70, 120], abstand: 200, bewegt: 0.4, amp: [18, 26] },
+  { g: 5, name: 'Eisschollen', n: 20, tempo: [144, 160], luecke: [164, 152], versatz: [80, 135], abstand: 198, lang: 0.4 },
+  { g: 5, name: 'Schneegestöber', n: 23, tempo: [148, 165], luecke: [160, 148], versatz: [90, 145], abstand: 200, wind: 300, bewegt: 0.4, amp: [20, 28] },
+  { g: 5, name: 'Polarnacht', n: 26, tempo: [150, 170], luecke: [156, 144], versatz: [100, 160], abstand: 195, lang: 0.3, bewegt: 0.5, amp: [22, 32] },
+  // ---- 7 · Hafenfest: Finale ----
+  { g: 6, name: 'Lampionflug', n: 20, tempo: [146, 162], luecke: [164, 152], versatz: [85, 140], lang: 0.3, bewegt: 0.4, amp: [20, 28] },
+  { g: 6, name: 'Feuerwerk', n: 24, tempo: [150, 168], luecke: [158, 147], versatz: [95, 150], wind: 300, bewegt: 0.4, amp: [22, 30] },
+  { g: 6, name: 'Festumzug', n: 28, tempo: [154, 174], luecke: [154, 143], versatz: [105, 160], wind: 320, lang: 0.35, bewegt: 0.5, amp: [24, 34], abstand: 205 },
+  { g: 6, name: 'Großes Finale', n: 34, tempo: [156, 178], luecke: [152, 140], versatz: [115, 170], wind: 340, lang: 0.4, bewegt: 0.55, amp: [24, 36], abstand: 200 },
+];
+LEVEL.forEach((l, i) => { l.nr = i + 1; });
+
+// Schwierigkeitsgrade gelten für Level und Endlos-Flug
+const STUFEN = {
+  leicht: { name: 'Gemütlich', luecke: 24, tempo: 0.9, versatz: 0.8, kraft: 0.7 },
+  normal: { name: 'Normal', luecke: 0, tempo: 1, versatz: 1, kraft: 1 },
+  schwer: { name: 'Profi', luecke: -12, tempo: 1.08, versatz: 1.12, kraft: 1.15 },
+};
+const STUFEN_REIHE = ['leicht', 'normal', 'schwer'];
+
+function levelEbene(nr) { return LEVEL[nr - 1] || null; }
+function erstesLevelImGebiet(g) { return LEVEL.find(l => l.g === g).nr; }
+function letztesLevelImGebiet(g) { let n = 0; for (const l of LEVEL) if (l.g === g) n = l.nr; return n; }
+
+// ===================================================================
+// 3 · SPIELLOGIK
+// Zustände, Flugphysik, Hindernisse, Sterne, Wind, Punkte und Kollisionen.
 // Kein Zugriff auf Bildschirm, Ton oder Browser: alles hier lässt sich
 // in Node testen (quelle/test-logik.js).
 // ===================================================================
 
 const ZUSTAND = {
-  START: 'start',        // Startfenster, Figur schwebt
+  START: 'start',        // vor dem Start, Figur schwebt
   SPIELEN: 'spielen',
   BEREIT: 'bereit',      // nach der Pause: Welt steht still, erst ein Tipp fliegt weiter
   PAUSE: 'pause',
   ENDE: 'ende',          // Bruchlandung (kurze Sperre, dann Neustart möglich)
+  ZIEL: 'ziel',          // Level geschafft, Figur fliegt aus
 };
 
 // Kleiner Zufallsgenerator mit Startwert, damit Folgen nachprüfbar sind
@@ -470,83 +678,142 @@ function zufallsGenerator(saat) {
 
 const begrenze = (v, min, max) => Math.max(min, Math.min(max, v));
 
-// ---------- Schwierigkeit ----------
+// ---------- Regeln für einen Lauf (Endlos oder Level, mit Schwierigkeitsgrad) ----------
 // Index i = Nummer des Hindernisses = Punktestand, während man darauf zufliegt.
-function tempoBei(punkte) { return Math.min(K.TEMPO_START + punkte * K.TEMPO_PRO_PUNKT, K.TEMPO_MAX); }
-function lueckeBei(i) { return Math.max(K.LUECKE_START - i * K.LUECKE_PRO_PUNKT, K.LUECKE_MIN); }
-function versatzBei(i) {
-  if (i < K.RUHIGE_HINDERNISSE) return 24;
-  return Math.min(K.VERSATZ_START + (i - K.RUHIGE_HINDERNISSE) * K.VERSATZ_PRO_PUNKT, K.VERSATZ_MAX);
+function erstelleKonfig(modus, nr, stufe) {
+  const st = STUFEN[stufe] || STUFEN.normal;
+  stufe = STUFEN[stufe] ? stufe : 'normal';
+  const ruhig = (i, v) => (i < K.RUHIGE_HINDERNISSE ? 24 : v);
+  if (modus !== 'level' || !levelEbene(nr)) {
+    return {
+      modus: 'endlos', nr: 0, stufe, gebiet: 0, anzahl: Infinity, saat: null, abstand: K.ABSTAND,
+      tempo: i => Math.min(K.TEMPO_START + i * K.TEMPO_PRO_PUNKT, K.TEMPO_MAX) * st.tempo,
+      luecke: i => Math.max(K.LUECKE_START - i * K.LUECKE_PRO_PUNKT, K.LUECKE_MIN) + st.luecke,
+      versatz: i => ruhig(i, Math.min(K.VERSATZ_START + (i - K.RUHIGE_HINDERNISSE) * K.VERSATZ_PRO_PUNKT, K.VERSATZ_MAX) * st.versatz),
+      lang: 0, bewegt: 0, amp: () => 0, wind: 0, muenzen: [],
+    };
+  }
+  const L = levelEbene(nr);
+  const q = i => (L.n > 1 ? begrenze(i / (L.n - 1), 0, 1) : 0);
+  const mische = (paar, i) => paar[0] + (paar[1] - paar[0]) * q(i);
+  return {
+    modus: 'level', nr, stufe, gebiet: L.g, anzahl: L.n, saat: 1000 + nr * 7919, abstand: L.abstand || K.ABSTAND,
+    tempo: i => mische(L.tempo, i) * st.tempo,
+    luecke: i => mische(L.luecke, i) + st.luecke,
+    versatz: i => ruhig(i, mische(L.versatz, i) * st.versatz),
+    lang: L.lang || 0,
+    bewegt: L.bewegt || 0,
+    amp: i => (L.amp ? mische(L.amp, i) * st.kraft : 0),
+    wind: (L.wind || 0) * st.kraft,
+    muenzen: [0.25, 0.55, 0.85].map(f => Math.round((L.n - 1) * f)),
+  };
 }
 
-// Durchschnittliche Steiggeschwindigkeit bei bequemem Tippen (aus der echten Physik)
-function steigRate() {
+// Die bisherigen Kurven des Endlos-Flugs (Stufe Normal)
+const ENDLOS_NORMAL = erstelleKonfig('endlos', 0, 'normal');
+function tempoBei(punkte) { return ENDLOS_NORMAL.tempo(punkte); }
+function lueckeBei(i) { return ENDLOS_NORMAL.luecke(i); }
+function versatzBei(i) { return ENDLOS_NORMAL.versatz(i); }
+
+// Durchschnittliche Steiggeschwindigkeit bei bequemem Tippen (aus der echten Physik).
+// Mit Wind wird mit der stärksten Böe nach unten gerechnet.
+function steigRate(schwerkraft = K.SCHWERKRAFT) {
   const t = K.FAIR_TIPP_ABSTAND;
-  return (-K.IMPULS * t - 0.5 * K.SCHWERKRAFT * t * t) / t;
+  return (-K.IMPULS * t - 0.5 * schwerkraft * t * t) / t;
 }
 
 // Größter fairer Höhenunterschied zwischen der Lücke davor (A) und der neuen Lücke (B).
 // Zwischen den Hindernissen bleibt die freie Flugzeit; dazu kommt der Spielraum,
 // den man innerhalb beider Lücken hat (man kann A oben verlassen und B unten erreichen).
-function erlaubterVersatz(i, lueckeA, lueckeB) {
-  const frei = (K.ABSTAND - K.HINDERNIS_B - K.TREFFER_B) / tempoBei(i);
-  const spielraum = Math.max(0, (lueckeA - K.TREFFER_H) / 2 - K.FAIR_SICHERHEIT)
-                  + Math.max(0, (lueckeB - K.TREFFER_H) / 2 - K.FAIR_SICHERHEIT);
-  return steigRate() * frei * K.FAIR_FAKTOR + spielraum;
+// Schwebende Container können im ungünstigsten Fall gegeneinander laufen: ihr
+// Schwebeweg wird abgezogen.
+function erlaubterVersatz(k, i, A, B) {
+  if (typeof k === 'number') { B = { luecke: A }; A = { luecke: i }; i = k; k = ENDLOS_NORMAL; }   // alte Form (i, lueckeA, lueckeB)
+  const frei = (k.abstand - K.HINDERNIS_B - K.TREFFER_B) / k.tempo(i);
+  const spielraum = Math.max(0, (A.luecke - K.TREFFER_H) / 2 - K.FAIR_SICHERHEIT)
+                  + Math.max(0, (B.luecke - K.TREFFER_H) / 2 - K.FAIR_SICHERHEIT);
+  return steigRate(K.SCHWERKRAFT + k.wind) * frei * K.FAIR_FAKTOR + spielraum - (A.amp || 0) - (B.amp || 0);
+}
+
+// Wie hoch trägt ein einzelner Tipp im ungünstigsten Fall (stärkster Aufwind)?
+function schubHoehe(k) {
+  return (K.IMPULS * K.IMPULS) / (2 * (K.SCHWERKRAFT - k.wind));
+}
+
+// ---------- Windplan: feste Folge von Böen pro Level ----------
+function erstelleWindPlan(saat, staerke) {
+  if (!staerke) return [];
+  const z = zufallsGenerator((saat ^ 0xA11CE) >>> 0);
+  const plan = [];
+  let t = K.WIND_ERSTE + z() * 1.2;
+  let letzte = 0;
+  while (t < 600) {
+    const dauer = 1.4 + z() * 0.9;
+    // Höchstens zwei Böen hintereinander in dieselbe Richtung
+    let richtung = z() < 0.5 ? -1 : 1;
+    if (plan.length >= 2 && plan[plan.length - 1].richtung === letzte && plan[plan.length - 2].richtung === letzte) richtung = -letzte;
+    letzte = richtung;
+    plan.push({ start: t, ende: t + dauer, richtung });   // richtung +1 = nach unten, -1 = nach oben
+    t += dauer + 2.3 + z() * 2.2;
+  }
+  return plan;
+}
+
+// Aktuelle Windlage zur Flugzeit t: Beschleunigung, Hinweis und Stärke 0..1
+function windBei(s, t) {
+  const w = s.wind;
+  const plan = s.windPlan;
+  w.a = 0; w.anteil = 0; w.richtung = 0; w.warnung = 0;
+  if (!plan.length) return w;
+  while (w.idx < plan.length - 1 && plan[w.idx].ende <= t) w.idx++;
+  const b = plan[w.idx];
+  if (t >= b.start && t < b.ende) {
+    const anteil = Math.min(1, (t - b.start) / K.WIND_RAMPE, (b.ende - t) / K.WIND_RAMPE);
+    w.anteil = anteil;
+    w.richtung = b.richtung;
+    w.a = s.konfig.wind * b.richtung * anteil;
+  } else if (t < b.start && t >= b.start - K.WIND_WARNUNG) {
+    w.warnung = b.richtung;
+    w.richtung = b.richtung;
+  }
+  return w;
 }
 
 // ---------- Spielstand ----------
-function erstelleSpiel() {
+function erstelleSpiel(konfig) {
   return {
+    konfig: konfig || erstelleKonfig('endlos', 0, 'normal'),
     zustand: ZUSTAND.START,
     zeit: 0,                 // läuft immer (für Animationen)
+    flugzeit: 0,             // läuft nur im Flug (Schwebe-Container, Wind)
     punkte: 0,
+    sterne: 0,
     strecke: 0,              // so weit ist die Welt schon nach links gezogen
     figur: { y: K.FIGUR_START_Y, vy: 0, schub: 99 },
     vorher: { y: K.FIGUR_START_Y, strecke: 0 },   // für weiche Darstellung zwischen zwei Schritten
     hindernisse: [],
     erzeugt: 0,
-    letzteMitte: K.FIGUR_START_Y,
-    letzteLuecke: K.LUECKE_START,
+    naechstesX: 0,
+    zielX: null,
+    letzte: { mitte: K.FIGUR_START_Y, luecke: K.LUECKE_START, amp: 0 },
     rng: zufallsGenerator(1),
+    windPlan: [],
+    wind: { idx: 0, a: 0, anteil: 0, richtung: 0, warnung: 0 },
     unfall: null,            // { art: 'container' | 'wasser' | 'decke', zeit }
+    ziel: null,              // { zeit }
     ereignisse: [],
     statistik: { impulse: 0, starts: 0 },
   };
 }
 
-function erzeugeHindernis(s) {
-  const i = s.erzeugt++;
-  const luecke = lueckeBei(i);
-  const oben = K.LUECKE_OBEN_MIN + luecke / 2;
-  const unten = K.LUECKE_UNTEN_MAX - luecke / 2;
-  const d = Math.min(versatzBei(i), erlaubterVersatz(i, s.letzteLuecke, luecke));
-  // Begrenzen kann den Versatz nur verkleinern (die vorige Mitte liegt immer im erlaubten Bereich)
-  const mitte = begrenze(s.letzteMitte + (s.rng() * 2 - 1) * d, oben, unten);
-  s.letzteMitte = mitte;
-  s.letzteLuecke = luecke;
-  s.hindernisse.push({
-    i,
-    x: K.FIGUR_X + K.ANFLUG + i * K.ABSTAND,   // linke Kante in Weltkoordinaten
-    oben: mitte - luecke / 2,                  // Oberkante der freien Lücke
-    unten: mitte + luecke / 2,                 // Unterkante der freien Lücke
-    gezaehlt: false,
-    saat: Math.floor(s.rng() * 1e9),           // nur für Farben und Aufkleber
-  });
-}
-
-// Hält genug Hindernisse vor der Figur bereit und räumt hinten auf
-function fuelleHindernisse(s) {
-  while (!s.hindernisse.length || s.hindernisse[s.hindernisse.length - 1].x < s.strecke + K.BREITE + K.ABSTAND) {
-    erzeugeHindernis(s);
-  }
-  while (s.hindernisse.length && s.hindernisse[0].x + K.HINDERNIS_B < s.strecke - 40) s.hindernisse.shift();
-}
-
-function neuStart(s, saat) {
-  s.zustand = ZUSTAND.SPIELEN;
+// Anderen Modus oder anderes Level wählen: zurück in den Startzustand
+function waehle(s, konfig) {
+  s.konfig = konfig;
+  s.zustand = ZUSTAND.START;
   s.punkte = 0;
+  s.sterne = 0;
   s.strecke = 0;
+  s.flugzeit = 0;
   s.figur.y = K.FIGUR_START_Y;
   s.figur.vy = 0;
   s.figur.schub = 99;
@@ -554,11 +821,94 @@ function neuStart(s, saat) {
   s.vorher.strecke = 0;
   s.hindernisse = [];
   s.erzeugt = 0;
-  s.letzteMitte = K.FIGUR_START_Y;
-  s.letzteLuecke = K.LUECKE_START;
-  s.rng = zufallsGenerator(saat === undefined ? (Date.now() ^ 0x5eed) : saat);
+  s.zielX = null;
   s.unfall = null;
+  s.ziel = null;
+  s.windPlan = [];
+  s.wind.idx = 0; s.wind.a = 0; s.wind.anteil = 0; s.wind.richtung = 0; s.wind.warnung = 0;
   s.ereignisse.length = 0;
+}
+
+// Setzt die Lücke eines schwebenden Containers auf die aktuelle Flugzeit
+function bewegeHindernis(h, t) {
+  const v = h.amp ? h.amp * Math.sin(h.frq * t + h.phase) : 0;
+  h.versatz = v;
+  h.oben = h.oben0 + v;
+  h.unten = h.unten0 + v;
+}
+
+function erzeugeHindernis(s) {
+  const k = s.konfig;
+  if (s.erzeugt >= k.anzahl) return false;
+  const i = s.erzeugt++;
+  const z = s.rng;
+  // Reihenfolge der Zufallszahlen ist fest, damit ein Level immer gleich aussieht
+  const lang = i >= K.RUHIGE_HINDERNISSE && z() < k.lang;
+  let amp = 0;
+  let frq = 0;
+  let phase = 0;
+  if (!lang && i >= K.RUHIGE_HINDERNISSE && z() < k.bewegt) {
+    amp = k.amp(i);
+    frq = K.SCHWEBE_FRQ[0] + z() * (K.SCHWEBE_FRQ[1] - K.SCHWEBE_FRQ[0]);
+    phase = z() * Math.PI * 2;
+  }
+  const b = lang ? K.LANG_B : K.HINDERNIS_B;
+  // Jede Lücke bietet mindestens den vollen Schubweg (bei Aufwind länger) plus Figur plus Luft
+  const luecke = Math.max(k.luecke(i) + (lang ? K.LANG_EXTRA : 0), schubHoehe(k) + K.TREFFER_H + K.LUECKE_RESERVE);
+  // Ein Tipp trägt immer ganz nach oben (mit Aufwind höher). Die Figur braucht in der Lücke
+  // mindestens diesen Schubweg plus ihre Größe; nur was übrig bleibt, darf die Lücke schweben.
+  if (amp) {
+    amp = Math.min(amp, luecke - schubHoehe(k) - K.TREFFER_H - K.SCHWEBE_RESERVE);
+    if (amp < 6) amp = 0;
+  }
+  const oben = K.LUECKE_OBEN_MIN + luecke / 2 + amp;
+  const unten = K.LUECKE_UNTEN_MAX - luecke / 2 - amp;
+  const neu = { luecke, amp };
+  const d = Math.max(0, Math.min(k.versatz(i), erlaubterVersatz(k, i, s.letzte, neu)));
+  // Begrenzen verkleinert den Versatz fast immer; die Tests prüfen, dass er erlaubt bleibt
+  const mitte = begrenze(s.letzte.mitte + (z() * 2 - 1) * d, oben, unten);
+  s.letzte = { mitte, luecke, amp };
+  const x = i === 0 ? K.FIGUR_X + K.ANFLUG : s.naechstesX;
+  s.naechstesX = x + b + (k.abstand - K.HINDERNIS_B);
+  const h = {
+    i,
+    x,                                       // linke Kante in Weltkoordinaten
+    b,                                       // Breite
+    lang,
+    mitte0: mitte,
+    oben0: mitte - luecke / 2,               // Oberkante der freien Lücke (ohne Schweben)
+    unten0: mitte + luecke / 2,              // Unterkante der freien Lücke (ohne Schweben)
+    amp, frq, phase,
+    versatz: 0,
+    oben: 0,
+    unten: 0,
+    gezaehlt: false,
+    muenze: k.muenzen.includes(i),
+    geholt: false,
+    saat: Math.floor(z() * 1e9),             // nur für Farben und Aufkleber
+  };
+  bewegeHindernis(h, s.flugzeit);
+  s.hindernisse.push(h);
+  if (s.erzeugt >= k.anzahl) s.zielX = x + b + 70;
+  return true;
+}
+
+// Hält genug Hindernisse vor der Figur bereit und räumt hinten auf
+function fuelleHindernisse(s) {
+  while (s.erzeugt < s.konfig.anzahl && (!s.hindernisse.length || s.hindernisse[s.hindernisse.length - 1].x < s.strecke + K.BREITE + K.ABSTAND)) {
+    erzeugeHindernis(s);
+  }
+  while (s.hindernisse.length && s.hindernisse[0].x + s.hindernisse[0].b < s.strecke - 40) s.hindernisse.shift();
+}
+
+function neuStart(s, saat) {
+  const k = s.konfig;
+  waehle(s, k);
+  s.zustand = ZUSTAND.SPIELEN;
+  s.letzte = { mitte: K.FIGUR_START_Y, luecke: k.luecke(0), amp: 0 };
+  const startwert = k.saat !== null ? k.saat : (saat === undefined ? (Date.now() ^ 0x5eed) : saat);
+  s.rng = zufallsGenerator(startwert);
+  s.windPlan = erstelleWindPlan(startwert, k.wind);
   s.statistik.starts++;
   fuelleHindernisse(s);
 }
@@ -592,7 +942,7 @@ function eingabe(s, saat) {
       if (!kannStarten(s)) return null;
       starte(s, saat);
       return 'start';
-    default: return null;   // in der Pause zählt nur „Weiter“
+    default: return null;   // in der Pause zählt nur „Weiter“, im Ziel die Knöpfe
   }
 }
 
@@ -619,11 +969,10 @@ function trefferFlaeche(s) {
 }
 
 // Trifft die Figur ein Hindernis? Container oben reichen von der Kranbahn bis zur Lücke,
-// Stapel unten von der Lücke bis ins Wasser. Seile liegen innerhalb dieser Fläche über
-// den Containern und sind zu kurz, um hindurchzupassen: kein unerwartetes Hindernis.
+// Stapel unten von der Lücke bis ins Wasser.
 function trifftHindernis(t, h) {
   const l = h.x + K.HINDERNIS_EINZUG;
-  const r = h.x + K.HINDERNIS_B - K.HINDERNIS_EINZUG;
+  const r = h.x + h.b - K.HINDERNIS_EINZUG;
   if (t.r <= l || t.l >= r) return false;
   return t.o < h.oben || t.u > h.unten;
 }
@@ -646,20 +995,54 @@ function unfall(s, art) {
   s.ereignisse.push({ typ: 'unfall', art });
 }
 
+// Wo liegt der Stern eines Hindernisses gerade?
+function sternPos(h) { return { x: h.x + h.b / 2, y: (h.oben + h.unten) / 2 }; }
+
+function aktuellesTempo(s) {
+  if (s.zustand !== ZUSTAND.SPIELEN && s.zustand !== ZUSTAND.ZIEL) return 0;
+  return s.konfig.tempo(Math.min(s.punkte, s.konfig.anzahl - 1));
+}
+
 function schritt(s, dt) {
   s.zeit += dt;
   s.vorher.y = s.figur.y;
   s.vorher.strecke = s.strecke;
 
   if (s.zustand === ZUSTAND.ENDE) { s.unfall.zeit += dt; return; }
+  if (s.zustand === ZUSTAND.ZIEL) {
+    // Ausflug nach dem Ziel: keine Hindernisse mehr, Figur gleitet in die Mitte
+    s.ziel.zeit += dt;
+    s.flugzeit += dt;
+    s.strecke += aktuellesTempo(s) * dt;
+    s.figur.vy = 0;
+    s.figur.schub += dt;
+    s.figur.y += (K.FIGUR_START_Y - s.figur.y) * Math.min(1, dt * 2.5);
+    for (const h of s.hindernisse) if (h.amp) bewegeHindernis(h, s.flugzeit);
+    return;
+  }
   if (s.zustand !== ZUSTAND.SPIELEN) return;
 
+  s.flugzeit += dt;
+  const wind = windBei(s, s.flugzeit);
   const f = s.figur;
   f.schub += dt;
-  f.vy = Math.min(f.vy + K.SCHWERKRAFT * dt, K.MAX_FALL);
+  f.vy = Math.min(f.vy + (K.SCHWERKRAFT + wind.a) * dt, K.MAX_FALL);
   f.y += f.vy * dt;
-  s.strecke += tempoBei(s.punkte) * dt;
+  s.strecke += aktuellesTempo(s) * dt;
   fuelleHindernisse(s);
+  for (const h of s.hindernisse) if (h.amp) bewegeHindernis(h, s.flugzeit);
+
+  // Sterne einsammeln (vor der Kollision: wer ihn berührt, hat ihn)
+  const fx = s.strecke + K.FIGUR_X;
+  for (const h of s.hindernisse) {
+    if (!h.muenze || h.geholt) continue;
+    const p = sternPos(h);
+    if ((p.x - fx) ** 2 + (p.y - f.y) ** 2 < K.MUENZE_RADIUS ** 2) {
+      h.geholt = true;
+      s.sterne++;
+      s.ereignisse.push({ typ: 'stern', sterne: s.sterne, x: p.x - s.strecke, y: p.y });
+    }
+  }
 
   const art = pruefeKollision(s);
   if (art) { unfall(s, art); return; }
@@ -667,19 +1050,25 @@ function schritt(s, dt) {
   // Punkt erst, wenn die Trefferfläche das Hindernis ganz hinter sich hat; jedes Paar nur einmal
   const links = s.strecke + K.FIGUR_X - K.TREFFER_B / 2;
   for (const h of s.hindernisse) {
-    if (!h.gezaehlt && links > h.x + K.HINDERNIS_B) {
+    if (!h.gezaehlt && links > h.x + h.b) {
       h.gezaehlt = true;
       s.punkte++;
       s.ereignisse.push({ typ: 'punkt', punkte: s.punkte });
     }
   }
+
+  if (s.punkte >= s.konfig.anzahl) {
+    s.zustand = ZUSTAND.ZIEL;
+    s.ziel = { zeit: 0 };
+    s.ereignisse.push({ typ: 'ziel', sterne: s.sterne });
+  }
 }
 
 // ===================================================================
-// 3 · SPEICHER
-// Rekord und Ton-Einstellung im Browser, mit versionierter Kennung.
-// Ist localStorage gesperrt (z. B. privater Modus), merkt sich das Spiel
-// die Werte nur bis zum Neuladen – es läuft trotzdem.
+// 4 · SPEICHER
+// Rekorde, Levelfortschritt, Schwierigkeit und Ton im Browser, mit
+// versionierter Kennung. Ist localStorage gesperrt (z. B. privater Modus),
+// merkt sich das Spiel die Werte nur bis zum Neuladen – es läuft trotzdem.
 // ===================================================================
 
 const Speicher = (() => {
@@ -706,14 +1095,49 @@ const Speicher = (() => {
     try { const l = lager(); if (l) l.setItem(key, String(wert)); } catch (e) { /* gesperrt oder voll */ }
   }
 
+  // Der Endlos-Rekord der Stufe „Normal“ behält die alte Kennung, damit er erhalten bleibt
+  const rekordName = stufe => (stufe && stufe !== 'normal' ? 'rekord.' + stufe : 'rekord');
+
+  // Levelfortschritt: { geschafft: [Nummern], sterne: { Nummer: 0..3 } }
+  function fortschritt() {
+    let d = null;
+    try { d = JSON.parse(lies('level', 'null')); } catch (e) { d = null; }
+    const ok = { geschafft: [], sterne: {} };
+    if (!d || typeof d !== 'object') return ok;
+    if (Array.isArray(d.geschafft)) ok.geschafft = d.geschafft.filter(n => Number.isInteger(n) && n > 0 && n < 1000);
+    if (d.sterne && typeof d.sterne === 'object') {
+      for (const [k, v] of Object.entries(d.sterne)) {
+        const n = parseInt(k, 10);
+        if (n > 0 && Number.isInteger(v)) ok.sterne[n] = Math.max(0, Math.min(3, v));
+      }
+    }
+    return ok;
+  }
+
   return {
-    rekord() {
-      const n = parseInt(lies('rekord', '0'), 10);
+    rekord(stufe) {
+      const n = parseInt(lies(rekordName(stufe), '0'), 10);
       return Number.isFinite(n) && n > 0 ? n : 0;
     },
-    setzeRekord(n) { schreib('rekord', Math.floor(n)); },
+    setzeRekord(n, stufe) { schreib(rekordName(stufe), Math.floor(n)); },
     tonAn() { return lies('ton', '1') !== '0'; },
     setzeTon(an) { schreib('ton', an ? '1' : '0'); },
+    stufe() {
+      const s = lies('stufe', 'normal');
+      return s === 'leicht' || s === 'schwer' ? s : 'normal';
+    },
+    setzeStufe(s) { schreib('stufe', s); },
+    fortschritt,
+    // Level geschafft: merkt sich das beste Sternergebnis. Gibt zurück, was neu ist.
+    levelGeschafft(nr, sterne) {
+      const d = fortschritt();
+      const erstmals = !d.geschafft.includes(nr);
+      if (erstmals) d.geschafft.push(nr);
+      const vorher = d.sterne[nr] || 0;
+      d.sterne[nr] = Math.max(vorher, sterne);
+      schreib('level', JSON.stringify(d));
+      return { erstmals, mehrSterne: sterne > vorher };
+    },
   };
 })();
 
@@ -880,6 +1304,23 @@ const Ton = (() => {
       knatter.connect(fil).connect(am).connect(pg).connect(haupt);
       knatter.start(p0); takt.start(p0);
       knatter.stop(p0 + 0.4); takt.stop(p0 + 0.4);
+    },
+
+    // Stern eingesammelt: helles Glitzer-Arpeggio, mit jedem Stern eine Stufe höher
+    stern(nummer = 1) {
+      if (!bereit()) return;
+      const basis = [784, 880, 988][Math.max(0, Math.min(2, nummer - 1))];
+      [1, 1.25, 1.5, 2].forEach((f, i) => {
+        ton(basis * f, basis * f, 0.14, { typ: 'triangle', laut: 0.2, start: i * 0.045 });
+        ton(basis * f * 2, basis * f * 2, 0.08, { typ: 'sine', laut: 0.05, start: i * 0.045 });
+      });
+    },
+
+    // Böe: weiches Rauschen, das steigt (Aufwind) oder fällt (Fallwind)
+    wind(richtung) {
+      if (!bereit()) return;
+      const hoch = richtung < 0;
+      rauschStoss(0.7, { laut: 0.12, typ: 'bandpass', f1: hoch ? 500 : 1600, f2: hoch ? 1600 : 450, q: 1.4 });
     },
 
     // Kleines Platschen zusätzlich bei Wasserlandung
@@ -1273,9 +1714,106 @@ const Grafik = (() => {
   let p = null;   // Maler für das Hauptbild
 
   // ===================================================================
+  // Themen: Jedes Gebiet hat eigenen Himmel, eigenes Wasser, eigene Fernkulisse
+  // und eigenes Wetter. Kräne und Schiffe werden wiederverwendet und passend
+  // eingefärbt; Lichter und Schnee kommen nach dem Einfärben dazu.
+  // ===================================================================
+  const THEMEN = [
+    { // 0 · Sonnenhafen
+      himmel: [[0, '#6FCBF2'], [110, '#80D3F4'], [190, '#93DCF6'], [250, '#A7E4F7'], [300, '#BCEBF7'], [342, '#D2F2F5'], [380, '#E6F6EE'], [412, '#F7F3DD'], [436, '#FFEFD0']],
+      wasser: ['#86D3E9', '#6CC4E2', '#59B5DA', '#47A3CF', '#3A92C3', '#3080B5'],
+      vorne: ['#2A86B8', '#1F6F9E', '#185A85', '#123F60'],
+      schaum: ['#D9F6F8', '#9EE3EE'], wellen: ['#3A97C6', '#2D7AA6', '#1D5A80'],
+      glanz: 'rgba(255, 255, 255, 0.28)', glitzer: 'rgba(255, 255, 255, 0.85)',
+      wolken: ['#FFF9EE', '#E2F1F8'],
+      himmelExtra: hp => { hp.kreis(284, 132, 44, 'rgba(255, 246, 205, 0.45)'); hp.kreis(284, 132, 32, '#FFE58A'); hp.kreis(280, 128, 22, '#FFF0B8'); },
+      fern: malKueste, fernDunst: 'rgba(205, 238, 250, 0.22)',
+      mitteDunst: 'rgba(205, 238, 250, 0.12)', schiffDunst: 'rgba(205, 238, 250, 0.1)',
+      wetter: null, kulisse: '#9FE3FF',
+    },
+    { // 1 · Werft im Nebel
+      himmel: [[0, '#AFC3D2'], [110, '#BCCCD8'], [190, '#C8D4DC'], [250, '#D3DBDF'], [300, '#DEE1E1'], [342, '#E8E5E0'], [380, '#F0E8DE'], [412, '#F5E9DA'], [436, '#F8EAD6']],
+      wasser: ['#A9C4C9', '#98B8BF', '#88ACB5', '#7A9FAA', '#6C939F', '#5F8794'],
+      vorne: ['#55808D', '#46717F', '#3A6371', '#2B4D59'],
+      schaum: ['#E4EEEE', '#B9CFD2'], wellen: ['#6E97A2', '#5A8590', '#466F7A'],
+      glanz: 'rgba(255, 255, 255, 0.22)', glitzer: 'rgba(255, 250, 235, 0.7)',
+      wolken: ['#F2EFEA', '#DCE2E6'],
+      himmelExtra: hp => { hp.kreis(250, 170, 46, 'rgba(255, 240, 215, 0.4)'); hp.kreis(250, 170, 30, '#FBE9CC'); },
+      fern: malWerft, fernDunst: 'rgba(232, 236, 238, 0.42)',
+      mitteDunst: 'rgba(225, 230, 234, 0.32)', schiffDunst: 'rgba(225, 230, 234, 0.22)',
+      wetter: 'nebel', kulisse: '#C8D4DC',
+    },
+    { // 2 · Abendmarkt
+      himmel: [[0, '#5B3C8C'], [90, '#734396'], [160, '#9A4E9A'], [220, '#C55E94'], [270, '#E8738A'], [315, '#F7907E'], [355, '#FCAE77'], [395, '#FEC97B'], [428, '#FFDD96']],
+      wasser: ['#E9A383', '#CF8A88', '#B0738C', '#92628D', '#77528A', '#5F447D'],
+      vorne: ['#57407A', '#48356A', '#3A2B5A', '#291F44'],
+      schaum: ['#FFE0C8', '#E9A9A8'], wellen: ['#7E5A92', '#68497F', '#52386A'],
+      glanz: 'rgba(255, 220, 170, 0.35)', glitzer: 'rgba(255, 226, 160, 0.9)',
+      wolken: ['#F9B6A2', '#E58E98'],
+      himmelExtra: hp => { hp.kreis(108, 420, 70, 'rgba(255, 214, 140, 0.35)'); hp.kreis(108, 420, 48, '#FFD27A'); hp.kreis(104, 414, 34, '#FFE7A6'); },
+      fern: malMarkt, fernDunst: 'rgba(250, 160, 140, 0.16)', fernLicht: lichterMarkt,
+      mitteDunst: 'rgba(120, 60, 110, 0.32)', mitteLicht: lichterHallen,
+      schiffDunst: 'rgba(120, 60, 110, 0.28)', schiffLicht: lichterSchiffe,
+      wetter: 'laternen', kulisse: '#C55E94',
+    },
+    { // 3 · Nachthafen
+      himmel: [[0, '#0B1630'], [110, '#0F1D3D'], [190, '#13244A'], [250, '#182C57'], [300, '#1D3464'], [342, '#233D70'], [380, '#2A477B'], [412, '#315083'], [436, '#38588A']],
+      wasser: ['#2E4C78', '#28446E', '#223C63', '#1D3459', '#192D4F', '#142645'],
+      vorne: ['#14284A', '#10213F', '#0C1A33', '#081227'],
+      schaum: ['#9FB8D8', '#5F7FAE'], wellen: ['#2C4A78', '#233E68', '#1A3156'],
+      glanz: 'rgba(255, 220, 140, 0.3)', glitzer: 'rgba(255, 220, 140, 0.9)',
+      wolken: null,
+      himmelExtra: hp => { sterneMalen(hp, 60, 300); hp.kreis(270, 110, 40, 'rgba(244, 239, 216, 0.12)'); hp.kreis(270, 110, 24, '#F4EFD8'); hp.kreis(280, 104, 20, '#13244A'); },
+      fern: malStadt, fernDunst: 'rgba(10, 22, 50, 0.35)', fernLicht: lichterStadt,
+      mitteDunst: 'rgba(8, 18, 45, 0.55)', mitteLicht: lichterHallen,
+      schiffDunst: 'rgba(8, 18, 45, 0.5)', schiffLicht: lichterSchiffe,
+      wetter: 'sterne', kulisse: '#13244A',
+    },
+    { // 4 · Sturmküste
+      himmel: [[0, '#47535F'], [110, '#53606C'], [190, '#5F6C77'], [250, '#6B7782'], [300, '#77828C'], [342, '#838D96'], [380, '#8F98A0'], [412, '#9AA2A9'], [436, '#A4ABB1']],
+      wasser: ['#62797F', '#566E75', '#4B636B', '#405961', '#364F57', '#2C454E'],
+      vorne: ['#2E4A52', '#264048', '#1E363E', '#152A31'],
+      schaum: ['#E3ECEC', '#AFC2C4'], wellen: ['#4C6970', '#3F5C63', '#2F4C53'],
+      glanz: 'rgba(230, 240, 240, 0.25)', glitzer: 'rgba(230, 240, 245, 0.6)',
+      wolken: ['#3E4954', '#323C46'], wolkenGross: true,
+      himmelExtra: () => {},
+      fern: malKlippen, fernDunst: 'rgba(160, 170, 178, 0.22)', fernLicht: lichterLeuchtturm,
+      mitteDunst: 'rgba(90, 100, 110, 0.38)', schiffDunst: 'rgba(90, 100, 110, 0.32)',
+      wetter: 'regen', kulisse: '#53606C',
+    },
+    { // 5 · Eishafen
+      himmel: [[0, '#93D1EC'], [110, '#A5DAF0'], [190, '#B6E2F3'], [250, '#C7E9F5'], [300, '#D6EFF7'], [342, '#E3F4F8'], [380, '#EDF7F9'], [412, '#F5FAFB'], [436, '#FAFCFC']],
+      wasser: ['#94CDDD', '#81C0D3', '#6FB3C9', '#60A6BF', '#529AB4', '#468DA9'],
+      vorne: ['#3E86A4', '#337896', '#286A88', '#1D5774'],
+      schaum: ['#FFFFFF', '#CDEFF6'], wellen: ['#4E9CBC', '#3C8AAA', '#2C7494'],
+      glanz: 'rgba(255, 255, 255, 0.45)', glitzer: 'rgba(255, 255, 255, 0.95)',
+      wolken: ['#FFFFFF', '#DDEEF6'],
+      himmelExtra: hp => { hp.kreis(84, 112, 36, 'rgba(255, 250, 225, 0.45)'); hp.kreis(84, 112, 22, '#FFF6D8'); },
+      fern: malEis, fernDunst: 'rgba(225, 245, 252, 0.2)',
+      mitteDunst: 'rgba(205, 235, 250, 0.2)', mitteLicht: schneeHallen,
+      schiffDunst: 'rgba(205, 235, 250, 0.16)', schiffLicht: schneeSchiffe,
+      wetter: 'schnee', kulisse: '#B6E2F3',
+    },
+    { // 6 · Hafenfest
+      himmel: [[0, '#1A1240'], [110, '#22184F'], [190, '#2B1E5C'], [250, '#352569'], [300, '#402C74'], [342, '#4C347E'], [380, '#593D86'], [412, '#67468C'], [436, '#744F90']],
+      wasser: ['#56488E', '#4B4084', '#423878', '#39316D', '#302A62', '#282357'],
+      vorne: ['#2A2458', '#221D4B', '#1B173E', '#120F2E'],
+      schaum: ['#D9C8FF', '#9C86D6'], wellen: ['#4B3F86', '#3F3575', '#322A62'],
+      glanz: 'rgba(255, 200, 230, 0.3)', glitzer: 'rgba(255, 214, 120, 0.95)',
+      wolken: null,
+      himmelExtra: hp => sterneMalen(hp, 40, 260),
+      fern: malFest, fernDunst: 'rgba(40, 20, 80, 0.25)', fernLicht: lichterFest,
+      mitteDunst: 'rgba(30, 15, 70, 0.5)', mitteLicht: lichterHallen,
+      schiffDunst: 'rgba(30, 15, 70, 0.45)', schiffLicht: lichterSchiffe,
+      wetter: 'feuerwerk', kulisse: '#2B1E5C',
+    },
+  ];
+  let thema = 0;
+
+  // ===================================================================
   // Vorgezeichnete Hintergrundebenen
   // ===================================================================
-  function ebene(breite, y0, hoehe, malen, dunst) {
+  function ebene(breite, y0, hoehe, malen, dunst, nachher) {
     const c = leinwand(breite * skala, hoehe * skala);
     const g = c.getContext('2d');
     malen(maler(g, skala, y0));
@@ -1286,180 +1824,378 @@ const Grafik = (() => {
       g.fillRect(0, 0, c.width, c.height);
       g.globalCompositeOperation = 'source-over';
     }
+    if (nachher) nachher(maler(g, skala, y0));
     return { c, breite, y0, devB: c.width };
   }
 
+  function sterneMalen(hp, anzahl, bisY) {
+    const z = zufallsGenerator(99);
+    for (let i = 0; i < anzahl; i++) {
+      const x = Math.floor(z() * B / 2) * 2;
+      const y = Math.floor(z() * bisY / 2) * 2;
+      hp.r(x, y, 2, 2, z() < 0.25 ? 'rgba(255, 220, 140, 0.8)' : 'rgba(255, 250, 235, 0.65)');
+    }
+  }
+
+  // ---------- Fernkulissen (Breite 720, wiederholt sich) ----------
+  function malKueste(f) {
+    const z = zufallsGenerator(7);
+    for (let x = 0; x < 720; x += 24) {
+      const h = 6 + Math.floor(z() * 4) * 4;
+      f.r(x, HORIZONT - h, 24, h, z() < 0.5 ? '#A9D6EA' : '#9DCDE4');
+    }
+    // Landzunge
+    const huegel = [[440, 6], [452, 12], [464, 18], [480, 24], [500, 30], [530, 34], [600, 36], [640, 30], [660, 22], [676, 14], [690, 6]];
+    for (let i = 0; i < huegel.length - 1; i++) {
+      const [x, h] = huegel[i];
+      f.r(x, HORIZONT - h, huegel[i + 1][0] - x, h, '#8DC2DC');
+    }
+    // Häuschen
+    for (const [x, w, h, d] of [[478, 16, 12, '#EAB7A6'], [498, 12, 10, '#F3E3C4'], [630, 14, 12, '#EAB7A6']]) {
+      f.r(x, HORIZONT - 24 - h + 2, w, h, d);
+      f.r(x - 2, HORIZONT - 24 - h - 2, w + 4, 4, '#C98B7A');
+    }
+    // Leuchtturm
+    const lx = 584;
+    const fuss = HORIZONT - 36;
+    for (let y = 330; y < fuss; y += 4) {
+      const w = 10 + Math.round(((y - 330) / (fuss - 330)) * 10 / 2) * 2;
+      f.r(lx - w / 2, y, w, 4, Math.floor((y - 330) / 12) % 2 === 0 ? '#F4A08A' : '#FFF4DC');
+    }
+    f.kreis(lx, 318, 16, 'rgba(255, 238, 160, 0.55)');
+    f.r(lx - 13, 326, 26, 4, '#4B7FA6');
+    f.r(lx - 7, 314, 14, 12, '#FFE07A');
+    f.r(lx - 1, 314, 2, 12, '#4B7FA6');
+    f.r(lx - 9, 310, 18, 4, '#E9876F');
+    f.r(lx - 6, 306, 12, 4, '#E9876F');
+    f.r(lx - 2, 302, 4, 4, '#E9876F');
+  }
+
+  // Werft: Schiffsrumpf auf der Helling mit Gerüst, Portalkran, Werfthalle
+  function malWerft(f) {
+    for (let x = 0; x < 720; x += 24) f.r(x, HORIZONT - 8, 24, 8, '#9DB3C1');
+    // Rumpf
+    for (let y = 372; y < HORIZONT - 6; y += 4) {
+      const einzug = Math.max(0, (y - 410) * 1.6);
+      f.r(70 + einzug * 0.4, y, 230 - einzug, 4, y > 420 ? '#C3907F' : '#8EA3B4');
+    }
+    f.r(70, 368, 230, 4, '#A9BAC7');
+    f.r(250, 346, 34, 22, '#A9BAC7');
+    f.r(256, 334, 10, 12, '#8EA3B4');
+    // Gerüst
+    for (let x = 60; x <= 310; x += 18) f.r(x, 330, 2, HORIZONT - 330, '#AEBECA');
+    for (let y = 340; y < HORIZONT; y += 22) f.r(58, y, 256, 2, '#AEBECA');
+    // Portalkran
+    f.r(370, 318, 6, HORIZONT - 318, '#9AAEBE');
+    f.r(470, 318, 6, HORIZONT - 318, '#9AAEBE');
+    f.r(356, 310, 136, 8, '#9AAEBE');
+    f.r(410, 318, 22, 12, '#8A9FB0');
+    f.r(420, 330, 2, 30, '#8A9FB0');
+    // Halle
+    f.r(540, 360, 150, HORIZONT - 360, '#A0B4C3');
+    for (let dx = 0; dx < 150; dx += 30) { f.r(540 + dx, 352, 30, 8, '#93A8B8'); f.r(548 + dx, 346, 14, 6, '#93A8B8'); }
+    f.r(590, 388, 50, HORIZONT - 388, '#8A9FB0');
+  }
+
+  // Abendmarkt: Giebelhäuser, Kirchturm, Markthalle
+  function malMarkt(f) {
+    const z = zufallsGenerator(21);
+    const farben = ['#9C5E8E', '#8A527F', '#B06A8E', '#A25F86'];
+    for (let x = 0; x < 720;) {
+      const w = 26 + Math.floor(z() * 4) * 4;
+      const h = 30 + Math.floor(z() * 6) * 5;
+      const farbe = farben[Math.floor(z() * farben.length)];
+      f.r(x, HORIZONT - h, w, h, farbe);
+      for (let s = 2; s < w / 2; s += 2) f.r(x + s, HORIZONT - h - s, w - s * 2, 2, farbe);
+      x += w + 2;
+    }
+    // Kirchturm
+    f.r(420, 330, 24, HORIZONT - 330, '#7E4A77');
+    for (let s = 0; s < 12; s++) f.r(424 + s / 2, 330 - s * 3, 16 - s, 3, '#7E4A77');
+    f.r(429, 346, 6, 8, '#6A3C64');
+  }
+  function lichterMarkt(f) {
+    const z = zufallsGenerator(22);
+    for (let i = 0; i < 46; i++) {
+      const x = Math.floor(z() * 700 / 2) * 2 + 6;
+      const y = HORIZONT - 8 - Math.floor(z() * 7) * 5;
+      f.r(x, y, 4, 4, z() < 0.6 ? '#FFD98A' : '#FFB86A');
+    }
+    f.r(430, 348, 4, 4, '#FFD98A');
+  }
+
+  // Nachthafen: Hochhäuser und Speicher mit erleuchteten Fenstern
+  function malStadt(f) {
+    const z = zufallsGenerator(31);
+    for (let x = 0; x < 720;) {
+      const w = 30 + Math.floor(z() * 5) * 6;
+      const h = 34 + Math.floor(z() * 9) * 9;
+      f.r(x, HORIZONT - h, w, h, z() < 0.5 ? '#203760' : '#1A2E54');
+      if (z() < 0.3) f.r(x + w / 2 - 1, HORIZONT - h - 12, 2, 12, '#203760');
+      x += w + 4;
+    }
+  }
+  function lichterStadt(f) {
+    const z = zufallsGenerator(32);
+    for (let i = 0; i < 120; i++) {
+      const x = Math.floor(z() * 700 / 4) * 4 + 6;
+      const y = HORIZONT - 10 - Math.floor(z() * 16) * 6;
+      if (z() < 0.55) f.r(x, y, 2, 3, z() < 0.7 ? 'rgba(255, 214, 120, 0.9)' : 'rgba(150, 220, 255, 0.8)');
+    }
+    for (let x = 30; x < 720; x += 140) f.r(x, HORIZONT - 90, 2, 2, '#FF5A5A');
+  }
+
+  // Sturmküste: Felsklippen mit Leuchtturm
+  function malKlippen(f) {
+    const z = zufallsGenerator(41);
+    let h = 20;
+    for (let x = 0; x < 720; x += 8) {
+      const ziel = x > 380 && x < 680 ? 92 : 24;
+      h += (ziel - h) * 0.12 + (z() * 2 - 1) * 4;
+      f.r(x, HORIZONT - h, 8, h, x % 16 === 0 ? '#58665F' : '#52605A');
+      f.r(x, HORIZONT - h, 8, 3, '#6C7C74');
+    }
+    const lx = 540;
+    const fuss = HORIZONT - 96;
+    for (let y = fuss - 64; y < fuss; y += 4) {
+      const w = 10 + Math.round(((y - fuss + 64) / 64) * 6 / 2) * 2;
+      f.r(lx - w / 2, y, w, 4, Math.floor((y - fuss + 64) / 12) % 2 === 0 ? '#D96E5E' : '#ECE6DA');
+    }
+    f.r(lx - 9, fuss - 76, 18, 12, '#3B4650');
+    f.r(lx - 7, fuss - 82, 14, 6, '#C25A4C');
+  }
+  function lichterLeuchtturm(f) {
+    const lx = 540;
+    const y = HORIZONT - 96 - 70;
+    for (let i = 0; i < 9; i++) f.r(lx + 8 + i * 12, y - 1 - i * 1.5, 12, 3 + i * 3, `rgba(255, 238, 170, ${0.32 - i * 0.03})`);
+    f.r(lx - 5, y - 3, 10, 6, '#FFE58A');
+  }
+
+  // Eishafen: Gletscherberge und Eisberge
+  function malEis(f) {
+    const berg = (x, w, h, farbe, kappe) => {
+      for (let s = 0; s < h; s += 4) {
+        const bw = w * (s / h);
+        f.r(x + (w - bw) / 2, HORIZONT - h + s, bw, 4, s < h * 0.3 ? kappe : farbe);
+      }
+    };
+    berg(-30, 240, 120, '#BBD9E6', '#F4FBFF');
+    berg(180, 200, 96, '#B2D2E0', '#F4FBFF');
+    berg(400, 280, 136, '#BBD9E6', '#F4FBFF');
+    berg(640, 160, 84, '#B2D2E0', '#F4FBFF');
+    // Eisberge im Wasser
+    for (const [x, w, h] of [[120, 54, 26], [330, 40, 20], [560, 70, 32]]) {
+      for (let s = 0; s < h; s += 2) {
+        const bw = Math.min(w, 12 + s * 2.4);
+        f.r(x + (w - bw) / 2, HORIZONT - h + s, bw, 2, s < 6 ? '#FFFFFF' : '#DDF1FA');
+      }
+      f.r(x + w / 2, HORIZONT - h + 6, w / 2 - 4, h - 6, '#C2E3F1');
+    }
+  }
+
+  // Hafenfest: Riesenrad, Festzelte, Lampionketten
+  function malFest(f) {
+    // Zelte
+    for (const [x, w, h] of [[40, 70, 40], [150, 90, 52], [270, 60, 34]]) {
+      for (let s = 0; s < h; s += 2) {
+        const bw = Math.min(w, 8 + s * 2.6);
+        for (let k = 0; k < bw; k += 10) f.r(x + (w - bw) / 2 + k, HORIZONT - h + s, Math.min(5, bw - k), 2, '#C04A6A');
+        for (let k = 5; k < bw; k += 10) f.r(x + (w - bw) / 2 + k, HORIZONT - h + s, Math.min(5, bw - k), 2, '#E8D6E8');
+      }
+      f.r(x + w / 2 - 1, HORIZONT - h - 8, 2, 8, '#E8D6E8');
+    }
+    // Riesenrad
+    const cx = 520;
+    const cy = 356;
+    const r = 66;
+    f.r(cx - 30, cy, 4, HORIZONT - cy, '#5A4890');
+    f.r(cx + 26, cy, 4, HORIZONT - cy, '#5A4890');
+    for (let i = 0; i < 12; i++) {
+      const a = (i / 12) * Math.PI * 2;
+      f.linie(cx, cy, cx + Math.cos(a) * r, cy + Math.sin(a) * r, 2, '#6B57A6');
+    }
+    for (let i = 0; i < 48; i++) {
+      const a = (i / 48) * Math.PI * 2;
+      f.r(cx + Math.cos(a) * r - 2, cy + Math.sin(a) * r - 2, 4, 4, '#7A66B8');
+    }
+    f.kreis(cx, cy, 6, '#7A66B8');
+  }
+  function lichterFest(f) {
+    const cx = 520;
+    const cy = 356;
+    const r = 66;
+    const farben = ['#FFD35A', '#FF805B', '#24D6CD', '#FF9AD5'];
+    for (let i = 0; i < 12; i++) {
+      const a = (i / 12) * Math.PI * 2;
+      f.r(cx + Math.cos(a) * r - 4, cy + Math.sin(a) * r, 8, 7, farben[i % 4]);
+    }
+    for (let i = 0; i < 24; i++) {
+      const a = (i / 24) * Math.PI * 2 + 0.13;
+      f.r(cx + Math.cos(a) * (r - 2) - 1, cy + Math.sin(a) * (r - 2) - 1, 2, 2, '#FFF4DC');
+    }
+    // Lampionkette über den Zelten
+    for (let x = 20; x < 360; x += 12) {
+      const y = 382 + Math.sin((x / 340) * Math.PI) * 14;
+      f.r(x, y, 4, 5, farben[(x / 12) % 4 | 0]);
+    }
+  }
+
+  // ---------- Kräne, Hallen und Schiffe (für alle Themen, nur eingefärbt) ----------
+  function malKraene(m) {
+    m.r(0, HORIZONT, 720, 8, '#5E8FB8');
+    m.r(0, HORIZONT, 720, 2, '#86B2D6');
+    const kran = (x, farbe, dunkel) => {
+      m.r(x, 372, 6, 74, farbe);
+      m.r(x + 40, 372, 6, 74, farbe);
+      m.r(x, 404, 46, 4, dunkel);
+      m.r(x - 2, 440, 10, 6, dunkel);
+      m.r(x + 38, 440, 10, 6, dunkel);
+      m.r(x - 6, 366, 58, 8, farbe);
+      m.r(x - 34, 356, 158, 6, farbe);
+      m.r(x + 16, 318, 8, 48, dunkel);
+      m.linie(x + 20, 320, x - 30, 356, 2, dunkel);
+      m.linie(x + 20, 320, x + 116, 356, 2, dunkel);
+      m.r(x + 50, 362, 12, 10, '#F3EEDF');
+      m.r(x + 52, 364, 8, 3, '#5E8FB8');
+      m.r(x + 88, 362, 8, 4, dunkel);
+      m.r(x + 90, 366, 1, 16, dunkel);
+      m.r(x + 95, 366, 1, 16, dunkel);
+      m.r(x + 84, 382, 20, 9, '#E9A08C');
+    };
+    kran(60, '#63BAC4', '#3F8E9C');
+    kran(430, '#E8A08A', '#B9735F');
+    // Lagerhäuser mit Sägezahndach
+    const halle = (x, w, h, farbe, dach) => {
+      m.r(x, HORIZONT - h, w, h, farbe);
+      for (let dx = 0; dx < w; dx += 20) {
+        m.r(x + dx, HORIZONT - h - 4, 20, 4, dach);
+        m.r(x + dx + 8, HORIZONT - h - 8, 12, 4, dach);
+        m.r(x + dx + 14, HORIZONT - h - 12, 6, 4, dach);
+      }
+      for (let dx = 8; dx < w - 8; dx += 14) m.r(x + dx, HORIZONT - h + 10, 8, 6, '#C9E4F2');
+      m.r(x + w / 2 - 10, HORIZONT - 18, 20, 18, '#4F7BA4');
+    };
+    halle(220, 120, 44, '#6E9CC6', '#557FA8');
+    halle(590, 100, 36, '#7AA7CF', '#5D8AB4');
+    // Kleine Containerstapel auf der Kaje
+    const kfarben = ['#E9A08C', '#7FCFD0', '#F1CF7C', '#93B3E6', '#E68C96'];
+    for (let i = 0; i < 9; i++) {
+      const x = 360 + (i % 3) * 18;
+      const y = HORIZONT - 9 - Math.floor(i / 3) * 9;
+      if (i === 8) continue;
+      m.r(x, y, 16, 8, kfarben[i % kfarben.length]);
+    }
+  }
+  function lichterHallen(m) {
+    for (const [x, w, h] of [[220, 120, 44], [590, 100, 36]]) {
+      for (let dx = 8; dx < w - 8; dx += 14) m.r(x + dx, HORIZONT - h + 10, 8, 6, 'rgba(255, 214, 120, 0.85)');
+    }
+    for (const x of [76, 446]) { m.r(x, 314, 4, 4, '#FF5A5A'); m.r(x + 70, 352, 3, 3, '#FFD35A'); }
+  }
+  function schneeHallen(m) {
+    for (const [x, w, h] of [[220, 120, 44], [590, 100, 36]]) {
+      for (let dx = 0; dx < w; dx += 20) { m.r(x + dx, HORIZONT - h - 14, 20, 3, '#FFFFFF'); m.r(x + dx + 8, HORIZONT - h - 10, 12, 2, '#FFFFFF'); }
+    }
+    for (const x of [60, 430]) { m.r(x - 34, 354, 158, 3, '#FFFFFF'); m.r(x - 6, 364, 58, 2, '#FFFFFF'); }
+  }
+
+  function malSchiffe(sp) {
+    // Containerschiff
+    sp.r(80, 482, 160, 14, '#3E6F9E');
+    sp.r(240, 482, 8, 10, '#3E6F9E');
+    sp.r(248, 482, 6, 6, '#3E6F9E');
+    sp.r(84, 494, 156, 3, '#E2876F');
+    sp.r(80, 480, 168, 2, '#F3EEDF');
+    const kf = ['#E9A08C', '#7FCFD0', '#F1CF7C', '#93B3E6', '#E68C96', '#9FDDB8'];
+    for (let k = 0; k < 9; k++) {
+      sp.r(110 + k * 14, 468, 13, 12, kf[k % kf.length]);
+      if (k % 3 !== 1) sp.r(110 + k * 14, 457, 13, 11, kf[(k + 2) % kf.length]);
+    }
+    sp.r(86, 450, 18, 30, '#F3EEDF');
+    sp.r(88, 454, 14, 3, '#3E6F9E');
+    sp.r(92, 442, 6, 8, '#E2876F');
+    sp.r(84, 498, 150, 2, 'rgba(255, 255, 255, 0.3)');
+    // Schlepper mit Rauchwölkchen
+    sp.r(480, 488, 46, 9, '#E58A73');
+    sp.r(526, 488, 6, 5, '#E58A73');
+    sp.r(480, 495, 46, 2, '#3E6F9E');
+    sp.r(492, 476, 20, 12, '#F3EEDF');
+    sp.r(495, 479, 14, 3, '#3E6F9E');
+    sp.r(500, 466, 6, 10, '#3E6F9E');
+    sp.r(500, 468, 6, 2, '#F1CF7C');
+    sp.kreis(508, 458, 4, 'rgba(255, 255, 255, 0.7)');
+    sp.kreis(516, 450, 6, 'rgba(255, 255, 255, 0.55)');
+    sp.r(482, 499, 40, 2, 'rgba(255, 255, 255, 0.3)');
+    // Boje
+    sp.r(360, 498, 6, 8, '#E58A73');
+    sp.r(360, 496, 6, 2, '#F3EEDF');
+    // Segelboot
+    sp.r(700, 494, 40, 6, '#F3EEDF');
+    sp.r(704, 500, 32, 2, '#3E6F9E');
+    sp.r(718, 440, 2, 54, '#3E6F9E');
+    for (let i = 0; i < 12; i++) sp.r(720, 442 + i * 4, 4 + i * 2, 4, '#FFF8EA');
+    for (let i = 0; i < 8; i++) sp.r(716 - (2 + i * 1.5), 452 + i * 4, 2 + i * 1.5, 4, '#7FCFD0');
+  }
+  function lichterSchiffe(sp) {
+    for (let k = 0; k < 6; k++) sp.r(92 + k * 24, 488, 3, 3, 'rgba(255, 214, 120, 0.9)');
+    sp.r(94, 455, 4, 3, 'rgba(255, 214, 120, 0.9)');
+    sp.r(500, 480, 4, 3, 'rgba(255, 214, 120, 0.9)');
+    sp.r(717, 438, 4, 4, '#FF5A5A');
+    sp.r(361, 492, 4, 4, '#FF5A5A');
+  }
+  function schneeSchiffe(sp) {
+    for (let k = 0; k < 9; k++) if (k % 3 !== 1) sp.r(110 + k * 14, 455, 13, 3, '#FFFFFF'); else sp.r(110 + k * 14, 466, 13, 3, '#FFFFFF');
+    sp.r(86, 448, 18, 3, '#FFFFFF');
+    sp.r(492, 474, 20, 3, '#FFFFFF');
+  }
+
   function baueEbenen() {
+    const T = THEMEN[thema];
     // ---- Himmel, Sonne und Hafenbecken (steht still) ----
     const himmel = leinwand(B * skala, H * skala);
     const hp = maler(himmel.getContext('2d'), skala);
-    const baender = [
-      [0, '#6FCBF2'], [110, '#80D3F4'], [190, '#93DCF6'], [250, '#A7E4F7'],
-      [300, '#BCEBF7'], [342, '#D2F2F5'], [380, '#E6F6EE'], [412, '#F7F3DD'], [436, '#FFEFD0'],
-    ];
-    baender.forEach(([y, f], i) => {
-      const bis = i + 1 < baender.length ? baender[i + 1][0] : HORIZONT;
+    T.himmel.forEach(([y, f], i) => {
+      const bis = i + 1 < T.himmel.length ? T.himmel[i + 1][0] : HORIZONT;
       hp.r(0, y, B, bis - y, f);
     });
-    hp.kreis(284, 132, 44, 'rgba(255, 246, 205, 0.45)');
-    hp.kreis(284, 132, 32, '#FFE58A');
-    hp.kreis(280, 128, 22, '#FFF0B8');
-    const wasserBaender = [
-      [HORIZONT, '#86D3E9'], [454, '#6CC4E2'], [470, '#59B5DA'], [494, '#47A3CF'],
-      [522, '#3A92C3'], [552, '#3080B5'],
-    ];
-    wasserBaender.forEach(([y, f], i) => {
-      const bis = i + 1 < wasserBaender.length ? wasserBaender[i + 1][0] : K.WASSER;
-      hp.r(0, y, B, bis - y, f);
-    });
-    hp.r(0, K.WASSER, B, 6, '#2A86B8');
-    hp.r(0, K.WASSER + 6, B, 14, '#1F6F9E');
-    hp.r(0, K.WASSER + 20, B, 16, '#185A85');
-    hp.r(0, K.WASSER + 36, B, H - K.WASSER - 36, '#123F60');
+    T.himmelExtra(hp);
+    const wy = [HORIZONT, 454, 470, 494, 522, 552];
+    T.wasser.forEach((f, i) => hp.r(0, wy[i], B, (i + 1 < wy.length ? wy[i + 1] : K.WASSER) - wy[i], f));
+    hp.r(0, K.WASSER, B, 6, T.vorne[0]);
+    hp.r(0, K.WASSER + 6, B, 14, T.vorne[1]);
+    hp.r(0, K.WASSER + 20, B, 16, T.vorne[2]);
+    hp.r(0, K.WASSER + 36, B, H - K.WASSER - 36, T.vorne[3]);
     for (const [x, y, w] of [[20, 462, 40], [150, 466, 24], [230, 478, 56], [60, 506, 30], [300, 512, 34], [190, 540, 46], [24, 560, 28]]) {
-      hp.r(x, y, w, 2, 'rgba(255, 255, 255, 0.28)');
+      hp.r(x, y, w, 2, T.glanz);
     }
 
     // ---- Wolken ----
-    const wolken = ebene(720, 30, 250, w => {
-      const wolke = (x, y, b) => {
-        const c = '#FFF9EE';
-        const sch = '#E2F1F8';
-        w.kreis(x + b * 0.3, y + 14, Math.round(b * 0.16), c);
-        w.kreis(x + b * 0.56, y + 10, Math.round(b * 0.21), c);
-        w.kreis(x + b * 0.78, y + 16, Math.round(b * 0.13), c);
-        w.r(x + 6, y + 16, b - 12, 12, c);
-        w.kreis(x + 8, y + 22, 6, c);
-        w.kreis(x + b - 8, y + 22, 6, c);
-        w.r(x + 6, y + 26, b - 12, 4, sch);
-      };
-      wolke(30, 40, 92);
-      wolke(250, 110, 70);
-      wolke(420, 30, 116);
-      wolke(600, 140, 84);
-      wolke(170, 210, 60);
-      wolke(540, 230, 50);
-    });
+    let wolken = null;
+    if (T.wolken) {
+      wolken = ebene(720, 30, 250, w => {
+        const wolke = (x, y, b) => {
+          const [c, sch] = T.wolken;
+          w.kreis(x + b * 0.3, y + 14, Math.round(b * 0.16), c);
+          w.kreis(x + b * 0.56, y + 10, Math.round(b * 0.21), c);
+          w.kreis(x + b * 0.78, y + 16, Math.round(b * 0.13), c);
+          w.r(x + 6, y + 16, b - 12, 12, c);
+          w.kreis(x + 8, y + 22, 6, c);
+          w.kreis(x + b - 8, y + 22, 6, c);
+          w.r(x + 6, y + 26, b - 12, 4, sch);
+        };
+        const f = T.wolkenGross ? 1.7 : 1;
+        wolke(30, 40, 92 * f);
+        wolke(250, 110, 70 * f);
+        wolke(420, 30, 116 * f);
+        wolke(600, 140, 84 * f);
+        wolke(170, 210 - (f > 1 ? 40 : 0), 60 * f);
+        wolke(540, 230 - (f > 1 ? 60 : 0), 50 * f);
+      });
+    }
 
-    // ---- Ferne Küste mit Leuchtturm ----
-    const fern = ebene(720, 290, HORIZONT - 290, f => {
-      const z = zufallsGenerator(7);
-      for (let x = 0; x < 720; x += 24) {
-        const h = 6 + Math.floor(z() * 4) * 4;
-        f.r(x, HORIZONT - h, 24, h, z() < 0.5 ? '#A9D6EA' : '#9DCDE4');
-      }
-      // Landzunge
-      const huegel = [[440, 6], [452, 12], [464, 18], [480, 24], [500, 30], [530, 34], [600, 36], [640, 30], [660, 22], [676, 14], [690, 6]];
-      for (let i = 0; i < huegel.length - 1; i++) {
-        const [x, h] = huegel[i];
-        f.r(x, HORIZONT - h, huegel[i + 1][0] - x, h, '#8DC2DC');
-      }
-      // Häuschen
-      for (const [x, w, h, d] of [[478, 16, 12, '#EAB7A6'], [498, 12, 10, '#F3E3C4'], [630, 14, 12, '#EAB7A6']]) {
-        f.r(x, HORIZONT - 24 - h + 2, w, h, d);
-        f.r(x - 2, HORIZONT - 24 - h - 2, w + 4, 4, '#C98B7A');
-      }
-      // Leuchtturm
-      const lx = 584;
-      const fuss = HORIZONT - 36;
-      for (let y = 330; y < fuss; y += 4) {
-        const w = 10 + Math.round(((y - 330) / (fuss - 330)) * 10 / 2) * 2;
-        f.r(lx - w / 2, y, w, 4, Math.floor((y - 330) / 12) % 2 === 0 ? '#F4A08A' : '#FFF4DC');
-      }
-      f.kreis(lx, 318, 16, 'rgba(255, 238, 160, 0.55)');
-      f.r(lx - 13, 326, 26, 4, '#4B7FA6');
-      f.r(lx - 7, 314, 14, 12, '#FFE07A');
-      f.r(lx - 1, 314, 2, 12, '#4B7FA6');
-      f.r(lx - 9, 310, 18, 4, '#E9876F');
-      f.r(lx - 6, 306, 12, 4, '#E9876F');
-      f.r(lx - 2, 302, 4, 4, '#E9876F');
-    }, 'rgba(205, 238, 250, 0.22)');
-
-    // ---- Kräne und Lagerhäuser ----
-    const mitte = ebene(720, 300, HORIZONT + 10 - 300, m => {
-      m.r(0, HORIZONT, 720, 8, '#5E8FB8');
-      m.r(0, HORIZONT, 720, 2, '#86B2D6');
-      const kran = (x, farbe, dunkel) => {
-        m.r(x, 372, 6, 74, farbe);
-        m.r(x + 40, 372, 6, 74, farbe);
-        m.r(x, 404, 46, 4, dunkel);
-        m.r(x - 2, 440, 10, 6, dunkel);
-        m.r(x + 38, 440, 10, 6, dunkel);
-        m.r(x - 6, 366, 58, 8, farbe);
-        m.r(x - 34, 356, 158, 6, farbe);
-        m.r(x + 16, 318, 8, 48, dunkel);
-        m.linie(x + 20, 320, x - 30, 356, 2, dunkel);
-        m.linie(x + 20, 320, x + 116, 356, 2, dunkel);
-        m.r(x + 50, 362, 12, 10, '#F3EEDF');
-        m.r(x + 52, 364, 8, 3, '#5E8FB8');
-        m.r(x + 88, 362, 8, 4, dunkel);
-        m.r(x + 90, 366, 1, 16, dunkel);
-        m.r(x + 95, 366, 1, 16, dunkel);
-        m.r(x + 84, 382, 20, 9, '#E9A08C');
-      };
-      kran(60, '#63BAC4', '#3F8E9C');
-      kran(430, '#E8A08A', '#B9735F');
-      // Lagerhäuser mit Sägezahndach
-      const halle = (x, w, h, farbe, dach) => {
-        m.r(x, HORIZONT - h, w, h, farbe);
-        for (let dx = 0; dx < w; dx += 20) {
-          m.r(x + dx, HORIZONT - h - 4, 20, 4, dach);
-          m.r(x + dx + 8, HORIZONT - h - 8, 12, 4, dach);
-          m.r(x + dx + 14, HORIZONT - h - 12, 6, 4, dach);
-        }
-        for (let dx = 8; dx < w - 8; dx += 14) m.r(x + dx, HORIZONT - h + 10, 8, 6, '#C9E4F2');
-        m.r(x + w / 2 - 10, HORIZONT - 18, 20, 18, '#4F7BA4');
-      };
-      halle(220, 120, 44, '#6E9CC6', '#557FA8');
-      halle(590, 100, 36, '#7AA7CF', '#5D8AB4');
-      // Kleine Containerstapel auf der Kaje
-      const kfarben = ['#E9A08C', '#7FCFD0', '#F1CF7C', '#93B3E6', '#E68C96'];
-      for (let i = 0; i < 9; i++) {
-        const x = 360 + (i % 3) * 18;
-        const y = HORIZONT - 9 - Math.floor(i / 3) * 9;
-        if (i === 8) continue;
-        m.r(x, y, 16, 8, kfarben[i % kfarben.length]);
-      }
-    }, 'rgba(205, 238, 250, 0.12)');
-
-    // ---- Schiffe im Hafenbecken ----
-    const schiffe = ebene(900, 430, 80, sp => {
-      // Containerschiff
-      sp.r(80, 482, 160, 14, '#3E6F9E');
-      sp.r(240, 482, 8, 10, '#3E6F9E');
-      sp.r(248, 482, 6, 6, '#3E6F9E');
-      sp.r(84, 494, 156, 3, '#E2876F');
-      sp.r(80, 480, 168, 2, '#F3EEDF');
-      const kf = ['#E9A08C', '#7FCFD0', '#F1CF7C', '#93B3E6', '#E68C96', '#9FDDB8'];
-      for (let k = 0; k < 9; k++) {
-        sp.r(110 + k * 14, 468, 13, 12, kf[k % kf.length]);
-        if (k % 3 !== 1) sp.r(110 + k * 14, 457, 13, 11, kf[(k + 2) % kf.length]);
-      }
-      sp.r(86, 450, 18, 30, '#F3EEDF');
-      sp.r(88, 454, 14, 3, '#3E6F9E');
-      sp.r(92, 442, 6, 8, '#E2876F');
-      sp.r(84, 498, 150, 2, 'rgba(255, 255, 255, 0.3)');
-      // Schlepper mit Rauchwölkchen
-      sp.r(480, 488, 46, 9, '#E58A73');
-      sp.r(526, 488, 6, 5, '#E58A73');
-      sp.r(480, 495, 46, 2, '#3E6F9E');
-      sp.r(492, 476, 20, 12, '#F3EEDF');
-      sp.r(495, 479, 14, 3, '#3E6F9E');
-      sp.r(500, 466, 6, 10, '#3E6F9E');
-      sp.r(500, 468, 6, 2, '#F1CF7C');
-      sp.kreis(508, 458, 4, 'rgba(255, 255, 255, 0.7)');
-      sp.kreis(516, 450, 6, 'rgba(255, 255, 255, 0.55)');
-      sp.r(482, 499, 40, 2, 'rgba(255, 255, 255, 0.3)');
-      // Boje
-      sp.r(360, 498, 6, 8, '#E58A73');
-      sp.r(360, 496, 6, 2, '#F3EEDF');
-      // Segelboot
-      sp.r(700, 494, 40, 6, '#F3EEDF');
-      sp.r(704, 500, 32, 2, '#3E6F9E');
-      sp.r(718, 440, 2, 54, '#3E6F9E');
-      for (let i = 0; i < 12; i++) sp.r(720, 442 + i * 4, 4 + i * 2, 4, '#FFF8EA');
-      for (let i = 0; i < 8; i++) sp.r(716 - (2 + i * 1.5), 452 + i * 4, 2 + i * 1.5, 4, '#7FCFD0');
-    }, 'rgba(205, 238, 250, 0.1)');
+    const fern = ebene(720, 280, HORIZONT - 280, T.fern, T.fernDunst, T.fernLicht);
+    const mitte = ebene(720, 300, HORIZONT + 10 - 300, malKraene, T.mitteDunst, T.mitteLicht);
+    const schiffe = ebene(900, 430, 80, malSchiffe, T.schiffDunst, T.schiffLicht);
 
     // ---- Kranbahn oben (Muster wiederholt sich alle 48 Punkte) ----
     const kranbahn = ebene(B + 48, 0, K.DECKE + 2, k => {
@@ -1475,18 +2211,85 @@ const Grafik = (() => {
     // ---- Schaumkronen (ziehen mit der Welt) und Wellenstriche (etwas langsamer) ----
     const schaum = ebene(B + 32, K.WASSER, 4, w => {
       for (let x = 0; x < B + 32; x += 32) {
-        w.r(x, K.WASSER, 14, 2, '#D9F6F8');
-        w.r(x + 14, K.WASSER + 2, 6, 2, '#9EE3EE');
+        w.r(x, K.WASSER, 14, 2, T.schaum[0]);
+        w.r(x + 14, K.WASSER + 2, 6, 2, T.schaum[1]);
       }
     });
     const wellen = ebene(B + 192, K.WASSER + 10, 38, w => {
-      for (let x = 0; x < B + 192; x += 48) w.r(x, K.WASSER + 12, 12, 2, '#3A97C6');
-      for (let x = 20; x < B + 192; x += 64) w.r(x, K.WASSER + 27, 16, 2, '#2D7AA6');
-      for (let x = 8; x < B + 192; x += 96) w.r(x, K.WASSER + 44, 20, 2, '#1D5A80');
+      for (let x = 0; x < B + 192; x += 48) w.r(x, K.WASSER + 12, 12, 2, T.wellen[0]);
+      for (let x = 20; x < B + 192; x += 64) w.r(x, K.WASSER + 27, 16, 2, T.wellen[1]);
+      for (let x = 8; x < B + 192; x += 96) w.r(x, K.WASSER + 44, 20, 2, T.wellen[2]);
     });
 
-    ebenen = { himmel, wolken, fern, mitte, schiffe, kranbahn, schaum, wellen };
+    ebenen = { himmel, wolken, fern, mitte, schiffe, kranbahn, schaum, wellen, wetter: baueWetter(T.wetter), wind: baueWindLinien() };
+    sprites = null;
     punkteBild = null;
+  }
+
+  // ---------- Wetter: einmal vorgezeichnete Kacheln, die nur verschoben werden ----------
+  function baueWetter(art) {
+    if (art === 'nebel') {
+      return ebene(B * 2, 0, H, w => {
+        const z = zufallsGenerator(5);
+        for (let i = 0; i < 9; i++) {
+          const x = z() * B * 2;
+          const y = 120 + z() * 380;
+          const b = 120 + z() * 160;
+          // Nebelbank aus weichen Streifen; am Rand nahtlos auf die andere Seite
+          for (const dx of [0, -B * 2, B * 2]) {
+            for (let s = -5; s < 6; s++) w.r(x + dx - b / 2 + Math.abs(s) * 8, y + s * 4, b - Math.abs(s) * 16, 4, 'rgba(250, 250, 248, 0.09)');
+          }
+        }
+      });
+    }
+    if (art === 'regen') {
+      return ebene(B, 0, H, w => {
+        const z = zufallsGenerator(6);
+        for (let i = 0; i < 70; i++) {
+          const x = Math.floor(z() * B / 2) * 2;
+          const y = Math.floor(z() * H / 2) * 2;
+          const l = 10 + Math.floor(z() * 4) * 4;
+          for (let k = 0; k < l; k += 2) w.r(((x - k * 0.35) % B + B) % B, (y + k) % H, 1.5, 2, 'rgba(220, 235, 245, 0.45)');
+        }
+      });
+    }
+    if (art === 'schnee') {
+      return ebene(B, 0, H, w => {
+        const z = zufallsGenerator(7);
+        for (let i = 0; i < 60; i++) {
+          const x = Math.floor(z() * B / 2) * 2;
+          const y = Math.floor(z() * H / 2) * 2;
+          const g = z() < 0.3 ? 4 : 2;
+          w.r(x, y, g, g, 'rgba(255, 255, 255, 0.9)');
+        }
+      });
+    }
+    if (art === 'laternen') {
+      // Aufsteigende Himmelslaternen im Abendhimmel
+      return ebene(B, 0, H, w => {
+        const z = zufallsGenerator(8);
+        for (let i = 0; i < 9; i++) {
+          const x = Math.floor(z() * (B - 12));
+          const y = 40 + Math.floor(z() * 360);
+          w.r(x - 2, y - 2, 10, 12, 'rgba(255, 200, 120, 0.25)');
+          w.r(x, y, 6, 8, '#FFC46A');
+          w.r(x + 1, y + 1, 4, 3, '#FFE4A0');
+        }
+      });
+    }
+    return null;
+  }
+  function baueWindLinien() {
+    return ebene(B, 0, H, w => {
+      const z = zufallsGenerator(9);
+      for (let i = 0; i < 34; i++) {
+        const x = 8 + Math.floor(z() * (B - 16) / 2) * 2;
+        const y = Math.floor(z() * H / 2) * 2;
+        const l = 18 + Math.floor(z() * 4) * 8;
+        w.r(x, y, 2, l, 'rgba(255, 255, 255, 0.55)');
+        if (y + l > H) w.r(x, y - H, 2, l, 'rgba(255, 255, 255, 0.55)');
+      }
+    });
   }
 
   // Zeichnet eine Kachel-Ebene verschoben und nahtlos wiederholt
@@ -1507,7 +2310,7 @@ const Grafik = (() => {
       const y = 458 + ((i * 53) % 118);
       const an = reduziert ? i % 3 === 0 : Math.sin(t * 3 + i * 1.7) > 0.55;
       if (!an) continue;
-      p.r(Math.floor(x / 2) * 2, y, 4, 2, 'rgba(255, 255, 255, 0.85)');
+      p.r(Math.floor(x / 2) * 2, y, 4, 2, THEMEN[thema].glitzer);
       if (!reduziert && Math.sin(t * 3 + i * 1.7) > 0.85) {
         p.r(Math.floor(x / 2) * 2 + 1, y - 2, 2, 6, 'rgba(255, 255, 255, 0.6)');
       }
@@ -1602,67 +2405,238 @@ const Grafik = (() => {
     return { n, h: hoehe / n };
   }
 
-  // Ein Hindernis wird einmal in ein eigenes Bild gemalt und danach nur verschoben.
-  // Das spart pro Bild Hunderte Zeichenbefehle (wichtig für Handys).
+  // Ein Hindernis wird einmal in zwei eigene Bilder gemalt (oben hängend, unten stehend)
+  // und danach nur verschoben. Das spart pro Bild Hunderte Zeichenbefehle (wichtig für Handys).
+  // Schwebende Container: Das obere Bild hängt an langen Seilen und wird mit der Lücke
+  // verschoben; das untere steht auf einem Ponton, der mitschaukelt.
   function zeichneHindernis(h, strecke) {
     const sx = h.x - strecke;
-    if (sx > B + 4 || sx + K.HINDERNIS_B < -4) return;
-    if (!h.bild || h.bildSkala !== skala) {
-      const c = leinwand(K.HINDERNIS_B * skala, H * skala);
-      const hauptMaler = p;
-      p = maler(c.getContext('2d'), skala);
-      malHindernis(h, 0);
-      p = hauptMaler;
-      h.bild = c;
-      h.bildSkala = skala;
-    }
-    ctx.drawImage(h.bild, Math.round(sx * skala), 0);
+    if (sx > B + 4 || sx + h.b < -4) return;
+    if (!h.bild || h.bildSkala !== skala || h.bildThema !== thema) baueHindernisBild(h);
+    const X = Math.round(sx * skala);
+    ctx.drawImage(h.bild.oben, X, Math.round((h.versatz - h.amp) * skala));
+    ctx.drawImage(h.bild.unten, X, Math.round(h.unten * skala));
   }
 
-  function malHindernis(h, x) {
-    const W = K.HINDERNIS_B;
+  function baueHindernisBild(h) {
+    const hauptMaler = p;
     const z = zufallsGenerator(h.saat);
+    // oben: Bild reicht von 0 bis zur tiefsten Lage der Lückenoberkante
+    const T = h.oben0 + h.amp;
+    const oben = leinwand(h.b * skala, T * skala);
+    p = maler(oben.getContext('2d'), skala);
+    malHaengend(h, T, z);
+    // unten: Bild beginnt an der Lückenunterkante und reicht bis unter den Bildrand
+    const U = h.unten0;
+    const unten = leinwand(h.b * skala, (H - U + h.amp + 4) * skala);
+    p = maler(unten.getContext('2d'), skala, U);
+    malStehend(h, U, z);
+    p = hauptMaler;
+    h.bild = { oben, unten };
+    h.bildSkala = skala;
+    h.bildThema = thema;
+  }
+
+  // Hängende Container mit Spreizer und Seilen (Laufkatze wird extra gezeichnet)
+  function malHaengend(h, T, z) {
+    const W = h.b;
     const farbe = () => CONTAINER_FARBEN[Math.floor(z() * CONTAINER_FARBEN.length)];
     const deko = () => (z() < 0.55 ? 1 + Math.floor(z() * 5) : 0);
-
-    // ---- Oben: Laufkatze an der Kranbahn, Seile, Spreizer, hängende Container ----
-    const seilEnde = K.DECKE + K.SEIL;
-    const spreizEnde = seilEnde + K.SPREIZER;
-    p.r(x + 16, 3, 8, 8, '#3B4E66');
-    p.r(x + W - 24, 3, 8, 8, '#3B4E66');
-    p.r(x + 12, 10, W - 24, 9, NAVY);
-    p.r(x + 14, 11, W - 28, 6, GELB);
-    p.r(x + 14, 15, W - 28, 2, '#D6A332');
-    p.r(x + 19, 19, 2, seilEnde - 19, '#34495F');
-    p.r(x + W - 21, 19, 2, seilEnde - 19, '#34495F');
-    p.r(x + 4, seilEnde, W - 8, K.SPREIZER, NAVY);
-    p.r(x + 6, seilEnde + 1, W - 12, K.SPREIZER - 2, GELB);
-    for (let k = x + 10; k < x + W - 10; k += 10) p.r(k, seilEnde + 1, 4, K.SPREIZER - 2, NAVY);
-    const oben = stapel(h.oben - spreizEnde);
-    for (let i = 0; i < oben.n; i++) {
-      container(x, spreizEnde + i * oben.h, W, oben.h, farbe(), deko(), z);
+    const spreizEnde = K.DECKE + K.SEIL + K.SPREIZER;
+    const hoehe = h.oben0 - h.amp - spreizEnde;      // Stapelhöhe in der höchsten Lage
+    const stapelOben = T - hoehe;
+    const spreizer = stapelOben - K.SPREIZER;
+    for (const sx of seilPositionen(W)) p.r(sx, 0, 2, spreizer, '#34495F');
+    p.r(4, spreizer, W - 8, K.SPREIZER, NAVY);
+    p.r(6, spreizer + 1, W - 12, K.SPREIZER - 2, GELB);
+    for (let k = 10; k < W - 10; k += 10) p.r(k, spreizer + 1, 4, K.SPREIZER - 2, NAVY);
+    const st = stapel(hoehe);
+    for (let i = 0; i < st.n; i++) container(0, stapelOben + i * st.h, W, st.h, farbe(), deko(), z);
+    if (h.amp) {
+      // Kleine Warnleuchte unter dem schwebenden Stapel: „ich bewege mich“
+      p.r(W / 2 - 5, T - 4, 10, 4, NAVY);
+      p.r(W / 2 - 3, T - 3, 6, 2, '#FF805B');
     }
+  }
+  function seilPositionen(W) {
+    return W > K.HINDERNIS_B ? [19, W / 2 - 1, W - 21] : [19, W - 21];
+  }
 
-    // ---- Unten: Containerstapel auf einem Betonsockel im Wasser ----
+  // Stehender Stapel auf Betonsockel (fest) oder Ponton (schwebend)
+  function malStehend(h, U, z) {
+    const W = h.b;
+    const farbe = () => CONTAINER_FARBEN[Math.floor(z() * CONTAINER_FARBEN.length)];
+    const deko = () => (z() < 0.55 ? 1 + Math.floor(z() * 5) : 0);
     const pierY = K.WASSER - K.PIER;
-    const unten = stapel(pierY - h.unten);
-    for (let i = 0; i < unten.n; i++) {
-      container(x, h.unten + i * unten.h, W, unten.h, farbe(), deko(), z);
+    const st = stapel(pierY - U);
+    for (let i = 0; i < st.n; i++) container(0, U + i * st.h, W, st.h, farbe(), deko(), z);
+    if (THEMEN[thema].wetter === 'schnee') {
+      // Schneehaube auf dem obersten Container (innerhalb der Trefferfläche)
+      p.r(2, U + 1, W - 4, 3, '#FFFFFF');
+      for (let k = 6; k < W - 8; k += 14) p.r(k, U + 4, 6, 2, '#FFFFFF');
     }
-    p.r(x, pierY, W, K.PIER, NAVY);
-    p.r(x + 2, pierY, W - 4, K.PIER, '#C9D4E0');
-    p.r(x + 2, pierY + K.PIER - 4, W - 4, 4, '#9FB0C4');
-    for (let k = 0; k < W - 4; k += 8) p.r(x + 2 + k, pierY + 2, 4, 4, k % 16 === 0 ? GELB : NAVY);
-    for (const tx of [x + 8, x + W - 20]) {
+    p.r(0, pierY, W, K.PIER, NAVY);
+    p.r(2, pierY, W - 4, K.PIER, h.amp ? '#FFB59E' : '#C9D4E0');
+    p.r(2, pierY + K.PIER - 4, W - 4, 4, h.amp ? '#E5664A' : '#9FB0C4');
+    for (let k = 0; k < W - 4; k += 8) p.r(2 + k, pierY + 2, 4, 4, k % 16 === 0 ? GELB : NAVY);
+    const unterkante = H + h.amp + 4;
+    if (h.amp) {
+      // Ponton: schwimmt und schaukelt mit
+      p.r(0, pierY + K.PIER, W, unterkante - pierY - K.PIER, NAVY);
+      p.r(3, pierY + K.PIER, W - 6, unterkante - pierY - K.PIER, '#C9553A');
+      p.r(3, pierY + K.PIER + 6, W - 6, 3, '#FFF4DC');
+      return;
+    }
+    for (const tx of [8, W - 20]) {
       p.r(tx, pierY + 8, 12, 10, '#1B2A3D');
       p.r(tx + 4, pierY + 11, 4, 4, '#3A4A5E');
     }
     // Pfähle unter Wasser
-    for (const px of [x + 6, x + W - 18]) {
-      p.r(px, K.WASSER, 12, H - K.WASSER, '#0F3550');
-      p.r(px, K.WASSER, 4, H - K.WASSER, '#1A4A6E');
+    const pfaehle = W > K.HINDERNIS_B ? [6, W / 2 - 6, W - 18] : [6, W - 18];
+    for (const px of pfaehle) {
+      p.r(px, K.WASSER, 12, unterkante - K.WASSER, '#0F3550');
+      p.r(px, K.WASSER, 4, unterkante - K.WASSER, '#1A4A6E');
       p.r(px - 2, K.WASSER + 2, 16, 2, '#9EE3EE');
     }
+  }
+
+  // ---------- Kleine Bilder, die oft gebraucht werden ----------
+  let sprites = null;
+  function baueSprites() {
+    const mal = (w, h, f) => {
+      const c = leinwand(w * skala, h * skala);
+      const hauptMaler = p;
+      p = maler(c.getContext('2d'), skala);
+      f(c.getContext('2d'));
+      p = hauptMaler;
+      return c;
+    };
+    const laufkatze = W => mal(W, 20, () => {
+      p.r(16, 3, 8, 8, '#3B4E66');
+      p.r(W - 24, 3, 8, 8, '#3B4E66');
+      if (W > K.HINDERNIS_B) p.r(W / 2 - 4, 3, 8, 8, '#3B4E66');
+      p.r(12, 10, W - 24, 9, NAVY);
+      p.r(14, 11, W - 28, 6, GELB);
+      p.r(14, 15, W - 28, 2, '#D6A332');
+    });
+    // Stern: glatt gezeichnet mit dickem Umriss
+    const sternPfad = (g, cx, cy, ra, ri) => {
+      g.beginPath();
+      for (let i = 0; i < 10; i++) {
+        const r = i % 2 ? ri : ra;
+        const a = -Math.PI / 2 + (i * Math.PI) / 5;
+        g.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+      }
+      g.closePath();
+    };
+    const stern = (gr, voll) => mal(gr, gr, g => {
+      g.scale(skala, skala);
+      const m = gr / 2;
+      if (voll) {
+        g.fillStyle = 'rgba(255, 211, 90, 0.28)';
+        g.beginPath(); g.arc(m, m, m - 0.5, 0, Math.PI * 2); g.fill();
+      }
+      sternPfad(g, m, m + 0.8, m * 0.82, m * 0.38);
+      g.lineJoin = 'round';
+      g.lineWidth = Math.max(2, gr * 0.09);
+      g.strokeStyle = NAVY;
+      g.fillStyle = voll ? GELB : 'rgba(16, 36, 58, 0.55)';
+      g.fill();
+      g.stroke();
+      if (voll) {
+        sternPfad(g, m - gr * 0.05, m - gr * 0.02, m * 0.45, m * 0.2);
+        g.fillStyle = '#FFF4B8';
+        g.fill();
+      } else {
+        g.strokeStyle = 'rgba(255, 244, 220, 0.6)';
+        g.lineWidth = 1.2;
+        sternPfad(g, m, m + 0.8, m * 0.62, m * 0.28);
+        g.stroke();
+      }
+    });
+    // Ziellinie: karierter Streifen über die ganze Höhe und ein Schild unter der Kranbahn
+    const ziel = mal(64, H, g => {
+      for (let y = K.DECKE; y < K.WASSER; y += 8) {
+        p.r(28, y, 4, 4, (y / 8) % 2 ? 'rgba(255, 244, 220, 0.85)' : 'rgba(16, 36, 58, 0.85)');
+        p.r(32, y, 4, 4, (y / 8) % 2 ? 'rgba(16, 36, 58, 0.85)' : 'rgba(255, 244, 220, 0.85)');
+        p.r(28, y + 4, 4, 4, (y / 8) % 2 ? 'rgba(16, 36, 58, 0.85)' : 'rgba(255, 244, 220, 0.85)');
+        p.r(32, y + 4, 4, 4, (y / 8) % 2 ? 'rgba(255, 244, 220, 0.85)' : 'rgba(16, 36, 58, 0.85)');
+      }
+      p.r(4, 22, 56, 26, NAVY);
+      p.r(6, 24, 52, 22, GELB);
+      g.save();
+      g.scale(skala, skala);
+      g.font = '10px "Press Start 2P", "Courier New", monospace';
+      g.textAlign = 'center';
+      g.textBaseline = 'middle';
+      g.fillStyle = NAVY;
+      g.fillText('ZIEL', 32, 36);
+      g.restore();
+    });
+    // Wind-Schild: Pfeile und „BÖE“
+    const windSchild = richtung => mal(78, 28, g => {
+      g.save();
+      g.scale(skala, skala);
+      g.fillStyle = 'rgba(16, 36, 58, 0.88)';
+      g.strokeStyle = '#7FF3EC';
+      g.lineWidth = 2;
+      g.beginPath();
+      g.roundRect ? g.roundRect(1, 1, 76, 26, 7) : g.rect(1, 1, 76, 26);
+      g.fill();
+      g.stroke();
+      g.fillStyle = '#7FF3EC';
+      for (const ax of [10, 24]) {
+        g.beginPath();
+        if (richtung < 0) { g.moveTo(ax - 6, 18); g.lineTo(ax, 8); g.lineTo(ax + 6, 18); }
+        else { g.moveTo(ax - 6, 10); g.lineTo(ax, 20); g.lineTo(ax + 6, 10); }
+        g.closePath();
+        g.fill();
+      }
+      g.font = '9px "Press Start 2P", "Courier New", monospace';
+      g.textAlign = 'left';
+      g.textBaseline = 'middle';
+      g.fillStyle = CREME;
+      g.fillText('WIND', 35, 15);
+      g.restore();
+    });
+    sprites = {
+      laufkatze: { [K.HINDERNIS_B]: laufkatze(K.HINDERNIS_B), [K.LANG_B]: laufkatze(K.LANG_B) },
+      stern: stern(26, true), sternHud: stern(18, true), sternLeer: stern(18, false),
+      ziel, windHoch: windSchild(-1), windRunter: windSchild(1),
+      schrift: document.fonts ? document.fonts.status : 'loaded',
+    };
+  }
+
+  function zeichneLaufkatzen(s, strecke) {
+    for (const h of s.hindernisse) {
+      const sx = h.x - strecke;
+      if (sx > B + 4 || sx + h.b < -4) continue;
+      ctx.drawImage(sprites.laufkatze[h.b], Math.round(sx * skala), 0);
+    }
+  }
+
+  // Sterne in den Lücken: drehen sich langsam und wippen leicht
+  function zeichneSterneWelt(s, strecke) {
+    const spr = sprites.stern;
+    for (const h of s.hindernisse) {
+      if (!h.muenze || h.geholt) continue;
+      const pos = sternPos(h);
+      const x = pos.x - strecke;
+      if (x < -20 || x > B + 20) continue;
+      const dreh = reduziert ? 1 : 0.4 + 0.6 * Math.abs(Math.cos(s.zeit * 2.2 + h.i));
+      const bob = reduziert ? 0 : Math.sin(s.zeit * 3 + h.i) * 2;
+      const w = 26 * dreh;
+      ctx.imageSmoothingEnabled = true;
+      ctx.drawImage(spr, Math.round((x - w / 2) * skala), Math.round((pos.y - 13 + bob) * skala), Math.max(1, Math.round(w * skala)), Math.round(26 * skala));
+      ctx.imageSmoothingEnabled = false;
+    }
+  }
+
+  function zeichneZiel(s, strecke) {
+    if (s.zielX === null) return;
+    const x = s.zielX - strecke;
+    if (x < -64 || x > B + 4) return;
+    ctx.drawImage(sprites.ziel, Math.round((x - 32) * skala), 0);
   }
 
   // ---------- Partikel ----------
@@ -1736,13 +2710,13 @@ const Grafik = (() => {
 
   function effekteSchritt(dt, s) {
     zeitEffekte += dt;
-    const welt = s.zustand === ZUSTAND.SPIELEN ? tempoBei(s.punkte) : 0;
+    const welt = aktuellesTempo(s);
     // Dauerfunken und Rauchwölkchen aus dem Rucksack
-    if (!reduziert && (s.zustand === ZUSTAND.SPIELEN || s.zustand === ZUSTAND.BEREIT || s.zustand === ZUSTAND.START)) {
+    if (!reduziert && (s.zustand === ZUSTAND.SPIELEN || s.zustand === ZUSTAND.BEREIT || s.zustand === ZUSTAND.START || s.zustand === ZUSTAND.ZIEL)) {
       emitterZeit += dt;
       while (emitterZeit > 0.07) {
         emitterZeit -= 0.07;
-        const y = s.zustand === ZUSTAND.SPIELEN ? s.figur.y : schwebeY(s);
+        const y = s.zustand === ZUSTAND.SPIELEN || s.zustand === ZUSTAND.ZIEL ? s.figur.y : schwebeY(s);
         const d = duesenPos(y, anzeigeWinkel);
         if (Math.random() < 0.6) funken(d.x, d.y, 1, 0.5); else rauch(d.x, d.y + 1);
       }
@@ -1756,6 +2730,8 @@ const Grafik = (() => {
     }
     partikel = partikel.filter(t => t.leben < t.max && t.x > -20 && t.x < B + 20 && t.y < H + 10);
     if (punktePop > 0) punktePop = Math.max(0, punktePop - dt);
+    for (let i = 0; i < 3; i++) if (sternPop[i] > 0) sternPop[i] = Math.max(0, sternPop[i] - dt);
+    feuerwerkSchritt(dt);
   }
 
   function effekteLeeren() {
@@ -1819,7 +2795,10 @@ const Grafik = (() => {
   function zeichneFigur(s, alpha, dt) {
     let y;
     let ziel;
-    if (s.zustand === ZUSTAND.SPIELEN) {
+    if (s.zustand === ZUSTAND.ZIEL) {
+      y = s.vorher.y + (s.figur.y - s.vorher.y) * alpha + (reduziert ? 0 : Math.sin(s.ziel.zeit * 6) * 3 * Math.min(1, s.ziel.zeit * 2));
+      ziel = reduziert ? 0 : -0.12;
+    } else if (s.zustand === ZUSTAND.SPIELEN) {
       y = s.vorher.y + (s.figur.y - s.vorher.y) * alpha;
       const vy = s.figur.vy;
       ziel = vy < 0 ? Math.max(-0.26, (vy / -K.IMPULS) * -0.26) : Math.min(0.5, (vy / K.MAX_FALL) * 0.5);
@@ -1883,9 +2862,10 @@ const Grafik = (() => {
       if (s.punkte > letztePunkte) punktePop = 0.22;
       letztePunkte = s.punkte;
     }
-    if (!punkteBild || punkteBild.wert !== s.punkte || punkteBild.sk !== skala || punkteBild.schrift !== (document.fonts ? document.fonts.status : 'loaded')) {
-      const inhalt = String(s.punkte);
-      const groesse = 28;
+    const level = s.konfig.modus === 'level';
+    const inhalt = level ? `${Math.min(s.punkte, s.konfig.anzahl)}/${s.konfig.anzahl}` : String(s.punkte);
+    if (!punkteBild || punkteBild.wert !== inhalt || punkteBild.sk !== skala || punkteBild.schrift !== (document.fonts ? document.fonts.status : 'loaded')) {
+      const groesse = level ? 22 : 28;
       const c = leinwand((inhalt.length * groesse + 24) * skala, (groesse + 16) * skala);
       const g = c.getContext('2d');
       g.scale(skala, skala);
@@ -1899,7 +2879,7 @@ const Grafik = (() => {
       g.strokeText(inhalt, mx, 7);
       g.fillStyle = CREME;
       g.fillText(inhalt, mx, 7);
-      punkteBild = { c, wert: s.punkte, sk: skala, b: inhalt.length * groesse + 24, h: groesse + 16, schrift: document.fonts ? document.fonts.status : 'loaded' };
+      punkteBild = { c, wert: inhalt, sk: skala, b: inhalt.length * groesse + 24, h: groesse + 16, schrift: document.fonts ? document.fonts.status : 'loaded' };
     }
     const f = 1 + (reduziert ? 0 : (punktePop / 0.22) * 0.28);
     const w = punkteBild.b * f;
@@ -1907,6 +2887,123 @@ const Grafik = (() => {
     ctx.imageSmoothingEnabled = true;
     ctx.drawImage(punkteBild.c, Math.round((B / 2 - w / 2) * skala), Math.round((30 - 7 * f) * skala), Math.round(w * skala), Math.round(hh * skala));
     ctx.imageSmoothingEnabled = false;
+  }
+
+  // Gesammelte Sterne oben links und der Böen-Hinweis darunter
+  let sternPop = [0, 0, 0];
+  function zeichneHud(s) {
+    if (s.konfig.modus === 'level') {
+      ctx.imageSmoothingEnabled = true;
+      for (let i = 0; i < 3; i++) {
+        const voll = i < s.sterne;
+        const f = 1 + (reduziert ? 0 : sternPop[i] * 1.6);
+        const g = 18 * f;
+        const cx = 20 + i * 21;
+        ctx.drawImage(voll ? sprites.sternHud : sprites.sternLeer, Math.round((cx - g / 2) * skala), Math.round((36 - g / 2) * skala), Math.round(g * skala), Math.round(g * skala));
+      }
+      ctx.imageSmoothingEnabled = false;
+    }
+    const w = s.wind;
+    if (w.richtung && (s.zustand === ZUSTAND.SPIELEN || s.zustand === ZUSTAND.BEREIT || s.zustand === ZUSTAND.PAUSE)) {
+      // Vor der Böe blinkt das Schild, während der Böe leuchtet es
+      const an = w.warnung ? (reduziert ? 1 : 0.45 + 0.55 * (Math.sin(s.zeit * 14) > -0.3 ? 1 : 0)) : 1;
+      ctx.globalAlpha = an;
+      ctx.drawImage(w.richtung < 0 ? sprites.windHoch : sprites.windRunter, Math.round(8 * skala), Math.round(52 * skala));
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // ---------- Wetter und Wind ----------
+  let feuerwerk = [];
+  let feuerwerkUhr = 0.6;
+  const FEST_FARBEN = ['#FFD35A', '#FF805B', '#24D6CD', '#FF9AD5', '#9BFF8A', '#FFF4DC'];
+  function feuerwerkSchritt(dt) {
+    if (THEMEN[thema].wetter !== 'feuerwerk' || reduziert) { feuerwerk.length = 0; return; }
+    feuerwerkUhr -= dt;
+    if (feuerwerkUhr <= 0) {
+      feuerwerkUhr = 1.1 + Math.random() * 1.2;
+      const x = 40 + Math.random() * (B - 80);
+      const y = 70 + Math.random() * 170;
+      const farbe = FEST_FARBEN[Math.floor(Math.random() * FEST_FARBEN.length)];
+      for (let i = 0; i < 22; i++) {
+        const a = (i / 22) * Math.PI * 2;
+        const v = 50 + Math.random() * 25;
+        feuerwerk.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, leben: 0, max: 1.1 + Math.random() * 0.3, farbe });
+      }
+    }
+    for (const f of feuerwerk) {
+      f.leben += dt;
+      f.vy += 30 * dt;
+      f.vx *= 1 - dt * 0.8;
+      f.vy *= 1 - dt * 0.8;
+      f.x += f.vx * dt;
+      f.y += f.vy * dt;
+    }
+    feuerwerk = feuerwerk.filter(f => f.leben < f.max);
+  }
+
+  function zeichneWetter(s, strecke) {
+    const art = THEMEN[thema].wetter;
+    const e = ebenen.wetter;
+    const t = reduziert ? 0 : s.zeit;
+    const kachel = (ebene, ox, oy) => {
+      const bw = ebene.c.width;
+      const bh = ebene.c.height;
+      const x = -(((Math.round(ox * skala) % bw) + bw) % bw);
+      const y = -(((Math.round(oy * skala) % bh) + bh) % bh);
+      ctx.drawImage(ebene.c, x, y);
+      if (x + bw < canvas.width) ctx.drawImage(ebene.c, x + bw, y);
+      if (y + bh < canvas.height) {
+        ctx.drawImage(ebene.c, x, y + bh);
+        if (x + bw < canvas.width) ctx.drawImage(ebene.c, x + bw, y + bh);
+      }
+    };
+    if (art === 'nebel') {
+      ctx.globalAlpha = 0.9;
+      kachel(e, strecke * 0.4 + t * 9, 0);
+      ctx.globalAlpha = 1;
+    } else if (art === 'regen') {
+      kachel(e, t * 70 + strecke * 0.6, -t * 520);
+    } else if (art === 'schnee') {
+      kachel(e, strecke * 0.5 + Math.sin(t * 0.7) * 16, -t * 38);
+      ctx.globalAlpha = 0.6;
+      kachel(e, strecke * 0.3 + 120 + Math.sin(t * 0.5 + 2) * 10, -t * 22 + 200);
+      ctx.globalAlpha = 1;
+    } else if (art === 'laternen') {
+      kachel(e, strecke * 0.1, t * 10);
+    } else if (art === 'sterne' || art === 'feuerwerk') {
+      for (let i = 0; i < 10; i++) {
+        const hell = reduziert ? 0.5 : 0.5 + 0.5 * Math.sin(t * (1.3 + i * 0.17) + i * 2.1);
+        if (hell < 0.55) continue;
+        const x = (i * 83 + 17) % B;
+        const y = 24 + ((i * 47) % 200);
+        ctx.globalAlpha = hell;
+        p.r(x - 1, y - 3, 2, 6, CREME);
+        p.r(x - 3, y - 1, 6, 2, CREME);
+      }
+      ctx.globalAlpha = 1;
+      for (const f of feuerwerk) {
+        const rest = 1 - f.leben / f.max;
+        ctx.globalAlpha = Math.min(1, rest * 1.6);
+        p.r(f.x - 1.5, f.y - 1.5, 3, 3, f.farbe);
+      }
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // Windböe: helle Striche ziehen in Windrichtung über das Bild
+  function zeichneWind(s) {
+    const w = s.wind;
+    if (!w.richtung || !(s.zustand === ZUSTAND.SPIELEN || s.zustand === ZUSTAND.BEREIT || s.zustand === ZUSTAND.PAUSE)) return;
+    const staerke = w.warnung ? 0.18 : 0.25 + 0.5 * w.anteil;
+    const e = ebenen.wind;
+    const bh = e.c.height;
+    const v = reduziert ? 0 : s.zeit * 460 * w.richtung;
+    const y = (((Math.round(v * skala) % bh) + bh) % bh);
+    ctx.globalAlpha = staerke;
+    ctx.drawImage(e.c, 0, y);
+    ctx.drawImage(e.c, 0, y - bh);
+    ctx.globalAlpha = 1;
   }
 
   // ===================================================================
@@ -1944,24 +3041,75 @@ const Grafik = (() => {
     const jetzt = s.zeit;
     const dt = letzteZeit === null ? 0 : Math.max(0, Math.min(0.1, jetzt - letzteZeit));
     letzteZeit = jetzt;
-    const strecke = s.zustand === ZUSTAND.SPIELEN ? s.vorher.strecke + (s.strecke - s.vorher.strecke) * alpha : s.strecke;
+    const fliegt = s.zustand === ZUSTAND.SPIELEN || s.zustand === ZUSTAND.ZIEL;
+    const strecke = fliegt ? s.vorher.strecke + (s.strecke - s.vorher.strecke) * alpha : s.strecke;
+    if (!sprites || sprites.schrift !== (document.fonts ? document.fonts.status : 'loaded')) baueSprites();
     const par = reduziert ? 0 : 1;
     const drift = reduziert ? 0 : s.zeit * 4;
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(ebenen.himmel, 0, 0);
-    zeichneEbene(ebenen.wolken, strecke * 0.06 * par + drift);
+    if (ebenen.wolken) zeichneEbene(ebenen.wolken, strecke * 0.06 * par + drift);
     zeichneEbene(ebenen.fern, strecke * 0.15 * par);
     zeichneEbene(ebenen.mitte, strecke * 0.32 * par);
     zeichneEbene(ebenen.schiffe, strecke * 0.5 * par);
     zeichneGlitzern(s, strecke);
     zeichneVorderWasser(strecke);
+    zeichneWetter(s, strecke);
+    zeichneWind(s);
+    const imSpiel = s.zustand !== ZUSTAND.START;
+    if (imSpiel) {
+      zeichneZiel(s, strecke);
+      for (const h of s.hindernisse) zeichneHindernis(h, strecke);
+    }
     zeichneKranbahn(strecke);
-    if (s.zustand !== ZUSTAND.START) for (const h of s.hindernisse) zeichneHindernis(h, strecke);
+    if (imSpiel) {
+      zeichneLaufkatzen(s, strecke);
+      zeichneSterneWelt(s, strecke);
+    }
     zeichnePartikel();
     zeichneFigur(s, alpha, dt);
-    if (s.zustand !== ZUSTAND.START) zeichnePunkte(s);
+    if (imSpiel) {
+      zeichnePunkte(s);
+      zeichneHud(s);
+    }
+  }
+
+  // Anderes Gebiet: Hintergrund neu vorzeichnen (nur wenn es sich ändert)
+  function setzeThema(n) {
+    n = Math.max(0, Math.min(THEMEN.length - 1, n | 0));
+    if (n === thema && ebenen) return;
+    thema = n;
+    feuerwerk = [];
+    if (canvas && canvas.width > 1 && ebenen) baueEbenen();
+    if (canvas) canvas.style.background = THEMEN[thema].kulisse;
+  }
+
+  // Stern eingesammelt: Funkenkranz an der Stelle, kleiner Hüpfer im Zähler
+  function sternEffekt(e) {
+    const n = reduziert ? 6 : 16;
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2;
+      neuesTeilchen({
+        art: 'funke', x: e.x, y: e.y,
+        vx: Math.cos(a) * (90 + Math.random() * 60), vy: Math.sin(a) * (90 + Math.random() * 60),
+        leben: 0, max: 0.4 + Math.random() * 0.2, g: 3, farbe: i % 2 ? GELB : '#FFF4B8', schwer: 120,
+      });
+    }
+    if (e.sterne >= 1 && e.sterne <= 3) sternPop[e.sterne - 1] = 0.22;
+  }
+
+  function zielEffekt() {
+    const n = reduziert ? 14 : 56;
+    for (let i = 0; i < n; i++) {
+      neuesTeilchen({
+        art: 'funke', x: Math.random() * B, y: -10 - Math.random() * 140,
+        vx: -30 + Math.random() * 60, vy: 60 + Math.random() * 90,
+        leben: 0, max: 2.4 + Math.random() * 1.2, g: 4,
+        farbe: CONTAINER_FARBEN[i % CONTAINER_FARBEN.length][0], schwer: 40, flattern: Math.random() * 6,
+      });
+    }
   }
 
   // Kleine animierte Figur im Startfenster
@@ -2036,7 +3184,8 @@ const Grafik = (() => {
   }
 
   return {
-    init, groesse, zeichne, setzeReduziert, impulsEffekt, unfallEffekt, rekordEffekt,
+    init, groesse, zeichne, setzeReduziert, impulsEffekt, unfallEffekt, rekordEffekt, setzeThema, sternEffekt, zielEffekt,
+    get thema() { return thema; },
     effekteSchritt, effekteLeeren, malStartFigur, malKulisse,
     get skala() { return skala; },
   };
@@ -2118,7 +3267,7 @@ const Eingabe = (() => {
 })();
 
 // ===================================================================
-// 8 · APP
+// 9 · APP
 // Verbindet Logik, Grafik, Ton, Eingabe und Speicher. Eine einzige
 // Spielschleife; alle Listener werden genau einmal eingerichtet.
 // ===================================================================
@@ -2145,13 +3294,30 @@ const Eingabe = (() => {
     'Die Gummistiefel sind jetzt voller Ehrgeiz.',
     'Ein Kran hat kurz weggeschaut.',
   ];
+  const STUFEN_TEXT = { leicht: 'große Lücken', normal: 'wie gedacht', schwer: 'eng und flott' };
+  // Farben der Gebietsköpfe in der Levelauswahl (passend zu den Hintergründen)
+  const GEBIET_FARBEN = [
+    'linear-gradient(90deg, #3A92C3, #80D3F4)',
+    'linear-gradient(90deg, #5F8794, #C8D4DC)',
+    'linear-gradient(90deg, #734396, #F7907E)',
+    'linear-gradient(90deg, #0F1D3D, #2A477B)',
+    'linear-gradient(90deg, #364F57, #77828C)',
+    'linear-gradient(90deg, #337896, #B6E2F3)',
+    'linear-gradient(90deg, #22184F, #C04A6A)',
+  ];
 
-  const s = erstelleSpiel();
-  let rekord = Speicher.rekord();
+  let stufe = Speicher.stufe();
+  let fortschritt = Speicher.fortschritt();
+  let rekord = Speicher.rekord(stufe);
+  const s = erstelleSpiel(erstelleKonfig('endlos', 0, stufe));
   let endeGezeigt = false;
+  let zielGezeigt = false;
+  let offenesFenster = null;
+  let introUhr = null;
 
   // ---------- Grafik und Bewegung ----------
   Grafik.init(canvas);
+  Grafik.setzeThema(0);
   const wenigBewegung = window.matchMedia('(prefers-reduced-motion: reduce)');
   Grafik.setzeReduziert(wenigBewegung.matches);
   wenigBewegung.addEventListener?.('change', e => Grafik.setzeReduziert(e.matches));
@@ -2208,17 +3374,25 @@ const Eingabe = (() => {
   window.addEventListener('resize', planeGroesse);
   window.addEventListener('orientationchange', planeGroesse);
 
-  // ---------- Fenster (Start, Pause, Ende) ----------
-  function zeigeFenster(id) {
-    for (const sec of fenster.querySelectorAll('section')) sec.hidden = sec.id !== id;
+  // ---------- Fenster ----------
+  function zeigeFenster(id, fokus) {
+    offenesFenster = id;
+    for (const sec of fenster.querySelectorAll('.tafel > section')) sec.hidden = sec.id !== id;
     fenster.hidden = !id;
     app.inert = !!id;
     if (id) {
       const sec = $(id);
       fenster.querySelectorAll('[data-titel]').forEach(t => t.removeAttribute('id'));
       sec.querySelector('[data-titel]').id = 'fensterTitel';
-      const knopf = sec.querySelector('.btn.main');
+      const knopf = fokus || sec.querySelector('.btn.main') || sec.querySelector('.lvl.naechstes') || sec.querySelector('.btn');
       if (knopf) knopf.focus({ preventScroll: true });
+      if (id === 'fLevel') {
+        const ziel = sec.querySelector('.lvl.naechstes');
+        fenster.scrollTop = 0;
+        if (ziel) ziel.scrollIntoView({ block: 'center' });
+      } else {
+        fenster.scrollTop = 0;
+      }
       if (id === 'fStart' || id === 'fEnde') planeGroesse();
     } else {
       canvas.focus({ preventScroll: true });
@@ -2231,6 +3405,7 @@ const Eingabe = (() => {
 
   // ---------- Meldung auf dem Spielfeld ----------
   function zeigeMeldung(gross, klein) {
+    clearTimeout(introUhr);
     meldung.replaceChildren(gross);
     if (klein) {
       const k = document.createElement('small');
@@ -2239,11 +3414,147 @@ const Eingabe = (() => {
     }
     meldung.hidden = false;
   }
-  function versteckeMeldung() { meldung.hidden = true; }
+  function versteckeMeldung() { clearTimeout(introUhr); meldung.hidden = true; }
 
-  // ---------- Spieleingabe (Taste, Klick, Tipp, Start-Knöpfe) ----------
+  // ---------- Schwierigkeit ----------
+  function zeigeStufen() {
+    for (const box of document.querySelectorAll('[data-stufen]')) {
+      if (!box.children.length) {
+        for (const st of STUFEN_REIHE) {
+          const k = document.createElement('button');
+          k.type = 'button';
+          k.className = 'stufe';
+          k.dataset.stufe = st;
+          k.innerHTML = `${STUFEN[st].name}<small>${STUFEN_TEXT[st]}</small>`;
+          k.addEventListener('click', () => setzeStufe(st));
+          box.append(k);
+        }
+      }
+      for (const k of box.children) k.setAttribute('aria-pressed', String(k.dataset.stufe === stufe));
+    }
+  }
+  function setzeStufe(st) {
+    if (!STUFEN[st]) return;
+    stufe = st;
+    Speicher.setzeStufe(st);
+    rekord = Speicher.rekord(st);
+    s.konfig = erstelleKonfig(s.konfig.modus, s.konfig.nr, st);
+    zeigeStufen();
+    zeigeZahlen();
+  }
+
+  // ---------- Levelauswahl ----------
+  const istFrei = nr => nr === 1 || fortschritt.geschafft.includes(nr) || fortschritt.geschafft.includes(nr - 1);
+  const sterneVon = nr => fortschritt.sterne[nr] || 0;
+  function sterneGesamt() { return LEVEL.reduce((n, l) => n + sterneVon(l.nr), 0); }
+  function naechstesLevel() {
+    const offen = LEVEL.find(l => !fortschritt.geschafft.includes(l.nr) && istFrei(l.nr));
+    return offen ? offen.nr : 0;
+  }
+
+  function zeigeZahlen() {
+    for (const el of document.querySelectorAll('.js-rekord')) el.textContent = rekord;
+    for (const el of document.querySelectorAll('.js-sterne')) el.textContent = sterneGesamt();
+    $('sterneMax').textContent = LEVEL.length * 3;
+  }
+
+  function baueLevelListe() {
+    const liste = $('levelListe');
+    liste.replaceChildren();
+    const naechstes = naechstesLevel();
+    GEBIETE.forEach((g, gi) => {
+      const level = LEVEL.filter(l => l.g === gi);
+      const box = document.createElement('div');
+      box.setAttribute('role', 'group');
+      box.className = 'gebiet';
+      box.setAttribute('aria-label', `Gebiet ${gi + 1}: ${g.name}`);
+      const kopf = document.createElement('h3');
+      kopf.className = 'gebiet-kopf';
+      kopf.style.background = GEBIET_FARBEN[gi];
+      const summe = level.reduce((n, l) => n + sterneVon(l.nr), 0);
+      kopf.innerHTML = `<span>${gi + 1} · ${g.name.toUpperCase()}</span><span>${summe}/${level.length * 3}</span>`;
+      const info = document.createElement('p');
+      info.className = 'gebiet-info';
+      info.innerHTML = g.neu ? `<b>Neu: ${g.neu}.</b> ${g.text}` : g.text;
+      const gitter = document.createElement('div');
+      gitter.className = 'levelgitter';
+      for (const l of level) {
+        const k = document.createElement('button');
+        k.type = 'button';
+        k.className = 'lvl';
+        const frei = istFrei(l.nr);
+        const st = sterneVon(l.nr);
+        if (fortschritt.geschafft.includes(l.nr)) k.classList.add('geschafft');
+        if (l.nr === naechstes) k.classList.add('naechstes');
+        k.disabled = !frei;
+        k.dataset.level = l.nr;
+        if (frei) {
+          k.innerHTML = `<span>${l.nr}</span><span class="mini">${[0, 1, 2].map(i => `<svg class="${i < st ? 'an' : ''}" aria-hidden="true"><use href="#stern"/></svg>`).join('')}</span>`;
+          k.setAttribute('aria-label', `Level ${l.nr}: ${l.name}, ${st} von 3 Sternen`);
+          k.title = l.name;
+          k.addEventListener('click', () => starteLevel(l.nr));
+        } else {
+          k.innerHTML = `<span>${l.nr}</span><svg class="schloss" aria-hidden="true"><use href="#schloss"/></svg>`;
+          k.setAttribute('aria-label', `Level ${l.nr}: noch gesperrt`);
+        }
+        gitter.append(k);
+      }
+      box.append(kopf, info, gitter);
+      liste.append(box);
+    });
+  }
+
+  function zeigeLevelauswahl() {
+    zuruecksetzen();
+    Grafik.setzeThema(0);
+    fortschritt = Speicher.fortschritt();
+    baueLevelListe();
+    zeigeStufen();
+    zeigeZahlen();
+    zeigeFenster('fLevel');
+  }
+  function zeigeHauptmenue() {
+    zuruecksetzen();
+    Grafik.setzeThema(0);
+    zeigeStufen();
+    zeigeZahlen();
+    zeigeFenster('fStart');
+  }
+  // Laufenden Versuch verwerfen und die Welt in den Startzustand bringen
+  function zuruecksetzen() {
+    waehle(s, s.konfig);
+    Grafik.effekteLeeren();
+    versteckeMeldung();
+    $('ansage').textContent = '';
+  }
+
+  // ---------- Starten ----------
+  function starteLevel(nr) {
+    if (!levelEbene(nr) || !istFrei(nr)) return;
+    Ton.wecke();
+    const k = erstelleKonfig('level', nr, stufe);
+    Grafik.setzeThema(k.gebiet);
+    waehle(s, k);
+    starte(s);
+    neuerVersuch();
+    const l = levelEbene(nr);
+    zeigeMeldung(`LEVEL ${nr}`, `${l.name} · ${GEBIETE[l.g].name}`);
+    introUhr = setTimeout(() => { if (s.zustand === ZUSTAND.SPIELEN) meldung.hidden = true; }, 2200);
+  }
+  function starteEndlos() {
+    Ton.wecke();
+    const k = erstelleKonfig('endlos', 0, stufe);
+    Grafik.setzeThema(0);
+    waehle(s, k);
+    starte(s);
+    neuerVersuch();
+  }
+
+  // ---------- Spieleingabe (Taste, Klick, Tipp) ----------
   function schub() {
     Ton.wecke();
+    // In Menüs startet eine Spieltaste nichts (dort entscheiden die Knöpfe)
+    if (!fenster.hidden && offenesFenster !== 'fEnde' && offenesFenster !== 'fPause') return null;
     const ergebnis = eingabe(s);
     if (ergebnis === 'start') neuerVersuch();
     else if (ergebnis === 'weiter') versteckeMeldung();
@@ -2252,15 +3563,26 @@ const Eingabe = (() => {
 
   function neuerVersuch() {
     endeGezeigt = false;
+    zielGezeigt = false;
     Grafik.effekteLeeren();
     versteckeMeldung();
     $('ansage').textContent = '';
     zeigeFenster(null);
   }
 
+  const menueText = () => (s.konfig.modus === 'level' ? 'Levelauswahl' : 'Hauptmenü');
+  const zumMenue = () => (s.konfig.modus === 'level' ? zeigeLevelauswahl() : zeigeHauptmenue());
+  const levelTitel = () => {
+    const l = levelEbene(s.konfig.nr);
+    return l ? `LEVEL ${l.nr} · ${l.name.toUpperCase()}` : '';
+  };
+
   function pause() {
     if (!pausiere(s)) return false;
-    $('pausePunkte').textContent = s.punkte;
+    $('pausePunkte').textContent = s.konfig.modus === 'level' ? `${s.punkte}/${s.konfig.anzahl}` : s.punkte;
+    $('pauseLevel').hidden = s.konfig.modus !== 'level';
+    $('pauseLevel').textContent = levelTitel();
+    $('pauseMenueKnopf').textContent = menueText();
     versteckeMeldung();
     zeigeFenster('fPause');
     return true;
@@ -2273,7 +3595,9 @@ const Eingabe = (() => {
     zeigeMeldung('BEREIT?', wurzel.classList.contains('touch') ? 'Tippen – dann geht es weiter' : 'Leertaste oder Klick – dann geht es weiter');
   }
 
-  $('losKnopf').addEventListener('click', schub);
+  $('abenteuerKnopf').addEventListener('click', () => { Ton.wecke(); zeigeLevelauswahl(); });
+  $('endlosKnopf').addEventListener('click', starteEndlos);
+  $('zurueckKnopf').addEventListener('click', zeigeHauptmenue);
   $('nochmalKnopf').addEventListener('click', schub);
   $('neuKnopf').addEventListener('click', () => {
     Ton.wecke();
@@ -2282,6 +3606,14 @@ const Eingabe = (() => {
   });
   $('weiterKnopf').addEventListener('click', weiter);
   $('pauseKnopf').addEventListener('click', pause);
+  $('pauseMenueKnopf').addEventListener('click', zumMenue);
+  $('endeMenueKnopf').addEventListener('click', zumMenue);
+  $('geschafftMenueKnopf').addEventListener('click', zeigeLevelauswahl);
+  $('wiederholenKnopf').addEventListener('click', () => starteLevel(s.konfig.nr));
+  $('naechstesKnopf').addEventListener('click', () => {
+    const n = s.konfig.nr + 1;
+    if (levelEbene(n)) starteLevel(n); else zeigeLevelauswahl();
+  });
 
   // Anderer Tab, App im Hintergrund oder Fenster verliert den Fokus: automatisch pausieren.
   // Weiter geht es nur bewusst über „Weiter“.
@@ -2296,14 +3628,20 @@ const Eingabe = (() => {
     beiSchub: schub,
     beiPause: () => {
       if (s.zustand === ZUSTAND.PAUSE) { weiter(); return true; }
+      if (offenesFenster === 'fLevel') { zeigeHauptmenue(); return true; }
       return pause();
     },
-    darfFensterStarten: () => !fenster.hidden && kannStarten(s),
+    darfFensterStarten: () => !fenster.hidden && offenesFenster === 'fEnde' && kannStarten(s),
     beiTouch: aufTouch,
   });
 
   // ---------- Ereignisse aus der Logik ----------
+  let windVorher = 0;
   function verarbeiteEreignisse() {
+    // Böe beginnt: kurzes Rauschen
+    const windJetzt = s.zustand === ZUSTAND.SPIELEN && s.wind.anteil > 0 ? s.wind.richtung : 0;
+    if (windJetzt && !windVorher) Ton.wind(windJetzt);
+    windVorher = windJetzt;
     if (!s.ereignisse.length) return;
     for (const e of s.ereignisse.splice(0)) {
       switch (e.typ) {
@@ -2314,27 +3652,74 @@ const Eingabe = (() => {
         case 'punkt':
           Ton.punkt();
           break;
+        case 'stern':
+          Ton.stern(e.sterne);
+          Grafik.sternEffekt(e);
+          break;
         case 'unfall':
           Ton.unfall();
           if (e.art === 'wasser') Ton.platsch();
           Grafik.unfallEffekt(s, e.art);
           break;
+        case 'ziel':
+          Ton.rekord(0.05);
+          Grafik.zielEffekt();
+          zielSpeichern(e.sterne);
+          break;
       }
     }
   }
 
+  let zielErgebnis = null;
+  function zielSpeichern(sterne) {
+    const nr = s.konfig.nr;
+    const vorherFrei = GEBIETE.map((g, gi) => istFrei(erstesLevelImGebiet(gi)));
+    zielErgebnis = Speicher.levelGeschafft(nr, sterne);
+    fortschritt = Speicher.fortschritt();
+    // Wurde dadurch ein neues Gebiet frei?
+    zielErgebnis.neuesGebiet = GEBIETE.findIndex((g, gi) => !vorherFrei[gi] && istFrei(erstesLevelImGebiet(gi)));
+  }
+
+  function zeigeGeschafft() {
+    zielGezeigt = true;
+    const nr = s.konfig.nr;
+    const l = levelEbene(nr);
+    $('geschafftLevel').textContent = levelTitel();
+    const sterne = s.sterne;
+    $('grossSterne').querySelectorAll('svg').forEach((el, i) => el.classList.toggle('an', i < sterne));
+    const texte = ['Ziel erreicht! Sammle beim nächsten Mal die Sterne in den Lücken.', 'Ein Stern! Zwei weitere warten noch.', 'Zwei Sterne – fast perfekt!', 'Alle drei Sterne. Meisterhaft!'];
+    let text = texte[sterne];
+    if (zielErgebnis && !zielErgebnis.mehrSterne && sterne < sterneVon(nr)) text += ` (Bestwert: ${sterneVon(nr)} Sterne)`;
+    $('geschafftText').textContent = text;
+    const letztes = nr === LEVEL.length;
+    $('geschafftTitel').textContent = letztes ? 'Großes Finale geschafft!' : 'Geschafft!';
+    const neu = zielErgebnis && zielErgebnis.neuesGebiet > 0 ? GEBIETE[zielErgebnis.neuesGebiet] : null;
+    $('neuesGebiet').hidden = !neu && !letztes;
+    $('neuesGebiet').textContent = letztes ? 'ALLE 32 LEVEL GESCHAFFT!' : neu ? `NEUES GEBIET: ${neu.name.toUpperCase()}` : '';
+    $('naechstesKnopf').textContent = letztes ? 'Zur Levelauswahl' : 'Nächstes Level';
+    $('ansage').textContent = `Geschafft! Level ${nr}, ${l.name}. ${sterne} von 3 Sternen.${neu ? ' Neues Gebiet: ' + neu.name + '.' : ''}`;
+    zeigeFenster('fGeschafft');
+  }
+
   function zeigeEnde() {
     endeGezeigt = true;
-    const neu = s.punkte > rekord;
-    if (neu) {
+    const level = s.konfig.modus === 'level';
+    let neu = false;
+    if (!level && s.punkte > rekord) {
+      neu = true;
       rekord = s.punkte;
-      Speicher.setzeRekord(rekord);
+      Speicher.setzeRekord(rekord, stufe);
       Ton.rekord(0.05);
       Grafik.rekordEffekt();
     }
-    $('ePunkte').textContent = s.punkte;
-    $('eRekord').textContent = rekord;
+    $('endeLevel').hidden = !level;
+    $('endeLevel').textContent = levelTitel();
+    $('ePunkteText').textContent = level ? 'Geschafft' : 'Punkte';
+    $('ePunkte').textContent = level ? `${s.punkte}/${s.konfig.anzahl}` : s.punkte;
+    $('eRekordText').textContent = level ? 'Sterne' : `Rekord (${STUFEN[stufe].name})`;
+    $('eRekord').textContent = level ? `${s.sterne}/3` : rekord;
     $('neuerRekord').hidden = !neu;
+    $('endeMenueKnopf').textContent = menueText();
     const spruch = $('spruch');
     // Gelegentlich ein kurzer Spruch (nicht bei einem neuen Rekord, der wird gefeiert)
     if (!neu && Math.random() < 0.55) {
@@ -2343,8 +3728,10 @@ const Eingabe = (() => {
     } else {
       spruch.hidden = true;
     }
-    for (const el of document.querySelectorAll('.js-rekord')) el.textContent = rekord;
-    $('ansage').textContent = `Bruchlandung. ${s.punkte} Punkte. Rekord ${rekord}.${neu ? ' Neuer Rekord!' : ''}`;
+    zeigeZahlen();
+    $('ansage').textContent = level
+      ? `Bruchlandung. ${s.punkte} von ${s.konfig.anzahl} geschafft.`
+      : `Bruchlandung. ${s.punkte} Punkte. Rekord ${rekord}.${neu ? ' Neuer Rekord!' : ''}`;
     zeigeFenster('fEnde');
   }
 
@@ -2373,12 +3760,15 @@ const Eingabe = (() => {
     }
     verarbeiteEreignisse();
     if (s.zustand === ZUSTAND.ENDE && !endeGezeigt && s.unfall.zeit >= K.SPERRE_NACH_UNFALL) zeigeEnde();
+    if (s.zustand === ZUSTAND.ZIEL && !zielGezeigt && s.ziel.zeit >= K.ZIEL_ZEIT) zeigeGeschafft();
     setzeZustandsKlasse();
-    Grafik.zeichne(s, s.zustand === ZUSTAND.SPIELEN ? rest / K.SCHRITT : 1);
-    if (!fenster.hidden && !$('fStart').hidden) Grafik.malStartFigur(startFigur, jetzt / 1000);
+    const fliegt = s.zustand === ZUSTAND.SPIELEN || s.zustand === ZUSTAND.ZIEL;
+    Grafik.zeichne(s, fliegt ? rest / K.SCHRITT : 1);
+    if (offenesFenster === 'fStart') Grafik.malStartFigur(startFigur, jetzt / 1000);
   }
 
-  for (const el of document.querySelectorAll('.js-rekord')) el.textContent = rekord;
+  zeigeStufen();
+  zeigeZahlen();
   zeigeFenster('fStart');
   setzeZustandsKlasse();
   passeGroesseAn();
@@ -2393,8 +3783,11 @@ const Eingabe = (() => {
   // Für automatische Tests (nur mit ?test in der Adresse)
   if (/[?&]test\b/.test(location.search)) {
     window.hafenhopser = {
-      s, K, ZUSTAND, eingabe, schritt, starte, pausiere, setzeFort, Speicher,
+      s, K, ZUSTAND, LEVEL, GEBIETE, eingabe, schritt, starte, pausiere, setzeFort, Speicher, Grafik,
+      starteLevel, starteEndlos, setzeStufe, zeigeLevelauswahl, zeigeHauptmenue,
       get rekord() { return rekord; },
+      get stufe() { return stufe; },
+      get fenster() { return offenesFenster; },
     };
   }
 })();
