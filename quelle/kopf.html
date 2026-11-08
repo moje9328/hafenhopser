@@ -214,6 +214,10 @@
   .touch .nurMaus { display: none; }
   .rekord { margin: 14px 0 0; color: var(--muted); font: 10px/1.6 var(--retro); }
   .rekord b { color: var(--gelb); font-weight: 400; }
+  .duell { margin: 14px 0 0; padding: 10px 12px; background: var(--surface-2); border-left: 4px solid var(--gelb); border-radius: 8px; line-height: 1.4; }
+  .duell[hidden] { display: none; }
+  .duelltext { margin: 12px 0 0; color: var(--muted); font-size: 15px; line-height: 1.4; }
+  .duelltext[hidden] { display: none; }
   .spruch { margin: 10px 0 0; color: var(--tuerkis); font-size: 16px; font-style: italic; }
   .zahlen { display: grid; gap: 8px; margin: 16px 0 0; padding: 0; }
   .zahlen div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
@@ -424,7 +428,11 @@
         <button class="btn" id="endlosKnopf" type="button">Endlos fliegen</button>
       </div>
       <p class="rekord">ENDLOS-REKORD <b class="js-rekord">0</b> · STERNE <b class="js-sterne">0</b></p>
-      <div class="knoepfe"><a class="btn klein" href="https://moje9328.github.io/spiele/">Zur Pixelhafen-Seite</a></div>
+      <p class="duell" id="startDuell" hidden></p>
+      <div class="knoepfe">
+        <button class="btn klein" id="freundeKnopf" type="button">Freunde herausfordern</button>
+        <a class="btn klein" href="https://moje9328.github.io/spiele/">Zur Pixelhafen-Seite</a>
+      </div>
     </section>
 
     <section id="fLevel" hidden>
@@ -460,8 +468,10 @@
         <div class="gross"><dt id="ePunkteText">Punkte</dt><dd id="ePunkte">0</dd></div>
         <div id="eRekordZeile"><dt id="eRekordText">Persönlicher Rekord</dt><dd id="eRekord">0</dd></div>
       </dl>
+      <p class="duelltext" id="eDuell" hidden></p>
       <div class="knoepfe">
         <button class="btn main" id="nochmalKnopf" type="button">Noch einmal</button>
+        <button class="btn klein" id="endeFreunde" type="button" hidden>Freunde herausfordern</button>
         <button class="btn klein" id="endeMenueKnopf" type="button">Levelauswahl</button>
       </div>
     </section>

@@ -42,6 +42,18 @@
   let fortschritt = Speicher.fortschritt();
   let rekord = Speicher.rekord(stufe);
   const s = erstelleSpiel(erstelleKonfig('endlos', 0, stufe));
+
+  // ---------- Freunde herausfordern (Endlos-Rekord je Stufe, per Link) ----------
+  const duell = PixelDuell.erstelle({
+    spiel: 'Hafenhopser',
+    adresse: 'https://moje9328.github.io/hafenhopser/',
+    schluessel: 'pixelhafen.hafenhopser.v1.freunde',
+    stufen: Object.fromEntries(STUFEN_REIHE.map(st => [st, STUFEN[st].name])),
+    stufe: () => stufe,
+    stand: st => ({ punkte: Speicher.rekord(st) }),
+    levelWort: '',
+    beiStufe: st => { if (STUFEN[st]) { stufe = st; Speicher.setzeStufe(st); rekord = Speicher.rekord(st); s.konfig = erstelleKonfig(s.konfig.modus, s.konfig.nr, st); } },
+  });
   let endeGezeigt = false;
   let zielGezeigt = false;
   let offenesFenster = null;
@@ -329,6 +341,12 @@
 
   $('abenteuerKnopf').addEventListener('click', () => { Ton.wecke(); zeigeLevelauswahl(); });
   $('endlosKnopf').addEventListener('click', starteEndlos);
+  $('freundeKnopf').addEventListener('click', () => duell.oeffne());
+  $('endeFreunde').addEventListener('click', () => duell.oeffne());
+  if (duell.offen) {
+    $('startDuell').textContent = duell.startText() + ' (Modus: Endlos fliegen)';
+    $('startDuell').hidden = false;
+  }
   $('zurueckKnopf').addEventListener('click', zeigeHauptmenue);
   $('nochmalKnopf').addEventListener('click', schub);
   $('neuKnopf').addEventListener('click', () => {
@@ -451,6 +469,9 @@
     $('eRekordText').textContent = level ? 'Sterne' : `Rekord (${STUFEN[stufe].name})`;
     $('eRekord').textContent = level ? `${s.sterne}/3` : rekord;
     $('neuerRekord').hidden = !neu;
+    $('eDuell').hidden = level;
+    $('eDuell').textContent = level ? '' : duell.endText(s.punkte);
+    $('endeFreunde').hidden = level;
     $('endeMenueKnopf').textContent = menueText();
     const spruch = $('spruch');
     // Gelegentlich ein kurzer Spruch (nicht bei einem neuen Rekord, der wird gefeiert)
