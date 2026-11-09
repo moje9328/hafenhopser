@@ -934,7 +934,7 @@ const Grafik = (() => {
       g.textAlign = 'center';
       g.textBaseline = 'middle';
       g.fillStyle = NAVY;
-      g.fillText('ZIEL', 32, 36);
+      g.fillText(T('ZIEL'), 32, 36);
       g.restore();
     });
     // Wind-Schild: Pfeile und „BÖE“
@@ -960,7 +960,7 @@ const Grafik = (() => {
       g.textAlign = 'left';
       g.textBaseline = 'middle';
       g.fillStyle = CREME;
-      g.fillText('WIND', 35, 15);
+      g.fillText(T('WIND'), 35, 15);
       g.restore();
     });
     sprites = {
@@ -1199,7 +1199,7 @@ const Grafik = (() => {
       p.r(sx - 3, sy - 1, 6, 2, GELB);
     }
     if (t < 0.9) {
-      const wort = s.unfall.art === 'wasser' ? 'PLATSCH!' : s.unfall.art === 'decke' ? 'BONK!' : 'BOING!';
+      const wort = s.unfall.art === 'wasser' ? T('PLATSCH!') : s.unfall.art === 'decke' ? 'BONK!' : 'BOING!';
       text(wort, K.FIGUR_X + 34, y - 42 - (reduziert ? 0 : Math.min(t, 0.3) * 20), 12, GELB, 'left');
     }
   }

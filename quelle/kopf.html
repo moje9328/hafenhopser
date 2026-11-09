@@ -389,7 +389,7 @@
 <canvas id="kulisse" aria-hidden="true"></canvas>
 
 <div id="app">
-  <header id="kopf"><svg aria-hidden="true"><use href="#logo"/></svg><span>PIXELHAFEN · <b>HAFENHOPSER</b></span></header>
+  <header id="kopf"><svg aria-hidden="true"><use href="#logo"/></svg><span data-en="PIXELHAFEN · &lt;b&gt;HARBOR HOPPER&lt;/b&gt;">PIXELHAFEN · <b>HAFENHOPSER</b></span></header>
   <main id="buehne">
     <div id="rahmen">
       <canvas id="bild" tabindex="0" role="img" aria-label="Spielfeld von Hafenhopser: Die Figur fliegt mit einem Raketenrucksack zwischen hängenden Containern und Containerstapeln hindurch. Leertaste, Pfeil hoch, W, Klick oder Tippen gibt einen Schub."></canvas>
@@ -414,11 +414,11 @@
     <section id="fStart">
       <p class="marke"><svg aria-hidden="true"><use href="#logo"/></svg>PIXELHAFEN</p>
       <div class="titelzeile">
-        <h1 data-titel>HAFEN&shy;HOPSER</h1>
+        <h1 data-titel data-en="HARBOR&amp;shy;HOPPER">HAFEN&shy;HOPSER</h1>
         <canvas id="startFigur" aria-hidden="true"></canvas>
       </div>
       <p class="unterzeile">Der Hafen ruft. Dein Jetpack hustet.</p>
-      <p class="steuerinfo"><span class="nurMaus"><b>Leertaste</b>, <b>Pfeil hoch</b>, <b>W</b> oder <b>Klick</b> gibt einen kurzen Schub. <b>P</b> oder <b>Esc</b> pausiert.</span><span class="nurTouch"><b>Tippe</b> irgendwo auf den Bildschirm für einen kurzen Schub. Flieg durch die Lücken, nicht ins Wasser.</span></p>
+      <p class="steuerinfo"><span class="nurMaus" data-en="&lt;b&gt;Space&lt;/b&gt;, &lt;b&gt;Up arrow&lt;/b&gt;, &lt;b&gt;W&lt;/b&gt; or &lt;b&gt;click&lt;/b&gt; gives a short boost. &lt;b&gt;P&lt;/b&gt; or &lt;b&gt;Esc&lt;/b&gt; pauses."><b>Leertaste</b>, <b>Pfeil hoch</b>, <b>W</b> oder <b>Klick</b> gibt einen kurzen Schub. <b>P</b> oder <b>Esc</b> pausiert.</span><span class="nurTouch" data-en="&lt;b&gt;Tap&lt;/b&gt; anywhere on the screen for a short boost. Fly through the gaps, not into the water."><b>Tippe</b> irgendwo auf den Bildschirm für einen kurzen Schub. Flieg durch die Lücken, nicht ins Wasser.</span></p>
       <fieldset class="stufenwahl">
         <legend>SCHWIERIGKEIT</legend>
         <div class="stufen" data-stufen></div>
@@ -431,8 +431,9 @@
       <p class="duell" id="startDuell" hidden></p>
       <div class="knoepfe">
         <button class="btn klein" id="freundeKnopf" type="button">Freunde herausfordern</button>
-        <a class="btn klein" href="https://moje9328.github.io/spiele/">Zur Pixelhafen-Seite</a>
+        <a class="btn klein" id="pixelhafenLink" href="https://moje9328.github.io/spiele/">Zur Pixelhafen-Seite</a>
       </div>
+      <div class="knoepfe"><button class="btn klein" id="spracheKnopf" type="button" lang="en">English</button></div>
     </section>
 
     <section id="fLevel" hidden>

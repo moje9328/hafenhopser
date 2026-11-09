@@ -389,7 +389,7 @@
 <canvas id="kulisse" aria-hidden="true"></canvas>
 
 <div id="app">
-  <header id="kopf"><svg aria-hidden="true"><use href="#logo"/></svg><span>PIXELHAFEN · <b>HAFENHOPSER</b></span></header>
+  <header id="kopf"><svg aria-hidden="true"><use href="#logo"/></svg><span data-en="PIXELHAFEN · &lt;b&gt;HARBOR HOPPER&lt;/b&gt;">PIXELHAFEN · <b>HAFENHOPSER</b></span></header>
   <main id="buehne">
     <div id="rahmen">
       <canvas id="bild" tabindex="0" role="img" aria-label="Spielfeld von Hafenhopser: Die Figur fliegt mit einem Raketenrucksack zwischen hängenden Containern und Containerstapeln hindurch. Leertaste, Pfeil hoch, W, Klick oder Tippen gibt einen Schub."></canvas>
@@ -414,11 +414,11 @@
     <section id="fStart">
       <p class="marke"><svg aria-hidden="true"><use href="#logo"/></svg>PIXELHAFEN</p>
       <div class="titelzeile">
-        <h1 data-titel>HAFEN&shy;HOPSER</h1>
+        <h1 data-titel data-en="HARBOR&amp;shy;HOPPER">HAFEN&shy;HOPSER</h1>
         <canvas id="startFigur" aria-hidden="true"></canvas>
       </div>
       <p class="unterzeile">Der Hafen ruft. Dein Jetpack hustet.</p>
-      <p class="steuerinfo"><span class="nurMaus"><b>Leertaste</b>, <b>Pfeil hoch</b>, <b>W</b> oder <b>Klick</b> gibt einen kurzen Schub. <b>P</b> oder <b>Esc</b> pausiert.</span><span class="nurTouch"><b>Tippe</b> irgendwo auf den Bildschirm für einen kurzen Schub. Flieg durch die Lücken, nicht ins Wasser.</span></p>
+      <p class="steuerinfo"><span class="nurMaus" data-en="&lt;b&gt;Space&lt;/b&gt;, &lt;b&gt;Up arrow&lt;/b&gt;, &lt;b&gt;W&lt;/b&gt; or &lt;b&gt;click&lt;/b&gt; gives a short boost. &lt;b&gt;P&lt;/b&gt; or &lt;b&gt;Esc&lt;/b&gt; pauses."><b>Leertaste</b>, <b>Pfeil hoch</b>, <b>W</b> oder <b>Klick</b> gibt einen kurzen Schub. <b>P</b> oder <b>Esc</b> pausiert.</span><span class="nurTouch" data-en="&lt;b&gt;Tap&lt;/b&gt; anywhere on the screen for a short boost. Fly through the gaps, not into the water."><b>Tippe</b> irgendwo auf den Bildschirm für einen kurzen Schub. Flieg durch die Lücken, nicht ins Wasser.</span></p>
       <fieldset class="stufenwahl">
         <legend>SCHWIERIGKEIT</legend>
         <div class="stufen" data-stufen></div>
@@ -431,8 +431,9 @@
       <p class="duell" id="startDuell" hidden></p>
       <div class="knoepfe">
         <button class="btn klein" id="freundeKnopf" type="button">Freunde herausfordern</button>
-        <a class="btn klein" href="https://moje9328.github.io/spiele/">Zur Pixelhafen-Seite</a>
+        <a class="btn klein" id="pixelhafenLink" href="https://moje9328.github.io/spiele/">Zur Pixelhafen-Seite</a>
       </div>
+      <div class="knoepfe"><button class="btn klein" id="spracheKnopf" type="button" lang="en">English</button></div>
     </section>
 
     <section id="fLevel" hidden>
@@ -495,6 +496,216 @@
 </div>
 
 <script>
+// ===================================================================
+// 0 · SPRACHE (Deutsch / Englisch)
+// Alle Texte stehen im Code auf Deutsch. T('deutscher Text') liefert im
+// englischen Modus die Übersetzung aus EN (unten), sonst den Text selbst.
+// Platzhalter: T('Level {nr}', { nr: 3 }).
+// Die Sprache kommt aus der gespeicherten Wahl, sonst aus dem Browser:
+// Deutsch für deutschsprachige Browser, für alle anderen Englisch.
+// PORTAL ist nur in der Version für Spieleportale (CrazyGames, Poki) wahr:
+// dort fehlen Links nach außen, Teilen und der Offline-Speicher.
+// ===================================================================
+
+const PORTAL = /*PORTAL*/false;
+
+const Sprache = (() => {
+  const SCHLUESSEL = 'pixelhafen.sprache';
+  function gespeichert() {
+    // ?lang=en in der Adresse geht vor (falls der Browser den Speicher sperrt)
+    try { const u = new URLSearchParams(location.search).get('lang'); if (u === 'de' || u === 'en') return u; } catch (e) { /* weiter */ }
+    try { const w = window.localStorage.getItem(SCHLUESSEL); return w === 'de' || w === 'en' ? w : ''; } catch (e) { return ''; }
+  }
+  function ausBrowser() {
+    try {
+      const liste = (typeof navigator !== 'undefined' && (navigator.languages || [navigator.language])) || [];
+      return String(liste[0] || 'de').toLowerCase().startsWith('de') ? 'de' : 'en';
+    } catch (e) { return 'de'; }
+  }
+  // Ohne Browser (automatische Tests) immer Deutsch
+  const aktuell = typeof document === 'undefined' ? 'de' : (gespeichert() || ausBrowser());
+  return {
+    aktuell,
+    wechsle() {
+      const neu = aktuell === 'de' ? 'en' : 'de';
+      try { window.localStorage.setItem(SCHLUESSEL, neu); } catch (e) { /* dann nur über die Adresse */ }
+      const u = new URL(location.href);
+      u.searchParams.set('lang', neu);
+      location.replace(u.href);
+    },
+  };
+})();
+
+function T(de, werte) {
+  let text = (Sprache.aktuell === 'en' && Object.prototype.hasOwnProperty.call(EN, de)) ? EN[de] : de;
+  if (werte) text = text.replace(/\{(\w+)\}/g, (m, k) => (k in werte ? werte[k] : m));
+  return text;
+}
+
+// Zweiter Name für T, wo im Spielcode eine Variable T (der Tisch) die Funktion verdeckt
+const uebersetze = T;
+
+// Übersetzt die festen Texte im HTML: Elemente mit data-en bekommen deren Inhalt
+// (für Texte mit Fettdruck darin), sonst werden einzelne Textstücke und die
+// Attribute aria-label, title und content (Beschreibung) über EN ersetzt.
+function uebersetzeSeite() {
+  document.documentElement.lang = Sprache.aktuell;
+  if (Sprache.aktuell !== 'en') return;
+  for (const el of document.querySelectorAll('[data-en]')) el.innerHTML = el.dataset.en;
+  const gang = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  const stuecke = [];
+  while (gang.nextNode()) stuecke.push(gang.currentNode);
+  for (const n of stuecke) {
+    const roh = n.nodeValue;
+    const kern = roh.trim();
+    if (kern && Object.prototype.hasOwnProperty.call(EN, kern)) n.nodeValue = roh.replace(kern, EN[kern]);
+  }
+  for (const el of document.querySelectorAll('[aria-label], [title], [placeholder], meta[name="description"]')) {
+    for (const a of ['aria-label', 'title', 'placeholder', 'content']) {
+      const w = el.getAttribute(a);
+      if (w && Object.prototype.hasOwnProperty.call(EN, w)) el.setAttribute(a, EN[w]);
+    }
+  }
+  if (Object.prototype.hasOwnProperty.call(EN, document.title)) document.title = EN[document.title];
+}
+
+const EN = {
+  // ---------- Seite ----------
+  'Hafenhopser – Pixelhafen': 'Harbor Hopper – Pixelhafen',
+  'Ein Tipp, ein Schub: Flieg mit dem hustenden Jetpack durch den Pixelhafen und zwischen den Containern hindurch. Kostenlos, ohne Anmeldung, ohne Werbung.':
+    'One tap, one boost: fly your coughing jetpack through the pixel harbor and between the shipping containers.',
+  'Spielfeld von Hafenhopser: Die Figur fliegt mit einem Raketenrucksack zwischen hängenden Containern und Containerstapeln hindurch. Leertaste, Pfeil hoch, W, Klick oder Tippen gibt einen Schub.':
+    'Harbor Hopper playfield: the character flies a jetpack between hanging containers and container stacks. Space, Up arrow, W, click or tap gives a boost.',
+  'Ton ausschalten': 'Mute sound',
+  'Ton einschalten': 'Unmute sound',
+  'Pause': 'Pause',
+  'Der Hafen ruft. Dein Jetpack hustet.': 'The harbor calls. Your jetpack coughs.',
+  'SCHWIERIGKEIT': 'DIFFICULTY',
+  'Level spielen': 'Play levels',
+  'Endlos fliegen': 'Endless flight',
+  'ENDLOS-REKORD': 'ENDLESS BEST',
+  '· STERNE': '· STARS',
+  'Freunde herausfordern': 'Challenge friends',
+  'Zur Pixelhafen-Seite': 'More Pixelhafen games',
+  'Levelauswahl': 'Select level',
+  'Zurück': 'Back',
+  'Verschnaufpause': 'Catch your breath',
+  'PUNKTE': 'SCORE',
+  'Weiter': 'Continue',
+  'Neu starten': 'Restart',
+  'Das war wohl eine Bruchlandung.': 'Well, that was a crash landing.',
+  'NEUER REKORD!': 'NEW BEST!',
+  'Punkte': 'Score',
+  'Persönlicher Rekord': 'Personal best',
+  'Noch einmal': 'Try again',
+  'Geschafft!': 'Level complete!',
+  'Nächstes Level': 'Next level',
+  'Sprache: Englisch': 'Language: German',
+  // ---------- Gebiete ----------
+  'Sonnenhafen': 'Sunny Harbor',
+  'Blauer Himmel, frische Brise. Zum Warmfliegen.': 'Blue skies, a fresh breeze. Time to warm up.',
+  'Werft im Nebel': 'Foggy Shipyard',
+  'Die Kräne heben und senken ihre Lasten.': 'The cranes raise and lower their loads.',
+  'Schwebende Container': 'Swinging containers',
+  'Abendmarkt': 'Evening Market',
+  'Lange Container: Höhe halten!': 'Long containers: hold your height!',
+  'Container-Tunnel': 'Container tunnels',
+  'Nachthafen': 'Night Harbor',
+  'Schneller, enger, dunkler.': 'Faster, tighter, darker.',
+  'Alles zusammen': 'Everything combined',
+  'Sturmküste': 'Storm Coast',
+  'Windböen drücken dich hoch oder runter.': 'Gusts of wind push you up or down.',
+  'Windböen': 'Wind gusts',
+  'Eishafen': 'Ice Harbor',
+  'Kalte Luft, dichter Verkehr.': 'Cold air, heavy traffic.',
+  'Enge Abstände': 'Tight spacing',
+  'Hafenfest': 'Harbor Festival',
+  'Das große Finale unterm Feuerwerk.': 'The grand finale under the fireworks.',
+  'Alles auf einmal': 'Everything at once',
+  // ---------- Level ----------
+  'Erster Hopser': 'First Hop',
+  'Kistenslalom': 'Crate Slalom',
+  'Hafenrundflug': 'Harbor Tour',
+  'Möwenkurs': 'Seagull Course',
+  'Großer Kai': 'Grand Quay',
+  'Schwebende Last': 'Hanging Load',
+  'Hoch und runter': 'Up and Down',
+  'Nebelkräne': 'Cranes in the Fog',
+  'Helling': 'Slipway',
+  'Stapellauf': 'Launch Day',
+  'Lange Kisten': 'Long Crates',
+  'Tunnelblick': 'Tunnel Vision',
+  'Markthallen': 'Market Halls',
+  'Lampionkette': 'Lantern Chain',
+  'Fischauktion': 'Fish Auction',
+  'Laternenlicht': 'Lamplight',
+  'Mondschein': 'Moonlight',
+  'Nachtschicht': 'Night Shift',
+  'Leuchtfeuer': 'Beacon',
+  'Mitternacht': 'Midnight',
+  'Erste Böe': 'First Gust',
+  'Gegenwind': 'Headwind',
+  'Brandung': 'Surf',
+  'Sturmflut': 'Storm Surge',
+  'Frostflug': 'Frost Flight',
+  'Eisschollen': 'Ice Floes',
+  'Schneegestöber': 'Snow Flurry',
+  'Polarnacht': 'Polar Night',
+  'Lampionflug': 'Lantern Flight',
+  'Feuerwerk': 'Fireworks',
+  'Festumzug': 'Parade',
+  'Großes Finale': 'Grand Finale',
+  // ---------- Schwierigkeit ----------
+  'Gemütlich': 'Relaxed',
+  'Normal': 'Normal',
+  'Profi': 'Pro',
+  'große Lücken': 'wide gaps',
+  'wie gedacht': 'as intended',
+  'eng und flott': 'tight and fast',
+  // ---------- Sprüche nach dem Absturz ----------
+  'Die Mütze ist noch da.': 'At least the cap survived.',
+  'Fast bis zur Mittagspause.': 'Almost made it to lunch break.',
+  'Der TÜV hat Fragen.': 'The safety inspector has questions.',
+  'Die Möwen applaudieren höflich.': 'The seagulls applaud politely.',
+  'Das Jetpack hustet beleidigt.': 'The jetpack coughs, offended.',
+  'Der Hafenmeister notiert: „Kreativ“.': 'The harbor master writes down: “creative”.',
+  'Die Gummistiefel sind jetzt voller Ehrgeiz.': 'The rubber boots are now full of ambition.',
+  'Ein Kran hat kurz weggeschaut.': 'A crane looked away for a second.',
+  // ---------- Meldungen im Spiel ----------
+  'Gebiet {nr}: {name}': 'Area {nr}: {name}',
+  'Neu:': 'New:',
+  'Level {nr}: {name}, {sterne} von 3 Sternen': 'Level {nr}: {name}, {sterne} of 3 stars',
+  'Level {nr}: noch gesperrt': 'Level {nr}: locked',
+  'Hauptmenü': 'Main menu',
+  'BEREIT?': 'READY?',
+  'Tippen – dann geht es weiter': 'Tap to continue',
+  'Leertaste oder Klick – dann geht es weiter': 'Space or click to continue',
+  ' (Modus: Endlos fliegen)': ' (mode: Endless flight)',
+  'Ziel erreicht! Sammle beim nächsten Mal die Sterne in den Lücken.': 'You made it! Next time, collect the stars in the gaps.',
+  'Ein Stern! Zwei weitere warten noch.': 'One star! Two more are waiting.',
+  'Zwei Sterne – fast perfekt!': 'Two stars – almost perfect!',
+  'Alle drei Sterne. Meisterhaft!': 'All three stars. Masterful!',
+  ' (Bestwert: {n} Sterne)': ' (best: {n} stars)',
+  'Großes Finale geschafft!': 'Grand finale complete!',
+  'ALLE 32 LEVEL GESCHAFFT!': 'ALL 32 LEVELS COMPLETE!',
+  'NEUES GEBIET: {name}': 'NEW AREA: {name}',
+  'Zur Levelauswahl': 'Back to levels',
+  'Geschafft! Level {nr}, {name}. {sterne} von 3 Sternen.': 'Level complete! Level {nr}, {name}. {sterne} of 3 stars.',
+  ' Neues Gebiet: {name}.': ' New area: {name}.',
+  'Geschafft': 'Cleared',
+  'Sterne': 'Stars',
+  'Rekord ({stufe})': 'Best ({stufe})',
+  'Bruchlandung. {punkte} von {anzahl} geschafft.': 'Crash landing. {punkte} of {anzahl} cleared.',
+  'Bruchlandung. {punkte} Punkte. Rekord {rekord}.': 'Crash landing. {punkte} points. Best {rekord}.',
+  ' Neuer Rekord!': ' New best!',
+  // ---------- Wörter auf dem Spielfeld ----------
+  'ZIEL': 'GOAL',
+  'WIND': 'WIND',
+  'PLATSCH!': 'SPLASH!',
+  'BONK!': 'BONK!',
+  'BOING!': 'BOING!',
+};
+
 'use strict';
 // ===================================================================
 // 1 · EINSTELLUNGEN
@@ -590,13 +801,13 @@ const K = {
 // ===================================================================
 
 const GEBIETE = [
-  { name: 'Sonnenhafen', text: 'Blauer Himmel, frische Brise. Zum Warmfliegen.', neu: '' },
-  { name: 'Werft im Nebel', text: 'Die Kräne heben und senken ihre Lasten.', neu: 'Schwebende Container' },
-  { name: 'Abendmarkt', text: 'Lange Container: Höhe halten!', neu: 'Container-Tunnel' },
-  { name: 'Nachthafen', text: 'Schneller, enger, dunkler.', neu: 'Alles zusammen' },
-  { name: 'Sturmküste', text: 'Windböen drücken dich hoch oder runter.', neu: 'Windböen' },
-  { name: 'Eishafen', text: 'Kalte Luft, dichter Verkehr.', neu: 'Enge Abstände' },
-  { name: 'Hafenfest', text: 'Das große Finale unterm Feuerwerk.', neu: 'Alles auf einmal' },
+  { name: T('Sonnenhafen'), text: T('Blauer Himmel, frische Brise. Zum Warmfliegen.'), neu: '' },
+  { name: T('Werft im Nebel'), text: T('Die Kräne heben und senken ihre Lasten.'), neu: T('Schwebende Container') },
+  { name: T('Abendmarkt'), text: T('Lange Container: Höhe halten!'), neu: T('Container-Tunnel') },
+  { name: T('Nachthafen'), text: T('Schneller, enger, dunkler.'), neu: T('Alles zusammen') },
+  { name: T('Sturmküste'), text: T('Windböen drücken dich hoch oder runter.'), neu: T('Windböen') },
+  { name: T('Eishafen'), text: T('Kalte Luft, dichter Verkehr.'), neu: T('Enge Abstände') },
+  { name: T('Hafenfest'), text: T('Das große Finale unterm Feuerwerk.'), neu: T('Alles auf einmal') },
 ];
 
 // n = Anzahl der Hindernispaare bis zum Ziel
@@ -605,52 +816,52 @@ const GEBIETE = [
 // lang = Anteil langer Container (Tunnel), wind = Stärke der Böen (0 = kein Wind)
 const LEVEL = [
   // ---- 1 · Sonnenhafen ----
-  { g: 0, name: 'Erster Hopser', n: 8, tempo: [118, 124], luecke: [192, 182], versatz: [30, 60] },
-  { g: 0, name: 'Kistenslalom', n: 12, tempo: [122, 132], luecke: [184, 172], versatz: [45, 85] },
-  { g: 0, name: 'Hafenrundflug', n: 15, tempo: [126, 142], luecke: [176, 162], versatz: [60, 115] },
-  { g: 0, name: 'Möwenkurs', n: 18, tempo: [130, 150], luecke: [170, 155], versatz: [80, 135] },
-  { g: 0, name: 'Großer Kai', n: 22, tempo: [134, 158], luecke: [165, 148], versatz: [90, 155] },
+  { g: 0, name: T('Erster Hopser'), n: 8, tempo: [118, 124], luecke: [192, 182], versatz: [30, 60] },
+  { g: 0, name: T('Kistenslalom'), n: 12, tempo: [122, 132], luecke: [184, 172], versatz: [45, 85] },
+  { g: 0, name: T('Hafenrundflug'), n: 15, tempo: [126, 142], luecke: [176, 162], versatz: [60, 115] },
+  { g: 0, name: T('Möwenkurs'), n: 18, tempo: [130, 150], luecke: [170, 155], versatz: [80, 135] },
+  { g: 0, name: T('Großer Kai'), n: 22, tempo: [134, 158], luecke: [165, 148], versatz: [90, 155] },
   // ---- 2 · Werft im Nebel: schwebende Container ----
-  { g: 1, name: 'Schwebende Last', n: 12, tempo: [128, 136], luecke: [182, 172], versatz: [40, 75], bewegt: 0.6, amp: [14, 20] },
-  { g: 1, name: 'Hoch und runter', n: 15, tempo: [130, 144], luecke: [176, 166], versatz: [55, 100], bewegt: 0.75, amp: [18, 26] },
-  { g: 1, name: 'Nebelkräne', n: 18, tempo: [134, 150], luecke: [172, 160], versatz: [65, 120], bewegt: 0.8, amp: [20, 30] },
-  { g: 1, name: 'Helling', n: 20, tempo: [136, 154], luecke: [168, 155], versatz: [75, 130], bewegt: 0.85, amp: [22, 34] },
-  { g: 1, name: 'Stapellauf', n: 24, tempo: [140, 160], luecke: [164, 150], versatz: [85, 150], bewegt: 0.9, amp: [24, 38] },
+  { g: 1, name: T('Schwebende Last'), n: 12, tempo: [128, 136], luecke: [182, 172], versatz: [40, 75], bewegt: 0.6, amp: [14, 20] },
+  { g: 1, name: T('Hoch und runter'), n: 15, tempo: [130, 144], luecke: [176, 166], versatz: [55, 100], bewegt: 0.75, amp: [18, 26] },
+  { g: 1, name: T('Nebelkräne'), n: 18, tempo: [134, 150], luecke: [172, 160], versatz: [65, 120], bewegt: 0.8, amp: [20, 30] },
+  { g: 1, name: T('Helling'), n: 20, tempo: [136, 154], luecke: [168, 155], versatz: [75, 130], bewegt: 0.85, amp: [22, 34] },
+  { g: 1, name: T('Stapellauf'), n: 24, tempo: [140, 160], luecke: [164, 150], versatz: [85, 150], bewegt: 0.9, amp: [24, 38] },
   // ---- 3 · Abendmarkt: lange Container ----
-  { g: 2, name: 'Lange Kisten', n: 12, tempo: [128, 138], luecke: [184, 174], versatz: [40, 75], lang: 0.45 },
-  { g: 2, name: 'Tunnelblick', n: 15, tempo: [130, 144], luecke: [180, 168], versatz: [50, 95], lang: 0.5 },
-  { g: 2, name: 'Markthallen', n: 18, tempo: [136, 152], luecke: [174, 160], versatz: [65, 120], lang: 0.5, bewegt: 0.3, amp: [18, 22] },
-  { g: 2, name: 'Lampionkette', n: 20, tempo: [138, 156], luecke: [170, 156], versatz: [75, 130], lang: 0.55, bewegt: 0.4, amp: [20, 26] },
-  { g: 2, name: 'Fischauktion', n: 24, tempo: [142, 162], luecke: [166, 150], versatz: [85, 150], lang: 0.6, bewegt: 0.45, amp: [22, 30] },
+  { g: 2, name: T('Lange Kisten'), n: 12, tempo: [128, 138], luecke: [184, 174], versatz: [40, 75], lang: 0.45 },
+  { g: 2, name: T('Tunnelblick'), n: 15, tempo: [130, 144], luecke: [180, 168], versatz: [50, 95], lang: 0.5 },
+  { g: 2, name: T('Markthallen'), n: 18, tempo: [136, 152], luecke: [174, 160], versatz: [65, 120], lang: 0.5, bewegt: 0.3, amp: [18, 22] },
+  { g: 2, name: T('Lampionkette'), n: 20, tempo: [138, 156], luecke: [170, 156], versatz: [75, 130], lang: 0.55, bewegt: 0.4, amp: [20, 26] },
+  { g: 2, name: T('Fischauktion'), n: 24, tempo: [142, 162], luecke: [166, 150], versatz: [85, 150], lang: 0.6, bewegt: 0.45, amp: [22, 30] },
   // ---- 4 · Nachthafen: alles zusammen, schneller ----
-  { g: 3, name: 'Laternenlicht', n: 15, tempo: [140, 150], luecke: [174, 160], versatz: [70, 110], lang: 0.3, bewegt: 0.4, amp: [18, 24] },
-  { g: 3, name: 'Mondschein', n: 18, tempo: [144, 158], luecke: [168, 155], versatz: [80, 130], bewegt: 0.6, amp: [22, 30], abstand: 205 },
-  { g: 3, name: 'Nachtschicht', n: 20, tempo: [148, 164], luecke: [162, 150], versatz: [90, 140], lang: 0.4, bewegt: 0.5, amp: [22, 30] },
-  { g: 3, name: 'Leuchtfeuer', n: 22, tempo: [150, 168], luecke: [158, 146], versatz: [100, 150], lang: 0.3, bewegt: 0.5, amp: [24, 32], abstand: 200 },
-  { g: 3, name: 'Mitternacht', n: 26, tempo: [152, 172], luecke: [155, 142], versatz: [110, 165], lang: 0.4, bewegt: 0.6, amp: [26, 36], abstand: 205 },
+  { g: 3, name: T('Laternenlicht'), n: 15, tempo: [140, 150], luecke: [174, 160], versatz: [70, 110], lang: 0.3, bewegt: 0.4, amp: [18, 24] },
+  { g: 3, name: T('Mondschein'), n: 18, tempo: [144, 158], luecke: [168, 155], versatz: [80, 130], bewegt: 0.6, amp: [22, 30], abstand: 205 },
+  { g: 3, name: T('Nachtschicht'), n: 20, tempo: [148, 164], luecke: [162, 150], versatz: [90, 140], lang: 0.4, bewegt: 0.5, amp: [22, 30] },
+  { g: 3, name: T('Leuchtfeuer'), n: 22, tempo: [150, 168], luecke: [158, 146], versatz: [100, 150], lang: 0.3, bewegt: 0.5, amp: [24, 32], abstand: 200 },
+  { g: 3, name: T('Mitternacht'), n: 26, tempo: [152, 172], luecke: [155, 142], versatz: [110, 165], lang: 0.4, bewegt: 0.6, amp: [26, 36], abstand: 205 },
   // ---- 5 · Sturmküste: Windböen ----
-  { g: 4, name: 'Erste Böe', n: 14, tempo: [130, 140], luecke: [186, 176], versatz: [40, 80], wind: 220 },
-  { g: 4, name: 'Gegenwind', n: 18, tempo: [136, 150], luecke: [174, 162], versatz: [65, 115], wind: 300 },
-  { g: 4, name: 'Brandung', n: 21, tempo: [140, 158], luecke: [168, 155], versatz: [75, 130], wind: 330, bewegt: 0.4, amp: [18, 26] },
-  { g: 4, name: 'Sturmflut', n: 25, tempo: [144, 164], luecke: [162, 148], versatz: [85, 150], wind: 360, lang: 0.3, bewegt: 0.4, amp: [20, 30] },
+  { g: 4, name: T('Erste Böe'), n: 14, tempo: [130, 140], luecke: [186, 176], versatz: [40, 80], wind: 220 },
+  { g: 4, name: T('Gegenwind'), n: 18, tempo: [136, 150], luecke: [174, 162], versatz: [65, 115], wind: 300 },
+  { g: 4, name: T('Brandung'), n: 21, tempo: [140, 158], luecke: [168, 155], versatz: [75, 130], wind: 330, bewegt: 0.4, amp: [18, 26] },
+  { g: 4, name: T('Sturmflut'), n: 25, tempo: [144, 164], luecke: [162, 148], versatz: [85, 150], wind: 360, lang: 0.3, bewegt: 0.4, amp: [20, 30] },
   // ---- 6 · Eishafen: enge Abstände ----
-  { g: 5, name: 'Frostflug', n: 16, tempo: [140, 154], luecke: [170, 158], versatz: [70, 120], abstand: 200, bewegt: 0.4, amp: [18, 26] },
-  { g: 5, name: 'Eisschollen', n: 20, tempo: [144, 160], luecke: [164, 152], versatz: [80, 135], abstand: 198, lang: 0.4 },
-  { g: 5, name: 'Schneegestöber', n: 23, tempo: [148, 165], luecke: [160, 148], versatz: [90, 145], abstand: 200, wind: 300, bewegt: 0.4, amp: [20, 28] },
-  { g: 5, name: 'Polarnacht', n: 26, tempo: [150, 170], luecke: [156, 144], versatz: [100, 160], abstand: 195, lang: 0.3, bewegt: 0.5, amp: [22, 32] },
+  { g: 5, name: T('Frostflug'), n: 16, tempo: [140, 154], luecke: [170, 158], versatz: [70, 120], abstand: 200, bewegt: 0.4, amp: [18, 26] },
+  { g: 5, name: T('Eisschollen'), n: 20, tempo: [144, 160], luecke: [164, 152], versatz: [80, 135], abstand: 198, lang: 0.4 },
+  { g: 5, name: T('Schneegestöber'), n: 23, tempo: [148, 165], luecke: [160, 148], versatz: [90, 145], abstand: 200, wind: 300, bewegt: 0.4, amp: [20, 28] },
+  { g: 5, name: T('Polarnacht'), n: 26, tempo: [150, 170], luecke: [156, 144], versatz: [100, 160], abstand: 195, lang: 0.3, bewegt: 0.5, amp: [22, 32] },
   // ---- 7 · Hafenfest: Finale ----
-  { g: 6, name: 'Lampionflug', n: 20, tempo: [146, 162], luecke: [164, 152], versatz: [85, 140], lang: 0.3, bewegt: 0.4, amp: [20, 28] },
-  { g: 6, name: 'Feuerwerk', n: 24, tempo: [150, 168], luecke: [158, 147], versatz: [95, 150], wind: 300, bewegt: 0.4, amp: [22, 30] },
-  { g: 6, name: 'Festumzug', n: 28, tempo: [154, 174], luecke: [154, 143], versatz: [105, 160], wind: 320, lang: 0.35, bewegt: 0.5, amp: [24, 34], abstand: 205 },
-  { g: 6, name: 'Großes Finale', n: 34, tempo: [156, 178], luecke: [152, 140], versatz: [115, 170], wind: 340, lang: 0.4, bewegt: 0.55, amp: [24, 36], abstand: 200 },
+  { g: 6, name: T('Lampionflug'), n: 20, tempo: [146, 162], luecke: [164, 152], versatz: [85, 140], lang: 0.3, bewegt: 0.4, amp: [20, 28] },
+  { g: 6, name: T('Feuerwerk'), n: 24, tempo: [150, 168], luecke: [158, 147], versatz: [95, 150], wind: 300, bewegt: 0.4, amp: [22, 30] },
+  { g: 6, name: T('Festumzug'), n: 28, tempo: [154, 174], luecke: [154, 143], versatz: [105, 160], wind: 320, lang: 0.35, bewegt: 0.5, amp: [24, 34], abstand: 205 },
+  { g: 6, name: T('Großes Finale'), n: 34, tempo: [156, 178], luecke: [152, 140], versatz: [115, 170], wind: 340, lang: 0.4, bewegt: 0.55, amp: [24, 36], abstand: 200 },
 ];
 LEVEL.forEach((l, i) => { l.nr = i + 1; });
 
 // Schwierigkeitsgrade gelten für Level und Endlos-Flug
 const STUFEN = {
-  leicht: { name: 'Gemütlich', luecke: 24, tempo: 0.9, versatz: 0.8, kraft: 0.7 },
-  normal: { name: 'Normal', luecke: 0, tempo: 1, versatz: 1, kraft: 1 },
-  schwer: { name: 'Profi', luecke: -12, tempo: 1.08, versatz: 1.12, kraft: 1.15 },
+  leicht: { name: T('Gemütlich'), luecke: 24, tempo: 0.9, versatz: 0.8, kraft: 0.7 },
+  normal: { name: T('Normal'), luecke: 0, tempo: 1, versatz: 1, kraft: 1 },
+  schwer: { name: T('Profi'), luecke: -12, tempo: 1.08, versatz: 1.12, kraft: 1.15 },
 };
 const STUFEN_REIHE = ['leicht', 'normal', 'schwer'];
 
@@ -2580,7 +2791,7 @@ const Grafik = (() => {
       g.textAlign = 'center';
       g.textBaseline = 'middle';
       g.fillStyle = NAVY;
-      g.fillText('ZIEL', 32, 36);
+      g.fillText(T('ZIEL'), 32, 36);
       g.restore();
     });
     // Wind-Schild: Pfeile und „BÖE“
@@ -2606,7 +2817,7 @@ const Grafik = (() => {
       g.textAlign = 'left';
       g.textBaseline = 'middle';
       g.fillStyle = CREME;
-      g.fillText('WIND', 35, 15);
+      g.fillText(T('WIND'), 35, 15);
       g.restore();
     });
     sprites = {
@@ -2845,7 +3056,7 @@ const Grafik = (() => {
       p.r(sx - 3, sy - 1, 6, 2, GELB);
     }
     if (t < 0.9) {
-      const wort = s.unfall.art === 'wasser' ? 'PLATSCH!' : s.unfall.art === 'decke' ? 'BONK!' : 'BOING!';
+      const wort = s.unfall.art === 'wasser' ? T('PLATSCH!') : s.unfall.art === 'decke' ? 'BONK!' : 'BOING!';
       text(wort, K.FIGUR_X + 34, y - 42 - (reduziert ? 0 : Math.min(t, 0.3) * 20), 12, GELB, 'left');
     }
   }
@@ -3632,16 +3843,16 @@ const PixelDuell = (() => {
   const startFigur = $('startFigur');
 
   const SPRUECHE = [
-    'Die Mütze ist noch da.',
-    'Fast bis zur Mittagspause.',
-    'Der TÜV hat Fragen.',
-    'Die Möwen applaudieren höflich.',
-    'Das Jetpack hustet beleidigt.',
-    'Der Hafenmeister notiert: „Kreativ“.',
-    'Die Gummistiefel sind jetzt voller Ehrgeiz.',
-    'Ein Kran hat kurz weggeschaut.',
+    T('Die Mütze ist noch da.'),
+    T('Fast bis zur Mittagspause.'),
+    T('Der TÜV hat Fragen.'),
+    T('Die Möwen applaudieren höflich.'),
+    T('Das Jetpack hustet beleidigt.'),
+    T('Der Hafenmeister notiert: „Kreativ“.'),
+    T('Die Gummistiefel sind jetzt voller Ehrgeiz.'),
+    T('Ein Kran hat kurz weggeschaut.'),
   ];
-  const STUFEN_TEXT = { leicht: 'große Lücken', normal: 'wie gedacht', schwer: 'eng und flott' };
+  const STUFEN_TEXT = { leicht: T('große Lücken'), normal: T('wie gedacht'), schwer: T('eng und flott') };
   // Farben der Gebietsköpfe in der Levelauswahl (passend zu den Hintergründen)
   const GEBIET_FARBEN = [
     'linear-gradient(90deg, #3A92C3, #80D3F4)',
@@ -3687,7 +3898,7 @@ const PixelDuell = (() => {
     const an = Ton.istAn();
     wurzel.classList.toggle('stumm', !an);
     $('tonKnopf').setAttribute('aria-pressed', String(an));
-    $('tonKnopf').setAttribute('aria-label', an ? 'Ton ausschalten' : 'Ton einschalten');
+    $('tonKnopf').setAttribute('aria-label', an ? T('Ton ausschalten') : T('Ton einschalten'));
   }
   zeigeTon();
   $('tonKnopf').addEventListener('click', () => {
@@ -3826,7 +4037,7 @@ const PixelDuell = (() => {
       const box = document.createElement('div');
       box.setAttribute('role', 'group');
       box.className = 'gebiet';
-      box.setAttribute('aria-label', `Gebiet ${gi + 1}: ${g.name}`);
+      box.setAttribute('aria-label', T('Gebiet {nr}: {name}', { nr: gi + 1, name: g.name }));
       const kopf = document.createElement('h3');
       kopf.className = 'gebiet-kopf';
       kopf.style.background = GEBIET_FARBEN[gi];
@@ -3834,7 +4045,7 @@ const PixelDuell = (() => {
       kopf.innerHTML = `<span>${gi + 1} · ${g.name.toUpperCase()}</span><span>${summe}/${level.length * 3}</span>`;
       const info = document.createElement('p');
       info.className = 'gebiet-info';
-      info.innerHTML = g.neu ? `<b>Neu: ${g.neu}.</b> ${g.text}` : g.text;
+      info.innerHTML = g.neu ? `<b>${T('Neu:')} ${g.neu}.</b> ${g.text}` : g.text;
       const gitter = document.createElement('div');
       gitter.className = 'levelgitter';
       for (const l of level) {
@@ -3849,12 +4060,12 @@ const PixelDuell = (() => {
         k.dataset.level = l.nr;
         if (frei) {
           k.innerHTML = `<span>${l.nr}</span><span class="mini">${[0, 1, 2].map(i => `<svg class="${i < st ? 'an' : ''}" aria-hidden="true"><use href="#stern"/></svg>`).join('')}</span>`;
-          k.setAttribute('aria-label', `Level ${l.nr}: ${l.name}, ${st} von 3 Sternen`);
+          k.setAttribute('aria-label', T('Level {nr}: {name}, {sterne} von 3 Sternen', { nr: l.nr, name: l.name, sterne: st }));
           k.title = l.name;
           k.addEventListener('click', () => starteLevel(l.nr));
         } else {
           k.innerHTML = `<span>${l.nr}</span><svg class="schloss" aria-hidden="true"><use href="#schloss"/></svg>`;
-          k.setAttribute('aria-label', `Level ${l.nr}: noch gesperrt`);
+          k.setAttribute('aria-label', T('Level {nr}: noch gesperrt', { nr: l.nr }));
         }
         gitter.append(k);
       }
@@ -3929,7 +4140,7 @@ const PixelDuell = (() => {
     zeigeFenster(null);
   }
 
-  const menueText = () => (s.konfig.modus === 'level' ? 'Levelauswahl' : 'Hauptmenü');
+  const menueText = () => (s.konfig.modus === 'level' ? T('Levelauswahl') : T('Hauptmenü'));
   const zumMenue = () => (s.konfig.modus === 'level' ? zeigeLevelauswahl() : zeigeHauptmenue());
   const levelTitel = () => {
     const l = levelEbene(s.konfig.nr);
@@ -3951,15 +4162,29 @@ const PixelDuell = (() => {
     Ton.wecke();
     if (!setzeFort(s)) return;
     zeigeFenster(null);
-    zeigeMeldung('BEREIT?', wurzel.classList.contains('touch') ? 'Tippen – dann geht es weiter' : 'Leertaste oder Klick – dann geht es weiter');
+    zeigeMeldung(T('BEREIT?'), wurzel.classList.contains('touch') ? T('Tippen – dann geht es weiter') : T('Leertaste oder Klick – dann geht es weiter'));
+  }
+
+  // ---------- Sprache und Portal-Version ----------
+  uebersetzeSeite();
+  $('spracheKnopf').textContent = Sprache.aktuell === 'de' ? 'English' : 'Deutsch';
+  $('spracheKnopf').lang = Sprache.aktuell === 'de' ? 'en' : 'de';
+  $('spracheKnopf').addEventListener('click', () => Sprache.wechsle());
+  if (PORTAL) {
+    // Auf Spieleportalen keine Links nach außen und kein Teilen
+    $('pixelhafenLink').remove();
+    $('freundeKnopf').remove();
+    $('endeFreunde').remove();
   }
 
   $('abenteuerKnopf').addEventListener('click', () => { Ton.wecke(); zeigeLevelauswahl(); });
   $('endlosKnopf').addEventListener('click', starteEndlos);
-  $('freundeKnopf').addEventListener('click', () => duell.oeffne());
-  $('endeFreunde').addEventListener('click', () => duell.oeffne());
-  if (duell.offen) {
-    $('startDuell').textContent = duell.startText() + ' (Modus: Endlos fliegen)';
+  if (!PORTAL) {
+    $('freundeKnopf').addEventListener('click', () => duell.oeffne());
+    $('endeFreunde').addEventListener('click', () => duell.oeffne());
+  }
+  if (!PORTAL && duell.offen) {
+    $('startDuell').textContent = duell.startText() + T(' (Modus: Endlos fliegen)');
     $('startDuell').hidden = false;
   }
   $('zurueckKnopf').addEventListener('click', zeigeHauptmenue);
@@ -4052,17 +4277,17 @@ const PixelDuell = (() => {
     $('geschafftLevel').textContent = levelTitel();
     const sterne = s.sterne;
     $('grossSterne').querySelectorAll('svg').forEach((el, i) => el.classList.toggle('an', i < sterne));
-    const texte = ['Ziel erreicht! Sammle beim nächsten Mal die Sterne in den Lücken.', 'Ein Stern! Zwei weitere warten noch.', 'Zwei Sterne – fast perfekt!', 'Alle drei Sterne. Meisterhaft!'];
+    const texte = [T('Ziel erreicht! Sammle beim nächsten Mal die Sterne in den Lücken.'), T('Ein Stern! Zwei weitere warten noch.'), T('Zwei Sterne – fast perfekt!'), T('Alle drei Sterne. Meisterhaft!')];
     let text = texte[sterne];
-    if (zielErgebnis && !zielErgebnis.mehrSterne && sterne < sterneVon(nr)) text += ` (Bestwert: ${sterneVon(nr)} Sterne)`;
+    if (zielErgebnis && !zielErgebnis.mehrSterne && sterne < sterneVon(nr)) text += T(' (Bestwert: {n} Sterne)', { n: sterneVon(nr) });
     $('geschafftText').textContent = text;
     const letztes = nr === LEVEL.length;
-    $('geschafftTitel').textContent = letztes ? 'Großes Finale geschafft!' : 'Geschafft!';
+    $('geschafftTitel').textContent = letztes ? T('Großes Finale geschafft!') : T('Geschafft!');
     const neu = zielErgebnis && zielErgebnis.neuesGebiet > 0 ? GEBIETE[zielErgebnis.neuesGebiet] : null;
     $('neuesGebiet').hidden = !neu && !letztes;
-    $('neuesGebiet').textContent = letztes ? 'ALLE 32 LEVEL GESCHAFFT!' : neu ? `NEUES GEBIET: ${neu.name.toUpperCase()}` : '';
-    $('naechstesKnopf').textContent = letztes ? 'Zur Levelauswahl' : 'Nächstes Level';
-    $('ansage').textContent = `Geschafft! Level ${nr}, ${l.name}. ${sterne} von 3 Sternen.${neu ? ' Neues Gebiet: ' + neu.name + '.' : ''}`;
+    $('neuesGebiet').textContent = letztes ? T('ALLE 32 LEVEL GESCHAFFT!') : neu ? T('NEUES GEBIET: {name}', { name: neu.name.toUpperCase() }) : '';
+    $('naechstesKnopf').textContent = letztes ? T('Zur Levelauswahl') : T('Nächstes Level');
+    $('ansage').textContent = T('Geschafft! Level {nr}, {name}. {sterne} von 3 Sternen.', { nr, name: l.name, sterne }) + (neu ? T(' Neues Gebiet: {name}.', { name: neu.name }) : '');
     zeigeFenster('fGeschafft');
   }
 
@@ -4079,14 +4304,14 @@ const PixelDuell = (() => {
     }
     $('endeLevel').hidden = !level;
     $('endeLevel').textContent = levelTitel();
-    $('ePunkteText').textContent = level ? 'Geschafft' : 'Punkte';
+    $('ePunkteText').textContent = level ? T('Geschafft') : T('Punkte');
     $('ePunkte').textContent = level ? `${s.punkte}/${s.konfig.anzahl}` : s.punkte;
-    $('eRekordText').textContent = level ? 'Sterne' : `Rekord (${STUFEN[stufe].name})`;
+    $('eRekordText').textContent = level ? T('Sterne') : T('Rekord ({stufe})', { stufe: STUFEN[stufe].name });
     $('eRekord').textContent = level ? `${s.sterne}/3` : rekord;
     $('neuerRekord').hidden = !neu;
-    $('eDuell').hidden = level;
-    $('eDuell').textContent = level ? '' : duell.endText(s.punkte);
-    $('endeFreunde').hidden = level;
+    $('eDuell').hidden = level || PORTAL;
+    $('eDuell').textContent = level || PORTAL ? '' : duell.endText(s.punkte);
+    if (!PORTAL) $('endeFreunde').hidden = level;
     $('endeMenueKnopf').textContent = menueText();
     const spruch = $('spruch');
     // Gelegentlich ein kurzer Spruch (nicht bei einem neuen Rekord, der wird gefeiert)
@@ -4098,8 +4323,8 @@ const PixelDuell = (() => {
     }
     zeigeZahlen();
     $('ansage').textContent = level
-      ? `Bruchlandung. ${s.punkte} von ${s.konfig.anzahl} geschafft.`
-      : `Bruchlandung. ${s.punkte} Punkte. Rekord ${rekord}.${neu ? ' Neuer Rekord!' : ''}`;
+      ? T('Bruchlandung. {punkte} von {anzahl} geschafft.', { punkte: s.punkte, anzahl: s.konfig.anzahl })
+      : T('Bruchlandung. {punkte} Punkte. Rekord {rekord}.', { punkte: s.punkte, rekord }) + (neu ? T(' Neuer Rekord!') : '');
     zeigeFenster('fEnde');
   }
 
@@ -4144,7 +4369,7 @@ const PixelDuell = (() => {
   requestAnimationFrame(bild);
 
   // Offline-Fähigkeit wie bei den anderen Pixelhafen-Spielen
-  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  if (!PORTAL && 'serviceWorker' in navigator && location.protocol === 'https:') {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }
 

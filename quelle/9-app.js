@@ -17,16 +17,16 @@
   const startFigur = $('startFigur');
 
   const SPRUECHE = [
-    'Die Mütze ist noch da.',
-    'Fast bis zur Mittagspause.',
-    'Der TÜV hat Fragen.',
-    'Die Möwen applaudieren höflich.',
-    'Das Jetpack hustet beleidigt.',
-    'Der Hafenmeister notiert: „Kreativ“.',
-    'Die Gummistiefel sind jetzt voller Ehrgeiz.',
-    'Ein Kran hat kurz weggeschaut.',
+    T('Die Mütze ist noch da.'),
+    T('Fast bis zur Mittagspause.'),
+    T('Der TÜV hat Fragen.'),
+    T('Die Möwen applaudieren höflich.'),
+    T('Das Jetpack hustet beleidigt.'),
+    T('Der Hafenmeister notiert: „Kreativ“.'),
+    T('Die Gummistiefel sind jetzt voller Ehrgeiz.'),
+    T('Ein Kran hat kurz weggeschaut.'),
   ];
-  const STUFEN_TEXT = { leicht: 'große Lücken', normal: 'wie gedacht', schwer: 'eng und flott' };
+  const STUFEN_TEXT = { leicht: T('große Lücken'), normal: T('wie gedacht'), schwer: T('eng und flott') };
   // Farben der Gebietsköpfe in der Levelauswahl (passend zu den Hintergründen)
   const GEBIET_FARBEN = [
     'linear-gradient(90deg, #3A92C3, #80D3F4)',
@@ -72,7 +72,7 @@
     const an = Ton.istAn();
     wurzel.classList.toggle('stumm', !an);
     $('tonKnopf').setAttribute('aria-pressed', String(an));
-    $('tonKnopf').setAttribute('aria-label', an ? 'Ton ausschalten' : 'Ton einschalten');
+    $('tonKnopf').setAttribute('aria-label', an ? T('Ton ausschalten') : T('Ton einschalten'));
   }
   zeigeTon();
   $('tonKnopf').addEventListener('click', () => {
@@ -211,7 +211,7 @@
       const box = document.createElement('div');
       box.setAttribute('role', 'group');
       box.className = 'gebiet';
-      box.setAttribute('aria-label', `Gebiet ${gi + 1}: ${g.name}`);
+      box.setAttribute('aria-label', T('Gebiet {nr}: {name}', { nr: gi + 1, name: g.name }));
       const kopf = document.createElement('h3');
       kopf.className = 'gebiet-kopf';
       kopf.style.background = GEBIET_FARBEN[gi];
@@ -219,7 +219,7 @@
       kopf.innerHTML = `<span>${gi + 1} · ${g.name.toUpperCase()}</span><span>${summe}/${level.length * 3}</span>`;
       const info = document.createElement('p');
       info.className = 'gebiet-info';
-      info.innerHTML = g.neu ? `<b>Neu: ${g.neu}.</b> ${g.text}` : g.text;
+      info.innerHTML = g.neu ? `<b>${T('Neu:')} ${g.neu}.</b> ${g.text}` : g.text;
       const gitter = document.createElement('div');
       gitter.className = 'levelgitter';
       for (const l of level) {
@@ -234,12 +234,12 @@
         k.dataset.level = l.nr;
         if (frei) {
           k.innerHTML = `<span>${l.nr}</span><span class="mini">${[0, 1, 2].map(i => `<svg class="${i < st ? 'an' : ''}" aria-hidden="true"><use href="#stern"/></svg>`).join('')}</span>`;
-          k.setAttribute('aria-label', `Level ${l.nr}: ${l.name}, ${st} von 3 Sternen`);
+          k.setAttribute('aria-label', T('Level {nr}: {name}, {sterne} von 3 Sternen', { nr: l.nr, name: l.name, sterne: st }));
           k.title = l.name;
           k.addEventListener('click', () => starteLevel(l.nr));
         } else {
           k.innerHTML = `<span>${l.nr}</span><svg class="schloss" aria-hidden="true"><use href="#schloss"/></svg>`;
-          k.setAttribute('aria-label', `Level ${l.nr}: noch gesperrt`);
+          k.setAttribute('aria-label', T('Level {nr}: noch gesperrt', { nr: l.nr }));
         }
         gitter.append(k);
       }
@@ -314,7 +314,7 @@
     zeigeFenster(null);
   }
 
-  const menueText = () => (s.konfig.modus === 'level' ? 'Levelauswahl' : 'Hauptmenü');
+  const menueText = () => (s.konfig.modus === 'level' ? T('Levelauswahl') : T('Hauptmenü'));
   const zumMenue = () => (s.konfig.modus === 'level' ? zeigeLevelauswahl() : zeigeHauptmenue());
   const levelTitel = () => {
     const l = levelEbene(s.konfig.nr);
@@ -336,15 +336,29 @@
     Ton.wecke();
     if (!setzeFort(s)) return;
     zeigeFenster(null);
-    zeigeMeldung('BEREIT?', wurzel.classList.contains('touch') ? 'Tippen – dann geht es weiter' : 'Leertaste oder Klick – dann geht es weiter');
+    zeigeMeldung(T('BEREIT?'), wurzel.classList.contains('touch') ? T('Tippen – dann geht es weiter') : T('Leertaste oder Klick – dann geht es weiter'));
+  }
+
+  // ---------- Sprache und Portal-Version ----------
+  uebersetzeSeite();
+  $('spracheKnopf').textContent = Sprache.aktuell === 'de' ? 'English' : 'Deutsch';
+  $('spracheKnopf').lang = Sprache.aktuell === 'de' ? 'en' : 'de';
+  $('spracheKnopf').addEventListener('click', () => Sprache.wechsle());
+  if (PORTAL) {
+    // Auf Spieleportalen keine Links nach außen und kein Teilen
+    $('pixelhafenLink').remove();
+    $('freundeKnopf').remove();
+    $('endeFreunde').remove();
   }
 
   $('abenteuerKnopf').addEventListener('click', () => { Ton.wecke(); zeigeLevelauswahl(); });
   $('endlosKnopf').addEventListener('click', starteEndlos);
-  $('freundeKnopf').addEventListener('click', () => duell.oeffne());
-  $('endeFreunde').addEventListener('click', () => duell.oeffne());
-  if (duell.offen) {
-    $('startDuell').textContent = duell.startText() + ' (Modus: Endlos fliegen)';
+  if (!PORTAL) {
+    $('freundeKnopf').addEventListener('click', () => duell.oeffne());
+    $('endeFreunde').addEventListener('click', () => duell.oeffne());
+  }
+  if (!PORTAL && duell.offen) {
+    $('startDuell').textContent = duell.startText() + T(' (Modus: Endlos fliegen)');
     $('startDuell').hidden = false;
   }
   $('zurueckKnopf').addEventListener('click', zeigeHauptmenue);
@@ -437,17 +451,17 @@
     $('geschafftLevel').textContent = levelTitel();
     const sterne = s.sterne;
     $('grossSterne').querySelectorAll('svg').forEach((el, i) => el.classList.toggle('an', i < sterne));
-    const texte = ['Ziel erreicht! Sammle beim nächsten Mal die Sterne in den Lücken.', 'Ein Stern! Zwei weitere warten noch.', 'Zwei Sterne – fast perfekt!', 'Alle drei Sterne. Meisterhaft!'];
+    const texte = [T('Ziel erreicht! Sammle beim nächsten Mal die Sterne in den Lücken.'), T('Ein Stern! Zwei weitere warten noch.'), T('Zwei Sterne – fast perfekt!'), T('Alle drei Sterne. Meisterhaft!')];
     let text = texte[sterne];
-    if (zielErgebnis && !zielErgebnis.mehrSterne && sterne < sterneVon(nr)) text += ` (Bestwert: ${sterneVon(nr)} Sterne)`;
+    if (zielErgebnis && !zielErgebnis.mehrSterne && sterne < sterneVon(nr)) text += T(' (Bestwert: {n} Sterne)', { n: sterneVon(nr) });
     $('geschafftText').textContent = text;
     const letztes = nr === LEVEL.length;
-    $('geschafftTitel').textContent = letztes ? 'Großes Finale geschafft!' : 'Geschafft!';
+    $('geschafftTitel').textContent = letztes ? T('Großes Finale geschafft!') : T('Geschafft!');
     const neu = zielErgebnis && zielErgebnis.neuesGebiet > 0 ? GEBIETE[zielErgebnis.neuesGebiet] : null;
     $('neuesGebiet').hidden = !neu && !letztes;
-    $('neuesGebiet').textContent = letztes ? 'ALLE 32 LEVEL GESCHAFFT!' : neu ? `NEUES GEBIET: ${neu.name.toUpperCase()}` : '';
-    $('naechstesKnopf').textContent = letztes ? 'Zur Levelauswahl' : 'Nächstes Level';
-    $('ansage').textContent = `Geschafft! Level ${nr}, ${l.name}. ${sterne} von 3 Sternen.${neu ? ' Neues Gebiet: ' + neu.name + '.' : ''}`;
+    $('neuesGebiet').textContent = letztes ? T('ALLE 32 LEVEL GESCHAFFT!') : neu ? T('NEUES GEBIET: {name}', { name: neu.name.toUpperCase() }) : '';
+    $('naechstesKnopf').textContent = letztes ? T('Zur Levelauswahl') : T('Nächstes Level');
+    $('ansage').textContent = T('Geschafft! Level {nr}, {name}. {sterne} von 3 Sternen.', { nr, name: l.name, sterne }) + (neu ? T(' Neues Gebiet: {name}.', { name: neu.name }) : '');
     zeigeFenster('fGeschafft');
   }
 
@@ -464,14 +478,14 @@
     }
     $('endeLevel').hidden = !level;
     $('endeLevel').textContent = levelTitel();
-    $('ePunkteText').textContent = level ? 'Geschafft' : 'Punkte';
+    $('ePunkteText').textContent = level ? T('Geschafft') : T('Punkte');
     $('ePunkte').textContent = level ? `${s.punkte}/${s.konfig.anzahl}` : s.punkte;
-    $('eRekordText').textContent = level ? 'Sterne' : `Rekord (${STUFEN[stufe].name})`;
+    $('eRekordText').textContent = level ? T('Sterne') : T('Rekord ({stufe})', { stufe: STUFEN[stufe].name });
     $('eRekord').textContent = level ? `${s.sterne}/3` : rekord;
     $('neuerRekord').hidden = !neu;
-    $('eDuell').hidden = level;
-    $('eDuell').textContent = level ? '' : duell.endText(s.punkte);
-    $('endeFreunde').hidden = level;
+    $('eDuell').hidden = level || PORTAL;
+    $('eDuell').textContent = level || PORTAL ? '' : duell.endText(s.punkte);
+    if (!PORTAL) $('endeFreunde').hidden = level;
     $('endeMenueKnopf').textContent = menueText();
     const spruch = $('spruch');
     // Gelegentlich ein kurzer Spruch (nicht bei einem neuen Rekord, der wird gefeiert)
@@ -483,8 +497,8 @@
     }
     zeigeZahlen();
     $('ansage').textContent = level
-      ? `Bruchlandung. ${s.punkte} von ${s.konfig.anzahl} geschafft.`
-      : `Bruchlandung. ${s.punkte} Punkte. Rekord ${rekord}.${neu ? ' Neuer Rekord!' : ''}`;
+      ? T('Bruchlandung. {punkte} von {anzahl} geschafft.', { punkte: s.punkte, anzahl: s.konfig.anzahl })
+      : T('Bruchlandung. {punkte} Punkte. Rekord {rekord}.', { punkte: s.punkte, rekord }) + (neu ? T(' Neuer Rekord!') : '');
     zeigeFenster('fEnde');
   }
 
@@ -529,7 +543,7 @@
   requestAnimationFrame(bild);
 
   // Offline-Fähigkeit wie bei den anderen Pixelhafen-Spielen
-  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  if (!PORTAL && 'serviceWorker' in navigator && location.protocol === 'https:') {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }
 

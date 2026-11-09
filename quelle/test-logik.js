@@ -7,7 +7,7 @@ const vm = require('vm');
 
 const ordner = __dirname;
 const schnell = process.argv.includes('schnell');
-const code = ['1-einstellungen.js', '2-level.js', '3-logik.js', '4-speicher.js'].map(n => fs.readFileSync(path.join(ordner, n), 'utf8')).join('\n');
+const code = ['0-sprache.js', '1-einstellungen.js', '2-level.js', '3-logik.js', '4-speicher.js'].map(n => fs.readFileSync(path.join(ordner, n), 'utf8')).join('\n');
 
 function lade(fensterObjekt) {
   const ctx = { window: fensterObjekt || {} };
