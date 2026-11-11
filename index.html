@@ -1298,7 +1298,8 @@ const Speicher = (() => {
   const notfall = {};
 
   function lager() {
-    try { return window.localStorage || null; } catch (e) { return null; }
+    // In der Portal-Version speichert das CrazyGames-SDK (gleiche Befehle wie localStorage)
+    try { return window.PortalLager || window.localStorage || null; } catch (e) { return null; }
   }
 
   function lies(name, standard) {

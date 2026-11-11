@@ -12,8 +12,31 @@ fertig = kopf.replace('%%SCHRIFT%%', (q / 'schrift.txt').read_text().strip()).re
 (q.parent / 'index.html').write_text(fertig)
 print('index.html:', len(fertig) // 1024, 'KB')
 
-portal = fertig.replace('const PORTAL = /*PORTAL*/false;', 'const PORTAL = true;', 1)
-assert portal != fertig
+# Portal: Spielcode läuft erst nach dem Start des CrazyGames-SDK (Spielstand über dessen Datenmodul)
+WICKEL = '''<script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
+<script>
+// Nur in der Portal-Version: Das Spiel startet erst, wenn das CrazyGames-SDK bereit ist,
+// damit Sterne und Rekorde über dessen Datenmodul gespeichert werden (window.PortalLager).
+// Ohne SDK (anderer Server, gesperrt, offline) startet es nach spätestens 6 s mit dem Browserspeicher.
+window.PortalLager = null;
+(function () {
+  let gestartet = false;
+  function los() { if (gestartet) return; gestartet = true; starteSpiel(); }
+  const sdk = window.CrazyGames && window.CrazyGames.SDK;
+  if (!sdk) { los(); return; }
+  setTimeout(los, 6000);
+  Promise.resolve().then(() => sdk.init()).then(() => {
+    if (!gestartet && (sdk.environment === 'crazygames' || sdk.environment === 'local')) window.PortalLager = sdk.data;
+  }).catch(() => {}).then(los);
+})();
+function starteSpiel() {
+%%SPIEL%%
+}
+</script>'''
+assert '<script>\n%%SPIEL%%\n</script>' in kopf
+portal = kopf.replace('<script>\n%%SPIEL%%\n</script>', WICKEL).replace('%%SCHRIFT%%', (q / 'schrift.txt').read_text().strip()).replace('%%SPIEL%%', spiel)
+portal = portal.replace('const PORTAL = /*PORTAL*/false;', 'const PORTAL = true;', 1)
+assert 'const PORTAL = true;' in portal
 for zeile in ['<link rel="manifest" href="manifest.webmanifest">\n',
               '<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">\n',
               '<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">\n']:
