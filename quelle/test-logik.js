@@ -398,6 +398,27 @@ abschnitt('Level: Aufbau, Fairness, Sterne, Ziel');
   pruefe(s.zustand === ZUSTAND.START && s.hindernisse.length === 0, 'Zurück ins Menü setzt alles zurück');
 }
 
+abschnitt('Sterne: jede Berührung mit der Figur zählt');
+{
+  // Figur direkt neben einen Stern setzen, um dy versetzt (bzw. dx), einen winzigen Schritt rechnen
+  const { erstelleKonfig, sternPos, fuelleHindernisse } = api;
+  function probiere(dx, dy) {
+    const s = erstelleSpiel(erstelleKonfig('level', 1, 'normal')); starte(s); ereignisse(s);
+    s.hindernisse.length = 0; fuelleHindernisse(s);
+    const h = s.hindernisse.find(o => o.muenze);
+    const p = sternPos(h);
+    s.strecke = p.x - K.FIGUR_X - dx; s.figur.y = p.y + dy; s.figur.vy = 0;
+    schritt(s, 1e-4);
+    return s.sterne === 1;
+  }
+  pruefe(probiere(0, 0), 'Stern mitten getroffen');
+  pruefe(probiere(0, 28) && probiere(0, -28), 'Stern an Kopf oder Füßen zählt');
+  pruefe(probiere(24, 0) && probiere(-24, 0), 'Stern am Rücken oder an der Nase zählt');
+  pruefe(probiere(22, 26), 'Stern an der Ecke der Figur zählt');
+  pruefe(!probiere(0, 36) && !probiere(0, -36), 'Stern klar über oder unter der Figur zählt nicht');
+  pruefe(!probiere(30, 0), 'Stern klar vor der Figur zählt noch nicht');
+}
+
 abschnitt('Bot fliegt alle Level (alle Stufen, mehrere Bildraten)');
 {
   const { LEVEL, erstelleKonfig } = api;

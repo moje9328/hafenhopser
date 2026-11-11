@@ -1,6 +1,6 @@
 // Offline-Helfer: Merkt sich alle Dateien des Spiels.
 // Mit Internet wird immer zuerst die neueste Version geladen, ohne Internet die gemerkte.
-const CACHE = 'hafenhopser-v5';
+const CACHE = 'hafenhopser-v6';
 const FILES = [
   './',
   './index.html',

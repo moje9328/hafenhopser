@@ -387,7 +387,10 @@ function schritt(s, dt) {
   for (const h of s.hindernisse) {
     if (!h.muenze || h.geholt) continue;
     const p = sternPos(h);
-    if ((p.x - fx) ** 2 + (p.y - f.y) ** 2 < K.MUENZE_RADIUS ** 2) {
+    // Abstand vom Sternmittelpunkt zum nächsten Punkt der Figur-Fläche
+    const dx = Math.max(Math.abs(p.x - fx) - K.STERN_FIGUR_B / 2, 0);
+    const dy = Math.max(Math.abs(p.y - f.y) - K.STERN_FIGUR_H / 2, 0);
+    if (dx * dx + dy * dy < K.STERN_RADIUS ** 2) {
       h.geholt = true;
       s.sterne++;
       s.ereignisse.push({ typ: 'stern', sterne: s.sterne, x: p.x - s.strecke, y: p.y });

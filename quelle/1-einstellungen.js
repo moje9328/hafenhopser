@@ -69,7 +69,9 @@ const K = {
   SCHWEBE_FRQ: [1.0, 1.6],   // schwebende Container: Kreisfrequenz (rad/s)
   LUECKE_RESERVE: 40,        // jede Lücke: Schubweg + Figur + so viel Luft (wichtig bei Aufwind)
   SCHWEBE_RESERVE: 24,       // so viel Luft bleibt in einer schwebenden Lücke neben dem Schubweg
-  MUENZE_RADIUS: 21,         // so nah muss die Figurmitte an den Stern
+  STERN_RADIUS: 12,          // Stern (gemalt 26 px) zum Einsammeln
+  STERN_FIGUR_B: 30,         // so breit und hoch zählt die Figur beim Sterne-Einsammeln
+  STERN_FIGUR_H: 40,         // (fast die ganze sichtbare Figur von etwa 34 × 48: jede Berührung zählt)
   WIND_WARNUNG: 1.0,         // so lange vor einer Böe erscheint der Hinweis
   WIND_RAMPE: 0.35,          // Böen schwellen weich an und ab
   WIND_ERSTE: 3.4,           // erste Böe frühestens nach so vielen Sekunden Flug
