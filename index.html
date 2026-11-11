@@ -517,6 +517,7 @@ const Sprache = (() => {
     try { const w = window.localStorage.getItem(SCHLUESSEL); return w === 'de' || w === 'en' ? w : ''; } catch (e) { return ''; }
   }
   function ausBrowser() {
+    if (PORTAL) return 'en'; // Spieleportale wollen Englisch als Standard
     try {
       const liste = (typeof navigator !== 'undefined' && (navigator.languages || [navigator.language])) || [];
       return String(liste[0] || 'de').toLowerCase().startsWith('de') ? 'de' : 'en';
